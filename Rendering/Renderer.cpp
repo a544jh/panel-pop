@@ -9,10 +9,9 @@
 
 Renderer::Renderer() :
 _SDLContext(SDLContext::getInstance()),
-_texture(nullptr)
-{
-	_SDLRenderer = _SDLContext.getRenderer();
-}
+_texture(nullptr),
+_SDLRenderer(_SDLContext.getRenderer())
+{}
 
 Renderer::~Renderer() {
 	// TODO Auto-generated destructor stub
