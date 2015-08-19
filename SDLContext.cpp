@@ -44,7 +44,6 @@ bool SDLContext::init()
 			std::cout << SDL_GetError();
 			success = false;
 		}
-
 	return success;
 }
 

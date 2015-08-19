@@ -7,7 +7,8 @@
 
 #include "Block.h"
 
-Block::Block() {
+Block::Block() : _state(NORMAL)
+{
 	// TODO Auto-generated constructor stub
 
 }

@@ -44,6 +44,7 @@ void BoardRenderer::drawGrid() {
 }
 
 void BoardRenderer::drawBlocks() {
+	SDL_SetRenderDrawBlendMode(_SDLRenderer, SDL_BLENDMODE_BLEND);
 	for (int i = 0; i < 24; i++) {
 		for (int j = 0; j < 6; j++) {
 			if (_board._tiles[i][j].type == BLOCK) {
@@ -72,6 +73,11 @@ void BoardRenderer::drawBlocks() {
 				default:
 					SDL_SetRenderDrawColor(_SDLRenderer, 0xAA, 0xAA, 0xAA,
 							0xFF);
+				}
+				if (block._state == EXPLODING){
+					uint8_t r, g, b, a;
+					SDL_GetRenderDrawColor(_SDLRenderer, &r, &g, &b, &a);
+					SDL_SetRenderDrawColor(_SDLRenderer, r, g, b, 0x80);
 				}
 				SDL_Rect pos;
 				pos.h = TILE_SIZE;

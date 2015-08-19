@@ -23,6 +23,7 @@ struct Tile {
 	TileType type;
 	Block b;
 	GarbageBlock* g;
+	BlockColor getColor();
 };
 
 class Board {
@@ -37,6 +38,7 @@ public:
 private:
 	void initializeTiles();
 	void fillRandom();
+	void matchBlocks();
 };
 
 #endif /* BOARD_H_ */
