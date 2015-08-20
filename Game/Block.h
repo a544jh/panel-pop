@@ -9,7 +9,7 @@
 #define BLOCK_H_
 
 enum BlockState {
-	NORMAL, FLOATING, EXPLODING
+	NORMAL, FLOATING, MATCHED, EXPLODING
 };
 
 enum BlockColor {
@@ -24,6 +24,11 @@ public:
 
 	BlockState _state;
 	BlockColor _color;
+
+	int _explosionTicks;
+	int _explosionAnimTicks;
+	int _explosionTimer;
+	bool _animBlinkState;
 };
 
 #endif /* BLOCK_H_ */

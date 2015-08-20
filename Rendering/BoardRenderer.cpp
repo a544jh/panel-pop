@@ -45,8 +45,8 @@ void BoardRenderer::drawGrid() {
 
 void BoardRenderer::drawBlocks() {
 	SDL_SetRenderDrawBlendMode(_SDLRenderer, SDL_BLENDMODE_BLEND);
-	for (int i = 0; i < 24; i++) {
-		for (int j = 0; j < 6; j++) {
+	for (int i = 0; i < Board::BOARD_HEIGHT; i++) {
+		for (int j = 0; j < Board::BOARD_WIDTH; j++) {
 			if (_board._tiles[i][j].type == BLOCK) {
 				Block& block = _board._tiles[i][j].b;
 				switch (block._color) {
@@ -74,10 +74,27 @@ void BoardRenderer::drawBlocks() {
 					SDL_SetRenderDrawColor(_SDLRenderer, 0xAA, 0xAA, 0xAA,
 							0xFF);
 				}
-				if (block._state == EXPLODING){
+				if (block._state == EXPLODING) {
 					uint8_t r, g, b, a;
 					SDL_GetRenderDrawColor(_SDLRenderer, &r, &g, &b, &a);
-					SDL_SetRenderDrawColor(_SDLRenderer, r, g, b, 0x80);
+					if (block._explosionTimer <= 45) {
+						if (block._animBlinkState) {
+							a = 0xff;
+						} else {
+							a = 0x00;
+						}
+					}
+					if (block._explosionTimer > 45) {
+						if (block._explosionTimer > block._explosionAnimTicks) {
+							a = 0x00;
+						} else {
+//							double f = block._explosionTimer
+//									/ (double) block._explosionAnimTicks;
+//							a *= 1 - f;
+							a = 0xff;
+						}
+					}
+					SDL_SetRenderDrawColor(_SDLRenderer, r, g, b, a);
 				}
 				SDL_Rect pos;
 				pos.h = TILE_SIZE;
@@ -90,22 +107,25 @@ void BoardRenderer::drawBlocks() {
 	}
 }
 
-void BoardRenderer::drawCursor(){
+void BoardRenderer::drawCursor() {
 	SDL_SetRenderDrawColor(_SDLRenderer, 0x00, 0x00, 0x00, 0xFF);
 
 	SDL_Rect cur;
 	cur.y = BOARD_HEIGHT - (_board._cursorY + 1) * TILE_SIZE;
 	cur.x = _board._cursorX * TILE_SIZE;
-	cur.w = 2 * TILE_SIZE; cur.h = 2;
-	SDL_RenderFillRect(_SDLRenderer, &cur);//up
-	cur.w = 2; cur.h = TILE_SIZE;
-	SDL_RenderFillRect(_SDLRenderer, &cur);//left
+	cur.w = 2 * TILE_SIZE;
+	cur.h = 2;
+	SDL_RenderFillRect(_SDLRenderer, &cur); //up
+	cur.w = 2;
+	cur.h = TILE_SIZE;
+	SDL_RenderFillRect(_SDLRenderer, &cur); //left
 	cur.x += 2 * TILE_SIZE;
-	SDL_RenderFillRect(_SDLRenderer, &cur);//right
+	SDL_RenderFillRect(_SDLRenderer, &cur); //right
 	cur.x = _board._cursorX * TILE_SIZE;
 	cur.y += TILE_SIZE;
-	cur.w = 2 * TILE_SIZE; cur.h = 2;
-	SDL_RenderFillRect(_SDLRenderer, &cur);//down
+	cur.w = 2 * TILE_SIZE;
+	cur.h = 2;
+	SDL_RenderFillRect(_SDLRenderer, &cur); //down
 
 }
 

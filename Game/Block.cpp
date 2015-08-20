@@ -7,7 +7,7 @@
 
 #include "Block.h"
 
-Block::Block() : _state(NORMAL)
+Block::Block() : _state(NORMAL), _animBlinkState(false)
 {
 	// TODO Auto-generated constructor stub
 
