@@ -14,7 +14,6 @@
 
 Board::Board() :
 		_cursorX(0), _cursorY(0) {
-	//initializeTiles();
 	fillRandom();
 
 }
@@ -23,13 +22,6 @@ Tile::Tile() :
 		type(AIR), g(nullptr) {
 }
 
-//void Board::initializeTiles() {
-//	for (int i = 0; i < BOARD_HEIGHT; i++) {
-//		for (int j = 0; j < BOARD_WIDTH; j++) {
-//			_tiles[i][j].type = AIR;
-//		}
-//	}
-//}
 
 void Board::fillRandom() {
 	srand(time(NULL));
@@ -43,7 +35,6 @@ void Board::fillRandom() {
 			}
 			colors.remove(_tiles[i][j - 1].b._color);
 			colors.remove(_tiles[i - 1][j].b._color);
-			//_tiles[i][j].b._color = static_cast<BlockColor>(rand() % BlockColor::COUNT);
 			auto it = colors.begin();
 
 			int r = (rand() % colors.size());
@@ -77,10 +68,10 @@ void Board::moveCursor(Direction d) {
 	while (_cursorY > 11) {
 		--_cursorY;
 	}
-	while(_cursorX < 0){
+	while (_cursorX < 0) {
 		++_cursorX;
 	}
-	while(_cursorY < 0){
+	while (_cursorY < 0) {
 		++_cursorY;
 	}
 }
@@ -89,21 +80,21 @@ bool Tile::swappable() {
 	return (type == AIR || (type == BLOCK && b._state == NORMAL));
 }
 
-bool Board::blockFalling(int row, int col) {
-	if(row == 0){
+bool Board::blockCanFall(int row, int col) {
+	if (row == 0 || _tiles[row][col].b._state == EXPLODING) {
 		return false;
 	} else {
 		return _tiles[row - 1][col].type == AIR;
 	}
 }
 
-bool Board::matchTiles(int r1, int c1, int r2, int c2){
+bool Board::matchTiles(int r1, int c1, int r2, int c2) {
 	Tile& t1 = _tiles[r1][c1];
 	Tile& t2 = _tiles[r2][c2];
-	return(t1.type == BLOCK && t2.type == BLOCK
-			&& t1.b._state == NORMAL && t2.b._state == NORMAL
-			&& !blockFalling(r1, c1) && !blockFalling(r2, c2)
-			&& t1.b._color == t2.b._color);
+	return (t1.type == BLOCK && t2.type == BLOCK
+			&& (t1.b._state == NORMAL || t1.b._state == MATCHED)
+			&& (t2.b._state == NORMAL || t2.b._state == MATCHED)
+			&& !t1.b._falling && !t2.b._falling && t1.b._color == t2.b._color);
 }
 
 void Board::swapBlocks() {
@@ -117,7 +108,6 @@ void Board::swapBlocks() {
 	t2 = tmp;
 }
 
-
 void Board::initTick() {
 	_tickMatched = 0;
 }
@@ -127,12 +117,14 @@ void Board::matchBlocks() {
 	auto setMatchedHor = [this](int startIndex, int row, int matched) {
 		for(int i = startIndex; i < startIndex + matched; i++) {
 			this->_tiles[row][i].b._state = MATCHED;
+			++_tickMatched;
 		}
 	};
 
 	auto setMatchedVer = [this](int startIndex, int col, int matched) {
 		for(int i = startIndex; i < startIndex + matched; i++) {
 			this->_tiles[i][col].b._state = MATCHED;
+			++_tickMatched;
 		}
 	};
 
@@ -140,7 +132,7 @@ void Board::matchBlocks() {
 		int matched = 1;
 		int matchStartIndex = 0;
 		for (int col = 1; col < BOARD_WIDTH; col++) {
-			if (matchTiles(row, col, row, col -1)) {
+			if (matchTiles(row, col, row, col - 1)) {
 				matched++;
 			} else {
 				if (matched >= 3) {
@@ -179,7 +171,7 @@ void Board::matchBlocks() {
 void Board::setExplosionTicks() {
 	int matches = 1;
 	for (int row = BOARD_HEIGHT; row >= 0; row--) {
-		for (int col = BOARD_WIDTH; col >= 0; col--) {
+		for (int col = 0; col < BOARD_WIDTH; col++) {
 			Tile& tile = _tiles[row][col];
 			if (tile.type == BLOCK && tile.b._state == MATCHED) {
 				tile.b._state = EXPLODING;
@@ -204,19 +196,22 @@ void Board::handleExplodingBlocks() {
 		if (it->type == BLOCK && it->b._state == EXPLODING) {
 			++it->b._explosionTimer;
 			it->b._animBlinkState = !it->b._animBlinkState;
-		}
-		if (it->b._explosionTicks == it->b._explosionTimer) {
-			deleteBlock(*it);
+			if (it->b._explosionTicks == it->b._explosionTimer) {
+				deleteBlock(*it);
+			}
 		}
 	}
 }
 
 void Board::handleFalling() {
 	for (int col = 0; col < BOARD_WIDTH; col++) {
-		for (int row = 1; row < BOARD_HEIGHT; row++) {
-			if (blockFalling(row, col)) {
+		for (int row = 0; row < BOARD_HEIGHT; row++) {
+			if (blockCanFall(row, col)) {
 				_tiles[row - 1][col] = _tiles[row][col];
+				_tiles[row - 1][col].b._falling = true;
 				deleteBlock(_tiles[row][col]);
+			} else {
+				_tiles[row][col].b._falling = false;
 			}
 		}
 	}
@@ -224,8 +219,8 @@ void Board::handleFalling() {
 
 void Board::tick() {
 	initTick();
-	handleFalling();
 	handleExplodingBlocks();
+	handleFalling();
 	matchBlocks();
 	setExplosionTicks();
 }

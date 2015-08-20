@@ -85,13 +85,11 @@ void BoardRenderer::drawBlocks() {
 						}
 					}
 					if (block._explosionTimer > 45) {
-						if (block._explosionTimer > block._explosionAnimTicks) {
+						if (block._explosionTimer
+								>= block._explosionAnimTicks) {
 							a = 0x00;
 						} else {
-//							double f = block._explosionTimer
-//									/ (double) block._explosionAnimTicks;
-//							a *= 1 - f;
-							a = 0xff;
+							a = 0x80;
 						}
 					}
 					SDL_SetRenderDrawColor(_SDLRenderer, r, g, b, a);
