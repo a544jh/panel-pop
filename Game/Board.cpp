@@ -56,7 +56,7 @@ void Board::fillRandom() {
 }
 
 void Board::moveCursor(Direction d) {
-	//TODO: Don't move if cursor gets out of bounds
+
 	switch (d) {
 	case UP:
 		_cursorY++;
@@ -71,20 +71,52 @@ void Board::moveCursor(Direction d) {
 		_cursorX--;
 		break;
 	}
+	while (_cursorX > BOARD_WIDTH - 2) {
+		--_cursorX;
+	}
+	while (_cursorY > 11) {
+		--_cursorY;
+	}
+	while(_cursorX < 0){
+		++_cursorX;
+	}
+	while(_cursorY < 0){
+		++_cursorY;
+	}
+}
+
+bool Tile::swappable() {
+	return (type == AIR || (type == BLOCK && b._state == NORMAL));
+}
+
+bool Board::blockFalling(int row, int col) {
+	if(row == 0){
+		return false;
+	} else {
+		return _tiles[row - 1][col].type == AIR;
+	}
+}
+
+bool Board::matchTiles(int r1, int c1, int r2, int c2){
+	Tile& t1 = _tiles[r1][c1];
+	Tile& t2 = _tiles[r2][c2];
+	return(t1.type == BLOCK && t2.type == BLOCK
+			&& t1.b._state == NORMAL && t2.b._state == NORMAL
+			&& !blockFalling(r1, c1) && !blockFalling(r2, c2)
+			&& t1.b._color == t2.b._color);
 }
 
 void Board::swapBlocks() {
-	Tile tmp = _tiles[_cursorY][_cursorX];
-	_tiles[_cursorY][_cursorX] = _tiles[_cursorY][_cursorX + 1];
-	_tiles[_cursorY][_cursorX + 1] = tmp;
+	Tile& t1 = _tiles[_cursorY][_cursorX];
+	Tile& t2 = _tiles[_cursorY][_cursorX + 1];
+	if (!(t1.swappable() && t2.swappable())) {
+		return;
+	}
+	Tile tmp = t1;
+	t1 = t2;
+	t2 = tmp;
 }
 
-BlockColor Tile::getColor() {
-	if (type == TileType::BLOCK && b._state == NORMAL) {
-		return b._color;
-	}
-	return BlockColor::COUNT;
-}
 
 void Board::initTick() {
 	_tickMatched = 0;
@@ -108,9 +140,7 @@ void Board::matchBlocks() {
 		int matched = 1;
 		int matchStartIndex = 0;
 		for (int col = 1; col < BOARD_WIDTH; col++) {
-			BlockColor c1 = _tiles[row][col].getColor();
-			BlockColor c2 = _tiles[row][col - 1].getColor();
-			if (c1 != BlockColor::COUNT && c1 == c2) {
+			if (matchTiles(row, col, row, col -1)) {
 				matched++;
 			} else {
 				if (matched >= 3) {
@@ -129,9 +159,7 @@ void Board::matchBlocks() {
 		int matched = 1;
 		int matchStartIndex = 0;
 		for (int row = 1; row < BOARD_HEIGHT; row++) {
-			BlockColor c1 = _tiles[row][col].getColor();
-			BlockColor c2 = _tiles[row - 1][col].getColor();
-			if (c1 != BlockColor::COUNT && c1 == c2) {
+			if (matchTiles(row, col, row - 1, col)) {
 				matched++;
 			} else {
 				if (matched >= 3) {
@@ -158,7 +186,8 @@ void Board::setExplosionTicks() {
 				tile.b._explosionTimer = 0;
 				tile.b._explosionAnimTicks = BASE_EXPLOSION_TICKS
 						+ matches * ADD_EXPL_TICKS;
-				tile.b._explosionTicks = BASE_EXPLOSION_TICKS + _tickMatched * ADD_EXPL_TICKS;
+				tile.b._explosionTicks = BASE_EXPLOSION_TICKS
+						+ _tickMatched * ADD_EXPL_TICKS;
 				++matches;
 			}
 		}
@@ -182,8 +211,20 @@ void Board::handleExplodingBlocks() {
 	}
 }
 
+void Board::handleFalling() {
+	for (int col = 0; col < BOARD_WIDTH; col++) {
+		for (int row = 1; row < BOARD_HEIGHT; row++) {
+			if (blockFalling(row, col)) {
+				_tiles[row - 1][col] = _tiles[row][col];
+				deleteBlock(_tiles[row][col]);
+			}
+		}
+	}
+}
+
 void Board::tick() {
 	initTick();
+	handleFalling();
 	handleExplodingBlocks();
 	matchBlocks();
 	setExplosionTicks();

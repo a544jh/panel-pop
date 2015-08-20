@@ -25,7 +25,7 @@ struct Tile {
 	TileType type;
 	Block b;
 	GarbageBlock* g;
-	BlockColor getColor();
+	bool swappable();
 };
 
 
@@ -51,6 +51,9 @@ private:
 	void setExplosionTicks();
 	void handleExplodingBlocks();
 	void deleteBlock(Tile&);
+	void handleFalling();
+	bool matchTiles(int, int, int, int);
+	bool blockFalling(int, int);
 };
 
 #endif /* BOARD_H_ */
