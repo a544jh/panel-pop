@@ -22,7 +22,6 @@ Tile::Tile() :
 		type(AIR), g(nullptr) {
 }
 
-
 void Board::fillRandom() {
 	srand(time(NULL));
 	for (int i = 0; i < 10; i++) {
@@ -81,7 +80,7 @@ bool Tile::swappable() {
 }
 
 bool Board::blockCanFall(int row, int col) {
-	if (row == 0 || _tiles[row][col].b._state == EXPLODING) {
+	if (row == 0 || _tiles[row][col].b._state != NORMAL) {
 		return false;
 	} else {
 		return _tiles[row - 1][col].type == AIR;
@@ -106,6 +105,15 @@ void Board::swapBlocks() {
 	Tile tmp = t1;
 	t1 = t2;
 	t2 = tmp;
+
+	if (blockCanFall(_cursorY, _cursorX)) {
+		t1.b._state = FLOATING;
+		t1.b._floatTimer = SWAP_FLOAT_TICKS;
+	}
+	if (blockCanFall(_cursorY, _cursorX + 1)) {
+		t2.b._state = FLOATING;
+		t2.b._floatTimer = SWAP_FLOAT_TICKS;
+	}
 }
 
 void Board::initTick() {
@@ -211,6 +219,11 @@ void Board::handleFalling() {
 				_tiles[row - 1][col].b._falling = true;
 				deleteBlock(_tiles[row][col]);
 			} else {
+				if(_tiles[row][col].b._state == FLOATING){
+					if(_tiles[row][col].b._floatTimer-- <= 0){
+						_tiles[row][col].b._state = NORMAL;
+					}
+				}
 				_tiles[row][col].b._falling = false;
 			}
 		}
