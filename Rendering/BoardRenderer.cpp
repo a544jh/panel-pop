@@ -23,6 +23,7 @@ SDL_Texture* BoardRenderer::renderBoard() {
 	SDL_RenderClear(_SDLRenderer);
 
 	drawBlocks();
+	drawBufferRow();
 	//drawGrid();
 	drawCursor();
 
@@ -98,10 +99,42 @@ void BoardRenderer::drawBlocks() {
 				pos.h = TILE_SIZE;
 				pos.w = TILE_SIZE;
 				pos.x = j * TILE_SIZE;
-				pos.y = BOARD_HEIGHT - (i + 1) * TILE_SIZE;
+				pos.y = (BOARD_HEIGHT - (i + 1) * TILE_SIZE)
+						- _board._stackOffset;
 				SDL_RenderFillRect(_SDLRenderer, &pos);
 			}
 		}
+	}
+}
+
+void BoardRenderer::drawBufferRow() {
+	for (int i = 0; i < Board::BOARD_WIDTH; i++) {
+		Block& block = _board._bufferRow[i].b;
+		switch (block._color) {
+		case BlockColor::CYAN:
+			SDL_SetRenderDrawColor(_SDLRenderer, 0x00, 0x80, 0x80, 0xFF);
+			break;
+		case BlockColor::GREEN:
+			SDL_SetRenderDrawColor(_SDLRenderer, 0x00, 0x80, 0x00, 0xFF);
+			break;
+		case BlockColor::PURPLE:
+			SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00, 0x80, 0xFF);
+			break;
+		case BlockColor::RED:
+			SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00, 0x00, 0xFF);
+			break;
+		case BlockColor::YELLOW:
+			SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x80, 0x00, 0xFF);
+			break;
+		default:
+			SDL_SetRenderDrawColor(_SDLRenderer, 0xAA, 0xAA, 0xAA, 0xFF);
+		}
+		SDL_Rect pos;
+		pos.h = TILE_SIZE;
+		pos.w = TILE_SIZE;
+		pos.x = i * TILE_SIZE;
+		pos.y = (BOARD_HEIGHT) - _board._stackOffset;
+		SDL_RenderFillRect(_SDLRenderer, &pos);
 	}
 }
 
@@ -109,7 +142,8 @@ void BoardRenderer::drawCursor() {
 	SDL_SetRenderDrawColor(_SDLRenderer, 0x00, 0x00, 0x00, 0xFF);
 
 	SDL_Rect cur;
-	cur.y = BOARD_HEIGHT - (_board._cursorY + 1) * TILE_SIZE;
+	cur.y = (BOARD_HEIGHT - (_board._cursorY + 1) * TILE_SIZE)
+			- _board._stackOffset;
 	cur.x = _board._cursorX * TILE_SIZE;
 	cur.w = 2 * TILE_SIZE;
 	cur.h = 2;

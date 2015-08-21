@@ -13,9 +13,10 @@
 #include <bitset>
 
 Board::Board() :
-		_cursorX(0), _cursorY(0) {
+		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
+				0), _stackRaiseForced(false) {
 	fillRandom();
-
+	fillBufferRow();
 }
 
 Tile::Tile() :
@@ -42,6 +43,26 @@ void Board::fillRandom() {
 			}
 			_tiles[i][j].b._color = static_cast<BlockColor>(*it);
 		}
+	}
+}
+
+void Board::fillBufferRow() {
+	srand(time(NULL));
+	for (int i = 0; i < BOARD_WIDTH; i++) {
+		std::list<int> colors;
+		for (int k = 0; k < BlockColor::COUNT; k++) {
+			colors.push_back(k);
+		}
+		colors.remove(_tiles[0][i].b._color);
+		colors.remove(_bufferRow[i - 1].b._color);
+		auto it = colors.begin();
+
+		int r = (rand() % colors.size());
+		for (int k = 0; k < r; k++) {
+			it++;
+		}
+		_bufferRow[i].type = BLOCK;
+		_bufferRow[i].b._color = static_cast<BlockColor>(*it);
 	}
 }
 
@@ -118,6 +139,7 @@ void Board::swapBlocks() {
 
 void Board::initTick() {
 	_tickMatched = 0;
+	_activeBlocks = activeBlocks();
 }
 
 void Board::matchBlocks() {
@@ -219,8 +241,8 @@ void Board::handleFalling() {
 				_tiles[row - 1][col].b._falling = true;
 				deleteBlock(_tiles[row][col]);
 			} else {
-				if(_tiles[row][col].b._state == FLOATING){
-					if(_tiles[row][col].b._floatTimer-- <= 0){
+				if (_tiles[row][col].b._state == FLOATING) {
+					if (_tiles[row][col].b._floatTimer-- <= 0) {
 						_tiles[row][col].b._state = NORMAL;
 					}
 				}
@@ -230,8 +252,52 @@ void Board::handleFalling() {
 	}
 }
 
+void Board::raiseStack() {
+	if (!_stackRaiseForced && _stackRaiseTimer < _stackRaiseTicks) {
+		++_stackRaiseTimer;
+		return;
+	}
+	if (_stackOffset < 32 && !activeBlocks()) {
+		++_stackOffset;
+		_stackRaiseTimer = 0;
+	}
+	if (_stackOffset >= 32) {
+		for (int row = BOARD_HEIGHT - 2; row >= 0; --row) {
+			for (int col = 0; col < BOARD_WIDTH; ++col) {
+				_tiles[row + 1][col] = _tiles[row][col];
+			}
+		}
+		for (int i = 0; i < BOARD_WIDTH; ++i) {
+			_tiles[0][i] = _bufferRow[i];
+		}
+		fillBufferRow();
+		_stackOffset = 0;
+		_stackRaiseForced = false;
+		if (_cursorY <= 10) {
+			++_cursorY;
+		}
+	}
+}
+
+void Board::forceStackRaise() {
+	if (!_activeBlocks) {
+		_stackRaiseForced = true;
+	}
+}
+
+bool Board::activeBlocks() {
+	for (Tile* it = &_tiles[0][0];
+			it != &_tiles[0][0] + BOARD_WIDTH * BOARD_HEIGHT; ++it) {
+		if (it->type == BLOCK && (it->b._state != NORMAL || it->b._falling)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Board::tick() {
 	initTick();
+	raiseStack();
 	handleExplodingBlocks();
 	handleFalling();
 	matchBlocks();
@@ -239,6 +305,6 @@ void Board::tick() {
 }
 
 Board::~Board() {
-	// TODO Auto-generated destructor stub
+// TODO Auto-generated destructor stub
 }
 

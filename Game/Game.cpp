@@ -31,6 +31,9 @@ void Game::tick() {
 	if(!_prevInput[SDL_SCANCODE_X] && input._keys[SDL_SCANCODE_X]) {
 		_board.swapBlocks();
 	}
+	if(input._keys[SDL_SCANCODE_S]) {
+			_board.forceStackRaise();
+		}
 
 	_board.tick();
 
