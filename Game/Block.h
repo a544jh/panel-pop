@@ -27,6 +27,7 @@ public:
 
 	bool _falling;//to prevent block from getting matched in mid-air
 	int _floatTimer;//the blocks floats for a while after getting swapped
+	bool _noChain;
 
 	int _explosionTicks; //ticks it takes for block to explode
 	int _explosionAnimTicks; //ticks it takes for the explosion animation to complete

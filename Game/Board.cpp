@@ -14,7 +14,8 @@
 
 Board::Board() :
 		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
-				0), _stackRaiseForced(false) {
+				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
+				false) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -135,11 +136,21 @@ void Board::swapBlocks() {
 		t2.b._state = FLOATING;
 		t2.b._floatTimer = SWAP_FLOAT_TICKS;
 	}
+//all blocks above get affected, therefore not part of a chain
+	for (int y = _cursorY; y < BOARD_HEIGHT; ++y) {
+		_tiles[y][_cursorX].b._noChain = true;
+		_tiles[y][_cursorX + 1].b._noChain = true;
+	}
+
 }
 
 void Board::initTick() {
 	_tickMatched = 0;
+	_tickChain = false;
 	_activeBlocks = activeBlocks();
+	if (!_activeBlocks) {
+		_chainCounter = 1;
+	}
 }
 
 void Board::matchBlocks() {
@@ -198,12 +209,17 @@ void Board::matchBlocks() {
 }
 
 //scan the board from top left and set the explosion time for each block, so we get a pretty animation
-void Board::setExplosionTicks() {
+void Board::handleMatchedBlocks() {
 	int matches = 1;
+	bool chain = true;
 	for (int row = BOARD_HEIGHT; row >= 0; row--) {
 		for (int col = 0; col < BOARD_WIDTH; col++) {
 			Tile& tile = _tiles[row][col];
+
 			if (tile.type == BLOCK && tile.b._state == MATCHED) {
+				if (tile.b._noChain) {
+					chain = false;
+				}
 				tile.b._state = EXPLODING;
 				tile.b._explosionTimer = 0;
 				tile.b._explosionAnimTicks = BASE_EXPLOSION_TICKS
@@ -212,7 +228,14 @@ void Board::setExplosionTicks() {
 						+ _tickMatched * ADD_EXPL_TICKS;
 				++matches;
 			}
+			if (tile.b._state == NORMAL && !blockCanFall(row, col) && !tile.b._falling) {
+				tile.b._noChain = false;
+			}
 		}
+	}
+	if (_tickMatched > 0 && chain) {
+		++_chainCounter;
+		_tickChain = true;
 	}
 }
 
@@ -301,7 +324,7 @@ void Board::tick() {
 	handleExplodingBlocks();
 	handleFalling();
 	matchBlocks();
-	setExplosionTicks();
+	handleMatchedBlocks();
 }
 
 Board::~Board() {

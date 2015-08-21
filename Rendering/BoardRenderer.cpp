@@ -6,6 +6,7 @@
  */
 
 #include "BoardRenderer.h"
+#include <iostream>
 
 const int BoardRenderer::BOARD_WIDTH = 192;
 const int BoardRenderer::BOARD_HEIGHT = 384;
@@ -26,6 +27,7 @@ SDL_Texture* BoardRenderer::renderBoard() {
 	drawBufferRow();
 	//drawGrid();
 	drawCursor();
+	drawChain();
 
 	return _texture;
 }
@@ -159,6 +161,13 @@ void BoardRenderer::drawCursor() {
 	cur.h = 2;
 	SDL_RenderFillRect(_SDLRenderer, &cur); //down
 
+}
+
+void BoardRenderer::drawChain(){
+	if(_board._tickChain){
+		//TODO:proper_effect
+		std::cout << _board._chainCounter << "x" << std::endl;
+	}
 }
 
 BoardRenderer::~BoardRenderer() {

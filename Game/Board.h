@@ -41,6 +41,8 @@ public:
 	int _stackRaiseTimer;
 	bool _stackRaiseForced;
 	bool _activeBlocks;
+	int _chainCounter;
+	bool _tickChain;
 	void tick();
 	void moveCursor(Direction);
 	void swapBlocks();
@@ -56,7 +58,7 @@ private:
 	void fillBufferRow();
 	bool activeBlocks();
 	void matchBlocks();
-	void setExplosionTicks();
+	void handleMatchedBlocks();
 	void handleExplodingBlocks();
 	void deleteBlock(Tile&);
 	void handleFalling();

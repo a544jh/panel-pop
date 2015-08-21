@@ -25,6 +25,7 @@ private:
 	void drawBlocks();
 	void drawCursor();
 	void drawBufferRow();
+	void drawChain();
 };
 
 #endif /* BOARDRENDERER_H_ */
