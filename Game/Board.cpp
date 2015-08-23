@@ -136,12 +136,6 @@ void Board::swapBlocks() {
 		t2.b._state = FLOATING;
 		t2.b._floatTimer = SWAP_FLOAT_TICKS;
 	}
-//all blocks above get affected, therefore not part of a chain
-	for (int y = _cursorY; y < BOARD_HEIGHT; ++y) {
-		_tiles[y][_cursorX].b._noChain = true;
-		_tiles[y][_cursorX + 1].b._noChain = true;
-	}
-
 }
 
 void Board::initTick() {
@@ -211,14 +205,14 @@ void Board::matchBlocks() {
 //scan the board from top left and set the explosion time for each block, so we get a pretty animation
 void Board::handleMatchedBlocks() {
 	int matches = 1;
-	bool chain = true;
+	bool chain = false;
 	for (int row = BOARD_HEIGHT; row >= 0; row--) {
 		for (int col = 0; col < BOARD_WIDTH; col++) {
 			Tile& tile = _tiles[row][col];
 
 			if (tile.type == BLOCK && tile.b._state == MATCHED) {
-				if (tile.b._noChain) {
-					chain = false;
+				if (tile.b._chain) {
+					chain = true;
 				}
 				tile.b._state = EXPLODING;
 				tile.b._explosionTimer = 0;
@@ -228,12 +222,13 @@ void Board::handleMatchedBlocks() {
 						+ _tickMatched * ADD_EXPL_TICKS;
 				++matches;
 			}
-			if (tile.b._state == NORMAL && !blockCanFall(row, col) && !tile.b._falling) {
-				tile.b._noChain = false;
+			if (tile.b._state == NORMAL && !blockCanFall(row, col)
+					&& !tile.b._falling) {
+				tile.b._chain = false;
 			}
 		}
 	}
-	if (_tickMatched > 0 && chain) {
+	if (chain) {
 		++_chainCounter;
 		_tickChain = true;
 	}
@@ -244,14 +239,26 @@ void Board::deleteBlock(Tile& tile) {
 }
 
 void Board::handleExplodingBlocks() {
-	for (Tile* it = &_tiles[0][0];
-			it != &_tiles[0][0] + BOARD_WIDTH * BOARD_HEIGHT; ++it) {
-		if (it->type == BLOCK && it->b._state == EXPLODING) {
-			++it->b._explosionTimer;
-			it->b._animBlinkState = !it->b._animBlinkState;
-			if (it->b._explosionTicks == it->b._explosionTimer) {
-				deleteBlock(*it);
+	for (int row = 0; row < BOARD_HEIGHT; ++row) {
+		for (int col = 0; col < BOARD_WIDTH; ++col) {
+			Tile& tile = _tiles[row][col];
+			if (tile.type == BLOCK && tile.b._state == EXPLODING) {
+				++tile.b._explosionTimer;
+				tile.b._animBlinkState = !tile.b._animBlinkState;
+				if (tile.b._explosionTicks == tile.b._explosionTimer) {
+					deleteBlock (tile);
+					setChain(row, col);
+				}
 			}
+		}
+	}
+}
+
+void Board::setChain(int row,int col) {
+	for(int y = row; y < BOARD_HEIGHT; ++y){
+		Tile& tile = _tiles[y][col];
+		if(tile.type == BLOCK){
+			tile.b._chain = true;
 		}
 	}
 }

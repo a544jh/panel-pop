@@ -61,6 +61,7 @@ private:
 	void handleMatchedBlocks();
 	void handleExplodingBlocks();
 	void deleteBlock(Tile&);
+	void setChain(int, int);
 	void handleFalling();
 	void raiseStack();
 	bool matchTiles(int, int, int, int);

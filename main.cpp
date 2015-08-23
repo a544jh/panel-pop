@@ -23,7 +23,7 @@ int main(int argc, char* args[]) {
 
 		SDL_Texture* t = gr.renderGame();
 		SDL.renderTextureToWindow(t);
-		//SDL_Delay(100);
+		SDL_Delay(50);
 	}
 
 	SDL.tearDown();
