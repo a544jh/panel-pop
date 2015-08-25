@@ -67,7 +67,7 @@ private:
 	bool matchTiles(int, int, int, int);
 	bool blockCanFall(int, int);
 
-	static const int SWAP_FLOAT_TICKS = 12;
+	static const int FLOAT_TICKS = 12;
 };
 
 #endif /* BOARD_H_ */

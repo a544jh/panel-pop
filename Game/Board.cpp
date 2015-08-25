@@ -130,11 +130,11 @@ void Board::swapBlocks() {
 
 	if (blockCanFall(_cursorY, _cursorX)) {
 		t1.b._state = FLOATING;
-		t1.b._floatTimer = SWAP_FLOAT_TICKS;
+		t1.b._floatTimer = FLOAT_TICKS;
 	}
 	if (blockCanFall(_cursorY, _cursorX + 1)) {
 		t2.b._state = FLOATING;
-		t2.b._floatTimer = SWAP_FLOAT_TICKS;
+		t2.b._floatTimer = FLOAT_TICKS;
 	}
 }
 
@@ -248,6 +248,11 @@ void Board::handleExplodingBlocks() {
 				if (tile.b._explosionTicks == tile.b._explosionTimer) {
 					deleteBlock (tile);
 					setChain(row, col);
+					if (_tiles[row + 1][col].type == BLOCK
+							&& _tiles[row + 1][col].b._state == NORMAL){
+						_tiles[row + 1][col].b._state = FLOATING;
+						_tiles[row + 1][col].b._floatTimer = FLOAT_TICKS;
+					}
 				}
 			}
 		}
