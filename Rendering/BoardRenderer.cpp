@@ -6,6 +6,7 @@
  */
 
 #include "BoardRenderer.h"
+#include "ChainPanel.h"
 #include <iostream>
 
 const int BoardRenderer::BOARD_WIDTH = 192;
@@ -19,6 +20,10 @@ BoardRenderer::BoardRenderer(Board& board) :
 }
 
 SDL_Texture* BoardRenderer::renderBoard() {
+
+	handleChain();
+	handleScorePanels();
+
 	SDL_SetRenderTarget(_SDLRenderer, _texture);
 	SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(_SDLRenderer);
@@ -27,7 +32,8 @@ SDL_Texture* BoardRenderer::renderBoard() {
 	drawBufferRow();
 	//drawGrid();
 	drawCursor();
-	drawChain();
+
+	drawScorePanels();
 
 	return _texture;
 }
@@ -163,9 +169,13 @@ void BoardRenderer::drawCursor() {
 
 }
 
-void BoardRenderer::drawChain(){
-	if(_board._tickChain){
+void BoardRenderer::handleChain() {
+	if (_board._tickChain) {
 		//TODO:proper_effect
+		_scorePanels.push_back(
+				new ChainPanel(_board._tickChainCol * TILE_SIZE + 5,
+						(BOARD_HEIGHT - (_board._tickChainRow + 1) * TILE_SIZE)
+								- _board._stackOffset, 0));
 		std::cout << _board._chainCounter << "x" << std::endl;
 	}
 }
@@ -174,3 +184,28 @@ BoardRenderer::~BoardRenderer() {
 	SDL_DestroyTexture(_texture);
 }
 
+void BoardRenderer::drawScorePanels() {
+	for (auto it = _scorePanels.begin(); it != _scorePanels.end(); ++it) {
+
+		SDL_Rect dst;
+		dst.x = (*it)->_x;
+		dst.y = (*it)->_y;
+		dst.h = (*it)->_h;
+		dst.w = (*it)->_w;
+		SDL_SetRenderTarget(_SDLRenderer, _texture);
+		SDL_RenderCopy(_SDLRenderer, (*it)->_texture, NULL, &dst);
+	}
+}
+
+void BoardRenderer::handleScorePanels() {
+	auto it = _scorePanels.begin();
+	while (it != _scorePanels.end()) {
+		if ((*it)->_alive) {
+			(*it)->tick();
+			++it;
+		} else {
+			delete *it;
+			it = _scorePanels.erase(it);
+		}
+	}
+}

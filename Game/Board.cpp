@@ -211,8 +211,10 @@ void Board::handleMatchedBlocks() {
 			Tile& tile = _tiles[row][col];
 
 			if (tile.type == BLOCK && tile.b._state == MATCHED) {
-				if (tile.b._chain) {
+				if (tile.b._chain && !chain) {
 					chain = true;
+					_tickChainCol = col;
+					_tickChainRow = row;
 				}
 				tile.b._state = EXPLODING;
 				tile.b._explosionTimer = 0;
@@ -246,23 +248,25 @@ void Board::handleExplodingBlocks() {
 				++tile.b._explosionTimer;
 				tile.b._animBlinkState = !tile.b._animBlinkState;
 				if (tile.b._explosionTicks == tile.b._explosionTimer) {
-					deleteBlock (tile);
-					setChain(row, col);
+					deleteBlock(tile);
+					//setChain(row, col);
+					// we need to set the chain flag for the blocks above, and set it on the others above when it's about to fall
 					if (_tiles[row + 1][col].type == BLOCK
-							&& _tiles[row + 1][col].b._state == NORMAL){
+							&& _tiles[row + 1][col].b._state == NORMAL) {
 						_tiles[row + 1][col].b._state = FLOATING;
 						_tiles[row + 1][col].b._floatTimer = FLOAT_TICKS;
+						_tiles[row + 1][col].b._chain = true;
 					}
 				}
 			}
 		}
 	}
 }
-
-void Board::setChain(int row,int col) {
-	for(int y = row; y < BOARD_HEIGHT; ++y){
+//sets the chain flag for the block and the ones above it
+void Board::setChain(int row, int col) {
+	for (int y = row; y < BOARD_HEIGHT; ++y) {
 		Tile& tile = _tiles[y][col];
-		if(tile.type == BLOCK){
+		if (tile.type == BLOCK) {
 			tile.b._chain = true;
 		}
 	}
@@ -275,12 +279,15 @@ void Board::handleFalling() {
 				_tiles[row - 1][col] = _tiles[row][col];
 				_tiles[row - 1][col].b._falling = true;
 				deleteBlock(_tiles[row][col]);
-			} else {
-				if (_tiles[row][col].b._state == FLOATING) {
-					if (_tiles[row][col].b._floatTimer-- <= 0) {
-						_tiles[row][col].b._state = NORMAL;
+			} else if (_tiles[row][col].b._state == FLOATING) {
+				if (_tiles[row][col].b._floatTimer-- <= 0) {
+					_tiles[row][col].b._state = NORMAL;
+					_tiles[row][col].b._falling = true;
+					if(_tiles[row][col].b._chain){
+						setChain(row, col);
 					}
 				}
+			} else {
 				_tiles[row][col].b._falling = false;
 			}
 		}

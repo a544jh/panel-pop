@@ -43,6 +43,8 @@ public:
 	bool _activeBlocks;
 	int _chainCounter;
 	bool _tickChain;
+	int _tickChainRow;
+	int _tickChainCol;
 	void tick();
 	void moveCursor(Direction);
 	void swapBlocks();

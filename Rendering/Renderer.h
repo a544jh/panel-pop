@@ -15,7 +15,6 @@ class Renderer {
 public:
 	Renderer();
 	virtual ~Renderer();
-protected:
 	SDLContext& _SDLContext;
 	SDL_Renderer* _SDLRenderer;
 	SDL_Texture* _texture;
