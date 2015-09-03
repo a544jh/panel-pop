@@ -38,6 +38,7 @@ void Game::tick() {
 	_board.tick();
 
 	_prevInput = input._keys;
+
 }
 
 Game::~Game() {
