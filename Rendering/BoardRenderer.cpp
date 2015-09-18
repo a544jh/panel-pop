@@ -103,6 +103,12 @@ void BoardRenderer::drawBlocks() {
 					}
 					SDL_SetRenderDrawColor(_SDLRenderer, r, g, b, a);
 				}
+				if (block._chain) {
+					uint8_t r, g, b, a;
+					SDL_GetRenderDrawColor(_SDLRenderer, &r, &g, &b, &a);
+					r -= 0x20;
+					SDL_SetRenderDrawColor(_SDLRenderer, r, g, b, a);
+				}
 				SDL_Rect pos;
 				pos.h = TILE_SIZE;
 				pos.w = TILE_SIZE;

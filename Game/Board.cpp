@@ -216,8 +216,7 @@ void Board::handleMatchedBlocks() {
 						+ _tickMatched * ADD_EXPL_TICKS;
 				++matches;
 			}
-			if (tile.b._state == NORMAL && !blockCanFall(row, col)
-					&& !tile.b._falling) {
+			if (tile.b._state == NORMAL && !tile.b._falling && tile.b._chain) {
 				tile.b._chain = false;
 			}
 		}
