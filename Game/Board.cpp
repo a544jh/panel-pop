@@ -102,7 +102,8 @@ bool Tile::swappable() {
 }
 
 bool Board::blockCanFall(int row, int col) {
-	if (row == 0 || _tiles[row][col].b._state != NORMAL) {
+	if (_tiles[row][col].type != BLOCK || row == 0
+			|| _tiles[row][col].b._state != NORMAL) {
 		return false;
 	} else {
 		return _tiles[row - 1][col].type == AIR;
@@ -127,15 +128,6 @@ void Board::swapBlocks() {
 	Tile tmp = t1;
 	t1 = t2;
 	t2 = tmp;
-
-	if (blockCanFall(_cursorY, _cursorX)) {
-		t1.b._state = FLOATING;
-		t1.b._floatTimer = FLOAT_TICKS;
-	}
-	if (blockCanFall(_cursorY, _cursorX + 1)) {
-		t2.b._state = FLOATING;
-		t2.b._floatTimer = FLOAT_TICKS;
-	}
 }
 
 void Board::initTick() {
@@ -253,8 +245,6 @@ void Board::handleExplodingBlocks() {
 					// we need to set the chain flag for the blocks above, and set it on the others above when it's about to fall
 					if (_tiles[row + 1][col].type == BLOCK
 							&& _tiles[row + 1][col].b._state == NORMAL) {
-						_tiles[row + 1][col].b._state = FLOATING;
-						_tiles[row + 1][col].b._floatTimer = FLOAT_TICKS;
 						_tiles[row + 1][col].b._chain = true;
 					}
 				}
@@ -275,20 +265,31 @@ void Board::setChain(int row, int col) {
 void Board::handleFalling() {
 	for (int col = 0; col < BOARD_WIDTH; col++) {
 		for (int row = 0; row < BOARD_HEIGHT; row++) {
-			if (blockCanFall(row, col)) {
-				_tiles[row - 1][col] = _tiles[row][col];
-				_tiles[row - 1][col].b._falling = true;
-				deleteBlock(_tiles[row][col]);
-			} else if (_tiles[row][col].b._state == FLOATING) {
-				if (_tiles[row][col].b._floatTimer-- <= 0) {
-					_tiles[row][col].b._state = NORMAL;
-					_tiles[row][col].b._falling = true;
-					if(_tiles[row][col].b._chain){
+			Tile& tile = _tiles[row][col];
+			if (tile.b._state == FLOATING) { //floating->falling
+				if (tile.b._floatTimer-- <= 0) {
+					tile.b._state = NORMAL;
+					tile.b._falling = true;
+					for (int y = row; y < BOARD_HEIGHT; ++y) {
+						if (_tiles[y][col].type == BLOCK) {
+							_tiles[y][col].b._falling = true;
+						}
+					}
+					if (tile.b._chain) {
 						setChain(row, col);
 					}
 				}
+			}
+			if (blockCanFall(row, col)) {
+				if (!tile.b._falling) { //normal -> floating
+					tile.b._state = FLOATING;
+					tile.b._floatTimer = FLOAT_TICKS;
+				} else { //actual falling
+					_tiles[row - 1][col] = _tiles[row][col];
+					deleteBlock(_tiles[row][col]);
+				}
 			} else {
-				_tiles[row][col].b._falling = false;
+				tile.b._falling = false;
 			}
 		}
 	}
