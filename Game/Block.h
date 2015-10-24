@@ -9,7 +9,7 @@
 #define BLOCK_H_
 
 enum BlockState {
-	NORMAL, FLOATING, MATCHED, EXPLODING
+	NORMAL, FLOATING, MATCHED, EXPLODING, SWAPPING_LEFT, SWAPPING_RIGHT
 };
 
 enum BlockColor {
@@ -27,12 +27,12 @@ public:
 
 	bool _falling;//to prevent block from getting matched in mid-air
 	int _floatTimer;//the blocks floats for a while after getting swapped
+	int _swapTimer;//for swap delay and animation
 	bool _chain;
 
 	int _explosionTicks; //ticks it takes for block to explode
 	int _explosionAnimTicks; //ticks it takes for the explosion animation to complete
 	int _explosionTimer; //gets increased every tick when block is exploding
-	bool _animBlinkState;//makes the block flicker
 };
 
 #endif /* BLOCK_H_ */

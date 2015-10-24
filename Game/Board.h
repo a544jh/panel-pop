@@ -46,11 +46,12 @@ public:
 	int _tickChainRow;
 	int _tickChainCol;
 	void tick();
-	void moveCursor(Direction);
-	void swapBlocks();
-	void forceStackRaise();
+	void inputMoveCursor(Direction);
+	void inputSwapBlocks();
+	void inputForceStackRaise();
 	static const int BASE_EXPLOSION_TICKS = 61;
 	static const int ADD_EXPL_TICKS = 9; //the total explosion time for a combo is 61 + 9 * n, where n is the  number of blocks
+	static const int SWAP_DELAY = 3;
 	static const int BOARD_HEIGHT = 24;
 	static const int BOARD_WIDTH = 6;
 private:
@@ -61,7 +62,7 @@ private:
 	bool activeBlocks();
 	void matchBlocks();
 	void handleMatchedBlocks();
-	void handleExplodingBlocks();
+	void handleBlockTimers();
 	void deleteBlock(Tile&);
 	void setChain(int, int);
 	void handleFalling();

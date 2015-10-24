@@ -65,6 +65,12 @@ void BoardRenderer::drawBlocks() {
 				pos.x = j * TILE_SIZE;
 				pos.y = (BOARD_HEIGHT - (i + 1) * TILE_SIZE)
 						- _board._stackOffset;
+				int xOffset = TILE_SIZE * (double)block._swapTimer / _board.SWAP_DELAY;
+				if(block._state == SWAPPING_RIGHT) {
+					pos.x += xOffset;
+				} else if (block._state == SWAPPING_LEFT) {
+					pos.x -= xOffset;
+				}
 				//SDL_RenderFillRect(_SDLRenderer, &pos);
 				if (block._explosionTimer > 45
 						&& block._explosionTimer >= block._explosionAnimTicks) {
@@ -123,18 +129,20 @@ SDL_Rect BoardRenderer::getBlockSprite(const Block& block) {
 }
 
 void BoardRenderer::drawBufferRow() {
+	SDL_SetTextureColorMod(_spriteSheet, 0x50, 0x50, 0x50);
 	for (int i = 0; i < Board::BOARD_WIDTH; i++) {
 		Block& block = _board._bufferRow[i].b;
 		SDL_Rect sheet = getBlockSprite(block);
-		SDL_SetTextureColorMod(_spriteSheet,0x50,0x50,0x50);
+
 		SDL_Rect pos;
 		pos.h = TILE_SIZE;
 		pos.w = TILE_SIZE;
 		pos.x = i * TILE_SIZE;
 		pos.y = (BOARD_HEIGHT) - _board._stackOffset;
 		SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sheet, &pos);
-		SDL_SetTextureColorMod(_spriteSheet,0xff,0xff,0xff);
+
 	}
+	SDL_SetTextureColorMod(_spriteSheet, 0xff, 0xff, 0xff);
 }
 
 void BoardRenderer::drawCursor() {

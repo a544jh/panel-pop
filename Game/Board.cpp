@@ -11,6 +11,7 @@
 #include <time.h>
 #include <list>
 #include <bitset>
+#include <iostream>
 
 Board::Board() :
 		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
@@ -67,7 +68,7 @@ void Board::fillBufferRow() {
 	}
 }
 
-void Board::moveCursor(Direction d) {
+void Board::inputMoveCursor(Direction d) {
 
 	switch (d) {
 	case UP:
@@ -119,15 +120,14 @@ bool Board::matchTiles(int r1, int c1, int r2, int c2) {
 			&& !t1.b._falling && !t2.b._falling && t1.b._color == t2.b._color);
 }
 
-void Board::swapBlocks() {
+void Board::inputSwapBlocks() {
 	Tile& t1 = _tiles[_cursorY][_cursorX];
 	Tile& t2 = _tiles[_cursorY][_cursorX + 1];
 	if (!(t1.swappable() && t2.swappable())) {
 		return;
 	}
-	Tile tmp = t1;
-	t1 = t2;
-	t2 = tmp;
+		t1.b._state = SWAPPING_RIGHT;
+		t2.b._state = SWAPPING_LEFT;
 }
 
 void Board::initTick() {
@@ -231,20 +231,35 @@ void Board::deleteBlock(Tile& tile) {
 	tile = Tile();
 }
 
-void Board::handleExplodingBlocks() {
+void Board::handleBlockTimers() {
 	for (int row = 0; row < BOARD_HEIGHT; ++row) {
 		for (int col = 0; col < BOARD_WIDTH; ++col) {
 			Tile& tile = _tiles[row][col];
 			if (tile.type == BLOCK && tile.b._state == EXPLODING) {
 				++tile.b._explosionTimer;
-				tile.b._animBlinkState = !tile.b._animBlinkState;
 				if (tile.b._explosionTicks == tile.b._explosionTimer) {
 					deleteBlock(tile);
-					//setChain(row, col);
 					// we need to set the chain flag for the blocks above, and set it on the others above when it's about to fall
 					if (_tiles[row + 1][col].type == BLOCK
 							&& _tiles[row + 1][col].b._state == NORMAL) {
 						_tiles[row + 1][col].b._chain = true;
+					}
+				}
+			}
+			if (tile.b._state == SWAPPING_LEFT
+					|| tile.b._state == SWAPPING_RIGHT) {
+				tile.b._swapTimer++;
+				if (tile.b._swapTimer == SWAP_DELAY) {
+					if (tile.b._state == SWAPPING_RIGHT) {
+						Tile& swapRight = _tiles[row][col];
+						Tile& swapLeft = _tiles[row][col + 1];
+						swapRight.b._swapTimer = 0;
+						swapRight.b._state = NORMAL;
+						swapLeft.b._swapTimer = 0;
+						swapLeft.b._state = NORMAL;
+						Tile tmp = swapLeft;
+						swapLeft = swapRight;
+						swapRight = tmp;
 					}
 				}
 			}
@@ -321,7 +336,7 @@ void Board::raiseStack() {
 	}
 }
 
-void Board::forceStackRaise() {
+void Board::inputForceStackRaise() {
 	if (!_activeBlocks) {
 		_stackRaiseForced = true;
 	}
@@ -340,7 +355,7 @@ bool Board::activeBlocks() {
 void Board::tick() {
 	initTick();
 	raiseStack();
-	handleExplodingBlocks();
+	handleBlockTimers();
 	handleFalling();
 	matchBlocks();
 	handleMatchedBlocks();
