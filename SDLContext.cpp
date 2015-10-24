@@ -7,11 +7,13 @@
 
 #include "SDLContext.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <iostream>
 
 SDLContext::SDLContext() :
 _window(nullptr),
 _renderer(nullptr),
+_spriteSheet(nullptr),
 WINDOW_WIDTH(640),
 WINDOW_HEIGHT(480)
 {}
@@ -44,11 +46,36 @@ bool SDLContext::init()
 			std::cout << SDL_GetError();
 			success = false;
 		}
+
+	int imgFlags = IMG_INIT_PNG;
+	if(! IMG_Init(imgFlags) & imgFlags){
+		std::cout << IMG_GetError();
+		success = false;
+	}
+
+	success = loadSpriteSheet();
 	return success;
 }
 
 SDL_Renderer* SDLContext::getRenderer() {
 	return _renderer;
+}
+
+SDL_Texture* SDLContext::getSpriteSheet(){
+	return _spriteSheet;
+}
+
+bool SDLContext::loadSpriteSheet() {
+	std::string path = "assets/sprites.png";
+	SDL_Surface* surface = IMG_Load(path.c_str());
+	if(surface == NULL){
+		std::cout << IMG_GetError();
+		return false;
+	}
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
+	SDL_FreeSurface(surface);
+	_spriteSheet = texture;
+	return true;
 }
 
 void SDLContext::renderTextureToWindow(SDL_Texture* texture)

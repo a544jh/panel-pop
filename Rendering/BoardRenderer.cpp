@@ -58,97 +58,82 @@ void BoardRenderer::drawBlocks() {
 		for (int j = 0; j < Board::BOARD_WIDTH; j++) {
 			if (_board._tiles[i][j].type == BLOCK) {
 				Block& block = _board._tiles[i][j].b;
-				switch (block._color) {
-				case BlockColor::CYAN:
-					SDL_SetRenderDrawColor(_SDLRenderer, 0x00, 0xFF, 0xFF,
-							0xFF);
-					break;
-				case BlockColor::GREEN:
-					SDL_SetRenderDrawColor(_SDLRenderer, 0x00, 0xFF, 0x00,
-							0xFF);
-					break;
-				case BlockColor::PURPLE:
-					SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0x00, 0xFF,
-							0xFF);
-					break;
-				case BlockColor::RED:
-					SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0x00, 0x00,
-							0xFF);
-					break;
-				case BlockColor::YELLOW:
-					SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0x00,
-							0xFF);
-					break;
-				default:
-					SDL_SetRenderDrawColor(_SDLRenderer, 0xAA, 0xAA, 0xAA,
-							0xFF);
-				}
-				if (block._state == EXPLODING) {
-					uint8_t r, g, b, a;
-					SDL_GetRenderDrawColor(_SDLRenderer, &r, &g, &b, &a);
-					if (block._explosionTimer <= 45) {
-						if (block._animBlinkState) {
-							a = 0xff;
-						} else {
-							a = 0x00;
-						}
-					}
-					if (block._explosionTimer > 45) {
-						if (block._explosionTimer
-								>= block._explosionAnimTicks) {
-							a = 0x00;
-						} else {
-							a = 0x80;
-						}
-					}
-					SDL_SetRenderDrawColor(_SDLRenderer, r, g, b, a);
-				}
-				if (block._chain) {
-					uint8_t r, g, b, a;
-					SDL_GetRenderDrawColor(_SDLRenderer, &r, &g, &b, &a);
-					r -= 0x20;
-					SDL_SetRenderDrawColor(_SDLRenderer, r, g, b, a);
-				}
+
 				SDL_Rect pos;
 				pos.h = TILE_SIZE;
 				pos.w = TILE_SIZE;
 				pos.x = j * TILE_SIZE;
 				pos.y = (BOARD_HEIGHT - (i + 1) * TILE_SIZE)
 						- _board._stackOffset;
-				SDL_RenderFillRect(_SDLRenderer, &pos);
+				//SDL_RenderFillRect(_SDLRenderer, &pos);
+				if (block._explosionTimer > 45
+						&& block._explosionTimer >= block._explosionAnimTicks) {
+					continue;
+				}
+
+				SDL_Rect sheet = getBlockSprite(block);
+
+				SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sheet, &pos);
 			}
 		}
 	}
 }
 
+SDL_Rect BoardRenderer::getBlockSprite(const Block& block) {
+	SDL_Rect sheet;
+	sheet.w = TILE_SIZE;
+	sheet.h = TILE_SIZE;
+	switch (block._color) {
+	case BlockColor::CYAN:
+		sheet.x = 64;
+		break;
+	case BlockColor::GREEN:
+		sheet.x = 32;
+		break;
+	case BlockColor::PURPLE:
+		sheet.x = 96;
+		break;
+	case BlockColor::RED:
+		sheet.x = 128;
+		break;
+	case BlockColor::YELLOW:
+		sheet.x = 0;
+		break;
+	default:
+		sheet.x = 0;
+	}
+	if (block._state == EXPLODING) {
+		if (block._explosionTimer <= 45) {
+			if (block._explosionTimer % 2 == 0) {
+				sheet.y = 0;
+			} else {
+				sheet.y = 160;
+			}
+		} else {
+			if (block._explosionTimer < block._explosionAnimTicks) {
+				sheet.y = 128;
+			}
+		}
+
+	} else {
+		sheet.y = 0;
+	}
+	return sheet;
+
+}
+
 void BoardRenderer::drawBufferRow() {
 	for (int i = 0; i < Board::BOARD_WIDTH; i++) {
 		Block& block = _board._bufferRow[i].b;
-		switch (block._color) {
-		case BlockColor::CYAN:
-			SDL_SetRenderDrawColor(_SDLRenderer, 0x00, 0x80, 0x80, 0xFF);
-			break;
-		case BlockColor::GREEN:
-			SDL_SetRenderDrawColor(_SDLRenderer, 0x00, 0x80, 0x00, 0xFF);
-			break;
-		case BlockColor::PURPLE:
-			SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00, 0x80, 0xFF);
-			break;
-		case BlockColor::RED:
-			SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00, 0x00, 0xFF);
-			break;
-		case BlockColor::YELLOW:
-			SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x80, 0x00, 0xFF);
-			break;
-		default:
-			SDL_SetRenderDrawColor(_SDLRenderer, 0xAA, 0xAA, 0xAA, 0xFF);
-		}
+		SDL_Rect sheet = getBlockSprite(block);
+		SDL_SetTextureColorMod(_spriteSheet,0x50,0x50,0x50);
 		SDL_Rect pos;
 		pos.h = TILE_SIZE;
 		pos.w = TILE_SIZE;
 		pos.x = i * TILE_SIZE;
 		pos.y = (BOARD_HEIGHT) - _board._stackOffset;
-		SDL_RenderFillRect(_SDLRenderer, &pos);
+		SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sheet, &pos);
+		SDL_SetTextureColorMod(_spriteSheet,0xff,0xff,0xff);
 	}
 }
 

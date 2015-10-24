@@ -30,6 +30,7 @@ private:
 	void handleChain();
 	void handleScorePanels();
 	void drawScorePanels();
+	SDL_Rect getBlockSprite(const Block&);
 	std::list<ScorePanel*> _scorePanels;
 };
 

@@ -10,7 +10,8 @@
 Renderer::Renderer() :
 _SDLContext(SDLContext::getInstance()),
 _texture(nullptr),
-_SDLRenderer(_SDLContext.getRenderer())
+_SDLRenderer(_SDLContext.getRenderer()),
+_spriteSheet(_SDLContext.getSpriteSheet())
 {}
 
 Renderer::~Renderer() {

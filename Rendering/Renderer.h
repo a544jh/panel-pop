@@ -18,6 +18,7 @@ public:
 	SDLContext& _SDLContext;
 	SDL_Renderer* _SDLRenderer;
 	SDL_Texture* _texture;
+	SDL_Texture* _spriteSheet;
 };
 
 #endif /* RENDERER_H_ */
