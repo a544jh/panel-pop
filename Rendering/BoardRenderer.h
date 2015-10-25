@@ -28,6 +28,7 @@ private:
 	void drawCursor();
 	void drawBufferRow();
 	void handleChain();
+	void handleCombo();
 	void handlePopups();
 	void drawPopups();
 	SDL_Rect getBlockSprite(const Block&);

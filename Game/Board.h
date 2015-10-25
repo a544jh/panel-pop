@@ -42,9 +42,11 @@ public:
 	bool _stackRaiseForced;
 	bool _activeBlocks;
 	int _chainCounter;
-	bool _tickChain;
+	bool _tickChain; //true if a chain has occurred during the tick
 	int _tickChainRow;
 	int _tickChainCol;
+	int _tickMatchRow;
+	int _tickMatchCol;
 	void tick();
 	void inputMoveCursor(Direction);
 	void inputSwapBlocks();

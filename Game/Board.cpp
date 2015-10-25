@@ -198,6 +198,7 @@ void Board::matchBlocks() {
 void Board::handleMatchedBlocks() {
 	int matches = 1;
 	bool chain = false;
+	bool match = false;
 	for (int row = BOARD_HEIGHT; row >= 0; row--) {
 		for (int col = 0; col < BOARD_WIDTH; col++) {
 			Tile& tile = _tiles[row][col];
@@ -207,6 +208,11 @@ void Board::handleMatchedBlocks() {
 					chain = true;
 					_tickChainCol = col;
 					_tickChainRow = row;
+				}
+				if(!match){
+					match = true;
+					_tickMatchCol = col;
+					_tickMatchRow = row;
 				}
 				tile.b._state = EXPLODING;
 				tile.b._explosionTimer = 0;

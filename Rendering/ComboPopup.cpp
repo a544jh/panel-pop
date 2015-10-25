@@ -23,7 +23,7 @@ void ComboPopup::render() {
 	dst.w = 5;
 	dst.h = 27;
 	SDL_Rect sheet;
-	sheet.x = 11;
+	sheet.x = 12;
 	sheet.y = 278;
 	sheet.w = 5;
 	sheet.h = 27;
