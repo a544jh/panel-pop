@@ -32,6 +32,5 @@ SDL_Texture* GameRenderer::renderGame() {
 }
 
 GameRenderer::~GameRenderer() {
-	SDL_DestroyTexture(_texture);
 }
 

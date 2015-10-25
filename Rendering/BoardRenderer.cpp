@@ -6,8 +6,8 @@
  */
 
 #include "BoardRenderer.h"
-#include "ChainPanel.h"
 #include <iostream>
+#include "ChainPopup.h"
 
 const int BoardRenderer::BOARD_WIDTH = 192;
 const int BoardRenderer::BOARD_HEIGHT = 384;
@@ -22,7 +22,7 @@ BoardRenderer::BoardRenderer(Board& board) :
 SDL_Texture* BoardRenderer::renderBoard() {
 
 	handleChain();
-	handleScorePanels();
+	handlePopups();
 
 	SDL_SetRenderTarget(_SDLRenderer, _texture);
 	SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -33,7 +33,7 @@ SDL_Texture* BoardRenderer::renderBoard() {
 	//drawGrid();
 	drawCursor();
 
-	drawScorePanels();
+	drawPopups();
 
 	return _texture;
 }
@@ -170,41 +170,46 @@ void BoardRenderer::drawCursor() {
 
 void BoardRenderer::handleChain() {
 	if (_board._tickChain) {
-		//TODO:proper_effect
-		_scorePanels.push_back(
-				new ChainPanel(_board._tickChainCol * TILE_SIZE + 5,
-						(BOARD_HEIGHT - (_board._tickChainRow + 1) * TILE_SIZE)
-								- _board._stackOffset, 0));
+		_popups.push_back(
+				new ChainPopup(_board._tickChainCol * TILE_SIZE + 5,
+						(BOARD_HEIGHT - (_board._tickChainRow + 1) * TILE_SIZE
+								- _board._stackOffset),
+								_board._chainCounter,
+								60));
 		std::cout << _board._chainCounter << "x" << std::endl;
 	}
 }
 
-BoardRenderer::~BoardRenderer() {
-	SDL_DestroyTexture(_texture);
+void BoardRenderer::handleCombo() {
+	if (_board._tickMatched > 3) {
+			_popups.push_back(
+					new ComboPopup(_board._tick * TILE_SIZE + 5,
+							(BOARD_HEIGHT - (_board._tickChainRow + 1) * TILE_SIZE
+									- _board._stackOffset),
+									_board._chainCounter,
+									60));
+			std::cout << _board._chainCounter << "x" << std::endl;
+		}
 }
 
-void BoardRenderer::drawScorePanels() {
-	for (auto it = _scorePanels.begin(); it != _scorePanels.end(); ++it) {
+BoardRenderer::~BoardRenderer() {
+}
 
-		SDL_Rect dst;
-		dst.x = (*it)->_x;
-		dst.y = (*it)->_y;
-		dst.h = (*it)->_h;
-		dst.w = (*it)->_w;
-		SDL_SetRenderTarget(_SDLRenderer, _texture);
-		SDL_RenderCopy(_SDLRenderer, (*it)->_texture, NULL, &dst);
+void BoardRenderer::drawPopups() {
+	for (auto it = _popups.begin(); it != _popups.end(); ++it) {
+		(*it)->render();
 	}
 }
 
-void BoardRenderer::handleScorePanels() {
-	auto it = _scorePanels.begin();
-	while (it != _scorePanels.end()) {
+void BoardRenderer::handlePopups() {
+	auto it = _popups.begin();
+	while (it != _popups.end()) {
 		if ((*it)->_alive) {
 			(*it)->tick();
 			++it;
 		} else {
 			delete *it;
-			it = _scorePanels.erase(it);
+			it = _popups.erase(it);
 		}
 	}
 }

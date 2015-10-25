@@ -10,9 +10,9 @@
 
 #include "../Game/Board.h"
 #include "Renderer.h"
-#include "ScorePanel.h"
 #include <SDL2/SDL.h>
 #include <list>
+#include "Popup.h"
 
 class BoardRenderer : public Renderer {
 public:
@@ -28,10 +28,10 @@ private:
 	void drawCursor();
 	void drawBufferRow();
 	void handleChain();
-	void handleScorePanels();
-	void drawScorePanels();
+	void handlePopups();
+	void drawPopups();
 	SDL_Rect getBlockSprite(const Block&);
-	std::list<ScorePanel*> _scorePanels;
+	std::list<Popup*> _popups;
 };
 
 #endif /* BOARDRENDERER_H_ */

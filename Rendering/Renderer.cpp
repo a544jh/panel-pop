@@ -8,13 +8,13 @@
 #include "Renderer.h"
 
 Renderer::Renderer() :
-_SDLContext(SDLContext::getInstance()),
-_texture(nullptr),
-_SDLRenderer(_SDLContext.getRenderer()),
-_spriteSheet(_SDLContext.getSpriteSheet())
+		_texture(nullptr),
+		_SDLContext(SDLContext::getInstance()),
+		_SDLRenderer(_SDLContext.getRenderer()),
+		_spriteSheet(_SDLContext.getSpriteSheet())
 {}
 
 Renderer::~Renderer() {
-	// TODO Auto-generated destructor stub
+	SDL_DestroyTexture(_texture);
 }
 
