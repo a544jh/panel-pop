@@ -173,7 +173,7 @@ void BoardRenderer::drawCursor() {
 void BoardRenderer::handleChain() {
 	if (_board._tickChain) {
 		_popups.push_back(
-				new ChainPopup(_board._tickChainCol * TILE_SIZE - 5,
+				new ChainPopup(_board._tickChainCol * TILE_SIZE + 5,
 						(BOARD_HEIGHT - (_board._tickChainRow + 1) * TILE_SIZE
 								- _board._stackOffset),
 								_board._chainCounter,
@@ -185,9 +185,9 @@ void BoardRenderer::handleChain() {
 void BoardRenderer::handleCombo() {
 	if (_board._tickMatched > 3) {
 			_popups.push_back(
-					new ComboPopup(_board._tickMatchCol * TILE_SIZE  + 5,
+					new ComboPopup(_board._tickMatchCol * TILE_SIZE + 5,
 							(BOARD_HEIGHT - (_board._tickMatchRow + 1) * TILE_SIZE
-									- _board._stackOffset),
+									- _board._stackOffset) + 30,
 									_board._tickMatched,
 									60));
 			std::cout << _board._chainCounter << "x" << std::endl;
