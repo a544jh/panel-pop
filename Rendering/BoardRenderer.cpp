@@ -178,7 +178,6 @@ void BoardRenderer::handleChain() {
 								- _board._stackOffset),
 								_board._chainCounter,
 								60));
-		std::cout << _board._chainCounter << "x" << std::endl;
 	}
 }
 
@@ -190,7 +189,6 @@ void BoardRenderer::handleCombo() {
 									- _board._stackOffset) + 30,
 									_board._tickMatched,
 									60));
-			std::cout << _board._chainCounter << "x" << std::endl;
 		}
 }
 

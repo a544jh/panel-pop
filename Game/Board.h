@@ -65,6 +65,7 @@ private:
 	void matchBlocks();
 	void handleMatchedBlocks();
 	void handleBlockTimers();
+	void swapBlocks(int, int);
 	void deleteBlock(Tile&);
 	void setChain(int, int);
 	void handleFalling();
