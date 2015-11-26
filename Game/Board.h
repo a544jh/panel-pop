@@ -25,7 +25,6 @@ struct Tile {
 	TileType type;
 	Block b;
 	GarbageBlock* g;
-	bool swappable();
 };
 
 class Board {
@@ -72,6 +71,7 @@ private:
 	void raiseStack();
 	bool matchTiles(int, int, int, int);
 	bool blockCanFall(int, int);
+	bool swappable(int, int);
 
 	static const int FLOAT_TICKS = 12;
 };

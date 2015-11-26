@@ -98,9 +98,11 @@ void Board::inputMoveCursor(Direction d) {
 	}
 }
 
-bool Tile::swappable() {
-	//TODO: prevent block from swapping into empty space with a block above it
-	return (type == AIR || (type == BLOCK && b._state == NORMAL));
+bool Board::swappable(int row, int col) {
+	//prevent block from swapping into empty space with a block above it
+	Tile& t = _tiles[row][col];
+	return ((t.type == AIR && _tiles[row + 1][col].type == AIR)
+			|| (t.type == BLOCK && t.b._state == NORMAL));
 }
 
 bool Board::blockCanFall(int row, int col) {
@@ -123,13 +125,11 @@ bool Board::matchTiles(int r1, int c1, int r2, int c2) {
 }
 
 void Board::inputSwapBlocks() {
-	Tile& t1 = _tiles[_cursorY][_cursorX];
-	Tile& t2 = _tiles[_cursorY][_cursorX + 1];
-	if (!(t1.swappable() && t2.swappable())) {
+	if (!(swappable(_cursorY, _cursorX) && swappable(_cursorY, _cursorX + 1))) {
 		return;
 	}
-	t1.b._state = SWAPPING_RIGHT;
-	t2.b._state = SWAPPING_LEFT;
+	_tiles[_cursorY][_cursorX].b._state = SWAPPING_RIGHT;
+	_tiles[_cursorY][_cursorX + 1].b._state = SWAPPING_LEFT;
 }
 
 void Board::initTick() {
@@ -271,16 +271,16 @@ void Board::swapBlocks(int row, int col) {
 	Tile& swapRight = _tiles[row][col];
 	Tile& swapLeft = _tiles[row][col + 1];
 	if (swapLeft.b._state == SWAPPING_LEFT) {
-		swapRight.b._swapTimer = 0;
-		swapRight.b._state = NORMAL;
-		swapLeft.b._swapTimer = 0;
-		swapLeft.b._state = NORMAL;
 		Tile tmp = swapLeft;
 		swapLeft = swapRight;
 		swapRight = tmp;
 	} else {
 		std::cout << "CAN'T SWAP!!\n";
 	}
+	swapRight.b._swapTimer = 0;
+	swapRight.b._state = NORMAL;
+	swapLeft.b._swapTimer = 0;
+	swapLeft.b._state = NORMAL;
 }
 
 //sets the chain flag for the block and the ones above it
@@ -331,7 +331,7 @@ void Board::raiseStack() {
 		++_stackRaiseTimer;
 		return;
 	}
-	if (_stackOffset < 32 && !activeBlocks()) {
+	if (_stackOffset < 32 && !_activeBlocks) {
 		++_stackOffset;
 		_stackRaiseTimer = 0;
 	}
