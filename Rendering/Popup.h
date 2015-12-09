@@ -21,8 +21,7 @@ public:
 	std::string _digits;
 
 	virtual void tick();
-	virtual void renderOnBoard() =0;
-	virtual SDL_Texture* render();
+	virtual void renderToBoard() =0;
 	virtual ~Popup();
 private:
 	void initDigits();

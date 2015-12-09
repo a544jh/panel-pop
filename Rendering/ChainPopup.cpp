@@ -17,7 +17,7 @@ ChainPopup::ChainPopup(int x, int y, int value, int lifetime) :
 }
 
 
-void ChainPopup::renderOnBoard() {
+void ChainPopup::renderToBoard() {
 	SDL_Rect dst;
 	dst.x = _x;
 	dst.y = _y;

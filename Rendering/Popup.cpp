@@ -34,10 +34,6 @@ void Popup::initDigits() {
 	_digits = os.str();
 }
 
-SDL_Texture* Popup::render(){
-	return nullptr;
-}
-
 Popup::~Popup() {
 	// TODO Auto-generated destructor stub
 }

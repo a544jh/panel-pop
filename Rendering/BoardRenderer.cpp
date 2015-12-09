@@ -196,7 +196,7 @@ BoardRenderer::~BoardRenderer() {
 
 void BoardRenderer::drawPopups() {
 	for (auto it = _popups.begin(); it != _popups.end(); ++it) {
-		(*it)->renderOnBoard();
+		(*it)->renderToBoard();
 	}
 }
 
