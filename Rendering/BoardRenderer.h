@@ -20,6 +20,7 @@ public:
 
 	BoardRenderer(Board&);
 	virtual ~BoardRenderer();
+	void tick();
 	SDL_Texture* renderBoard();
 private:
 	Board& _board;

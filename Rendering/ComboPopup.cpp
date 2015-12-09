@@ -16,7 +16,7 @@ ComboPopup::ComboPopup(int x, int y, int value, int lifetime) :
 		Popup(x, y, value, lifetime) {
 }
 
-void ComboPopup::render() {
+void ComboPopup::renderOnBoard() {
 	SDL_Rect dst;
 	dst.x = _x;
 	dst.y = _y;

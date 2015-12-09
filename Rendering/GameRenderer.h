@@ -17,6 +17,7 @@ class GameRenderer: public Renderer {
 public:
 	GameRenderer(Game&);
 	virtual ~GameRenderer();
+	void tick();
 	SDL_Texture* renderGame();
 private:
 	Game& _game;

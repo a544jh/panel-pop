@@ -20,12 +20,13 @@ BoardRenderer::BoardRenderer(Board& board) :
 			SDL_TEXTUREACCESS_TARGET, BOARD_WIDTH, BOARD_HEIGHT);
 }
 
-SDL_Texture* BoardRenderer::renderBoard() {
-
+void BoardRenderer::tick() {
 	handleChain();
 	handleCombo();
 	handlePopups();
+}
 
+SDL_Texture* BoardRenderer::renderBoard() {
 	SDL_SetRenderTarget(_SDLRenderer, _texture);
 	SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(_SDLRenderer);
@@ -34,7 +35,6 @@ SDL_Texture* BoardRenderer::renderBoard() {
 	drawBufferRow();
 	//drawGrid();
 	drawCursor();
-
 	drawPopups();
 
 	return _texture;
@@ -67,8 +67,9 @@ void BoardRenderer::drawBlocks() {
 				pos.x = j * TILE_SIZE;
 				pos.y = (BOARD_HEIGHT - (i + 1) * TILE_SIZE)
 						- _board._stackOffset;
-				int xOffset = TILE_SIZE * (double)block._swapTimer / _board.SWAP_DELAY;
-				if(block._state == SWAPPING_RIGHT) {
+				int xOffset = TILE_SIZE * (double) block._swapTimer
+						/ _board.SWAP_DELAY;
+				if (block._state == SWAPPING_RIGHT) {
 					pos.x += xOffset;
 				} else if (block._state == SWAPPING_LEFT) {
 					pos.x -= xOffset;
@@ -175,21 +176,19 @@ void BoardRenderer::handleChain() {
 		_popups.push_back(
 				new ChainPopup(_board._tickChainCol * TILE_SIZE + 5,
 						(BOARD_HEIGHT - (_board._tickChainRow + 1) * TILE_SIZE
-								- _board._stackOffset),
-								_board._chainCounter,
-								60));
+								- _board._stackOffset), _board._chainCounter,
+						60));
 	}
 }
 
 void BoardRenderer::handleCombo() {
 	if (_board._tickMatched > 3) {
-			_popups.push_back(
-					new ComboPopup(_board._tickMatchCol * TILE_SIZE + 5,
-							(BOARD_HEIGHT - (_board._tickMatchRow + 1) * TILE_SIZE
-									- _board._stackOffset) + 30,
-									_board._tickMatched,
-									60));
-		}
+		_popups.push_back(
+				new ComboPopup(_board._tickMatchCol * TILE_SIZE + 5,
+						(BOARD_HEIGHT - (_board._tickMatchRow + 1) * TILE_SIZE
+								- _board._stackOffset) + 30,
+						_board._tickMatched, 60));
+	}
 }
 
 BoardRenderer::~BoardRenderer() {
@@ -197,7 +196,7 @@ BoardRenderer::~BoardRenderer() {
 
 void BoardRenderer::drawPopups() {
 	for (auto it = _popups.begin(); it != _popups.end(); ++it) {
-		(*it)->render();
+		(*it)->renderOnBoard();
 	}
 }
 

@@ -15,6 +15,7 @@ class Renderer {
 public:
 	Renderer();
 	virtual ~Renderer();
+	//Inherit to get access to the SDL renderer.
 	SDLContext& _SDLContext;
 	SDL_Renderer* _SDLRenderer;
 	SDL_Texture* _texture;

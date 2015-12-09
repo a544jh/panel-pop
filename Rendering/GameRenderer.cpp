@@ -15,6 +15,10 @@ _boardRenderer(_game._board)
 
 }
 
+void GameRenderer::tick() {
+	_boardRenderer.tick();
+}
+
 SDL_Texture* GameRenderer::renderGame() {
 
 	SDL_Texture* boardTexture = _boardRenderer.renderBoard();
