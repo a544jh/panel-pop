@@ -15,23 +15,22 @@ StateManager::StateManager() :
 	_currentState = new GameState();
 }
 
-StateManager& StateManager::getInstance()
-{
+StateManager& StateManager::getInstance() {
 	static StateManager instance;
 	return instance;
 }
 
 void StateManager::run() {
 	while (_running) {
-		input.poll();
-		if (input._quit) {
-			//TODO: State transitions?
-			_running = false;
-			break;
-		}
 		if (SDL_GetTicks() - _lastTick >= 16) {
-			_currentState->tick();
 			//TODO: Manage tickrate somewhere else?
+			input.poll();
+			if (input._quit) {
+				//TODO: State transitions?
+				_running = false;
+				break;
+			}
+			_currentState->tick();
 			_lastTick = SDL_GetTicks();
 		}
 		SDL_Texture* t = _currentState->render();

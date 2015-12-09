@@ -20,6 +20,7 @@ InputManager& InputManager::getInstance()
 
 
 void InputManager::poll() {
+	_prevKeys = _keys;
 	SDL_Event e;
 	while(SDL_PollEvent( &e ) != 0) {
 		if(e.type == SDL_QUIT) {

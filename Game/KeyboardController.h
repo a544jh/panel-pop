@@ -17,8 +17,6 @@ public:
 	KeyboardController(Board&);
 	void tick();
 	virtual ~KeyboardController();
-private:
-	std::array<bool, KEYBOARD_SIZE> _prevInput;
 };
 
 #endif /* GAME_KEYBOARDCONTROLLER_H_ */

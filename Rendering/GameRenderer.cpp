@@ -8,15 +8,16 @@
 #include "GameRenderer.h"
 
 GameRenderer::GameRenderer(Game& game) :
-_game(game),
-_boardRenderer(_game._board)
-{
-	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 480);
+		_game(game), _boardRenderer(_game._board) {
+	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
+			SDL_TEXTUREACCESS_TARGET, 640, 480);
 
 }
 
 void GameRenderer::tick() {
-	_boardRenderer.tick();
+	if (!_game.isPaused()) {
+		_boardRenderer.tick();
+	}
 }
 
 SDL_Texture* GameRenderer::renderGame() {
@@ -27,10 +28,18 @@ SDL_Texture* GameRenderer::renderGame() {
 	SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(_SDLRenderer);
 
-	SDL_Rect rekt; rekt.x = 0; rekt.y = 0;
+	SDL_Rect rekt;
+	rekt.x = 0;
+	rekt.y = 0;
 	rekt.w = _boardRenderer.BOARD_WIDTH;
 	rekt.h = _boardRenderer.BOARD_HEIGHT;
-	SDL_RenderCopy(_SDLRenderer,boardTexture, NULL, &rekt);
+	SDL_RenderCopy(_SDLRenderer, boardTexture, NULL, &rekt);
+
+	if (_game.isPaused()) {
+		SDL_SetTextureColorMod(_texture, 0x50, 0x50, 0x50);
+	} else {
+		SDL_SetTextureColorMod(_texture, 0xFF, 0xFF, 0xFF);
+	}
 
 	return _texture;
 }

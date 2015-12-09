@@ -17,8 +17,10 @@ public:
 	Board _board;
 	virtual ~Game();
 	void tick();
+	bool isPaused();
 private:
 	KeyboardController _kbc;
+	bool _paused;
 };
 
 #endif /* GAME_H_ */

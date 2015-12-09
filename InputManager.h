@@ -18,6 +18,7 @@ public:
 	void poll();
 	bool _quit;
 	 std::array<bool, KEYBOARD_SIZE> _keys;
+	 std::array<bool, KEYBOARD_SIZE> _prevKeys;
 private:
 	InputManager();
 	InputManager(InputManager const&) = delete;
