@@ -9,8 +9,7 @@
 #define GAME_H_
 
 #include "Board.h"
-#include "../InputManager.h"
-#include <array>
+#include "KeyboardController.h"
 
 class Game {
 public:
@@ -19,7 +18,7 @@ public:
 	virtual ~Game();
 	void tick();
 private:
-	std::array<bool, KEYBOARD_SIZE> _prevInput;
+	KeyboardController _kbc;
 };
 
 #endif /* GAME_H_ */
