@@ -14,10 +14,12 @@
 
 class StateManager {
 public:
-	StateManager();
+	static StateManager& getInstance();
 	void run();
-	virtual ~StateManager();
 private:
+	StateManager();
+	StateManager(StateManager const&) = delete;
+	void operator=(StateManager const&) = delete;
 	State* _currentState;
 	SDLContext& SDL;
 	InputManager& input;

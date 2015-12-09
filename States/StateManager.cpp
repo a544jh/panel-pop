@@ -15,6 +15,12 @@ StateManager::StateManager() :
 	_currentState = new GameState();
 }
 
+StateManager& StateManager::getInstance()
+{
+	static StateManager instance;
+	return instance;
+}
+
 void StateManager::run() {
 	while (_running) {
 		input.poll();
@@ -31,9 +37,5 @@ void StateManager::run() {
 		SDL_Texture* t = _currentState->render();
 		SDL.renderTextureToWindow(t);
 	}
-}
-
-StateManager::~StateManager() {
-	// TODO Auto-generated destructor stub
 }
 
