@@ -214,8 +214,6 @@ void Board::handleMatchedBlocks() {
 			if (tile.type == BLOCK && tile.b._state == MATCHED) {
 				if (tile.b._chain && !chain) {
 					chain = true;
-					_tickChainCol = col;
-					_tickChainRow = row;
 				}
 				if (!match) {
 					match = true;
@@ -408,7 +406,7 @@ Board::~Board() {
 // TODO Auto-generated destructor stub
 }
 
-bool Board::isActiveBlocks() const {
+bool Board::hasActiveBlocks() const {
 	return _activeBlocks;
 }
 
@@ -450,14 +448,6 @@ Board::BoardState Board::getState() const {
 
 bool Board::isTickChain() const {
 	return _tickChain;
-}
-
-int Board::getTickChainCol() const {
-	return _tickChainCol;
-}
-
-int Board::getTickChainRow() const {
-	return _tickChainRow;
 }
 
 int Board::getTickMatchCol() const {

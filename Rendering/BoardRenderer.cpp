@@ -191,9 +191,9 @@ void BoardRenderer::drawCursor() {
 void BoardRenderer::handleChain() {
 	if (_board.isTickChain()) {
 		_popups.push_back(
-				new ChainPopup(_board.getTickChainCol() * TILE_SIZE + 5,
+				new ChainPopup(_board.getTickMatchCol() * TILE_SIZE + 5,
 						(BOARD_HEIGHT
-								- (_board.getTickChainRow() + 1) * TILE_SIZE
+								- (_board.getTickMatchRow() + 1) * TILE_SIZE
 								- _board.getStackOffset()),
 						_board.getChainCounter(), 60));
 	}

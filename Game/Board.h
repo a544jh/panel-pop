@@ -48,7 +48,7 @@ public:
 	static const int BOARD_HEIGHT = 24;
 	static const int BOARD_WIDTH = 6;
 
-	bool isActiveBlocks() const;
+	bool hasActiveBlocks() const;
 	const Tile& getBufferRow(int) const;
 	int getChainCounter() const;
 	int getCursorX() const;
@@ -59,8 +59,6 @@ public:
 	int getStackRaiseTimer() const;
 	BoardState getState() const;
 	bool isTickChain() const;
-	int getTickChainCol() const;
-	int getTickChainRow() const;
 	int getTickMatchCol() const;
 	int getTickMatched() const;
 	int getTickMatchRow() const;
@@ -82,8 +80,6 @@ private:
 	bool _activeBlocks;
 	int _chainCounter;
 	bool _tickChain; //true if a chain has occurred during the tick
-	int _tickChainRow;
-	int _tickChainCol;
 	int _tickMatchRow;
 	int _tickMatchCol;
 
