@@ -20,6 +20,7 @@ public:
 	SDL_Renderer* getRenderer();
 	SDL_Texture* getSpriteSheet();
 	void renderTextureToWindow(SDL_Texture*);
+	void toggleFullscreen();
 private:
 	SDLContext();
 	SDLContext(SDLContext const&) = delete;

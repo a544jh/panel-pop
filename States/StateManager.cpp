@@ -32,6 +32,9 @@ void StateManager::run() {
 				_running = false;
 				break;
 			}
+			if(input._keys[SDL_SCANCODE_LALT] && input._keys[SDL_SCANCODE_RETURN] && !input._prevKeys[SDL_SCANCODE_RETURN]){
+				SDL.toggleFullscreen();
+			}
 			_currentState->tick();
 		}
 		SDL_Texture* t = _currentState->render();

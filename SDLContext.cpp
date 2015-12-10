@@ -33,7 +33,7 @@ bool SDLContext::init()
 		success = false;
 	}
 
-	_window = SDL_CreateWindow("Panel pop",SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+	_window = SDL_CreateWindow("Panel pop",SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
 	if (_window == NULL)
 	{
 		std::cout << SDL_GetError();
@@ -83,6 +83,15 @@ void SDLContext::renderTextureToWindow(SDL_Texture* texture)
 	SDL_SetRenderTarget(_renderer, NULL);
 	SDL_RenderCopy(_renderer, texture, NULL, NULL);
 	SDL_RenderPresent(_renderer);
+}
+
+void SDLContext::toggleFullscreen() {
+	uint32_t flags = SDL_GetWindowFlags(_window);
+	if ((flags & SDL_WINDOW_FULLSCREEN) == SDL_WINDOW_FULLSCREEN){
+		SDL_SetWindowFullscreen(_window,0);
+	} else {
+		SDL_SetWindowFullscreen(_window,SDL_WINDOW_FULLSCREEN);
+	}
 }
 
 void SDLContext::tearDown(){
