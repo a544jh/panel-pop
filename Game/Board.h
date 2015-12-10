@@ -64,6 +64,7 @@ public:
 	int getTickMatchCol() const;
 	int getTickMatched() const;
 	int getTickMatchRow() const;
+	int getGraceTimer() const;
 	const Tile& getTile(int,int) const;
 
 private:
@@ -76,6 +77,7 @@ private:
 	int _stackOffset;
 	int _stackRaiseTicks;
 	int _stackRaiseTimer;
+	int _graceTimer;
 	bool _stackRaiseForced;
 	bool _activeBlocks;
 	int _chainCounter;

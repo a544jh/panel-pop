@@ -17,6 +17,7 @@ public:
 	Board _board;
 	virtual ~Game();
 	void tick();
+	void reset();
 	void inputTogglePause();
 	const bool isPaused() const;
 private:

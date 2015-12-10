@@ -9,14 +9,17 @@
 
 #include "Board.h"
 
-Game::Game() :
-		_board(Board()), _paused(false) {
+Game::Game() : _paused(false) {
 }
 
 void Game::tick() {
 	if (!_paused) {
 		_board.tick();
 	}
+}
+
+void Game::reset(){
+	_board = Board(); //fix this :P
 }
 
 void Game::inputTogglePause() {

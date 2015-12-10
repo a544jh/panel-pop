@@ -83,7 +83,22 @@ void BoardRenderer::drawBlocks() {
 
 				SDL_Rect sheet = getBlockSprite(block);
 
-				SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sheet, &pos);
+				if (_board.getGraceTimer() > 0) {
+					int px = _board.getGraceTimer() * TILE_SIZE
+							/ ((32 * _board.getStackRaiseTicks()) / 2);
+					SDL_Rect top = { sheet.x, sheet.y, sheet.w, TILE_SIZE - px };
+					SDL_Rect bottom = { sheet.x, sheet.y + (TILE_SIZE - px),
+							sheet.w, px };
+					pos.h = top.h;
+					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &top, &pos);
+					SDL_SetTextureColorMod(_spriteSheet, 0xFF, 0x80, 0x80);
+					pos.h = bottom.h;
+					pos.y += top.h;
+					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &bottom, &pos);
+					SDL_SetTextureColorMod(_spriteSheet, 0xFF, 0xFF, 0xFF);
+				} else {
+					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sheet, &pos);
+				}
 			}
 		}
 	}
@@ -124,7 +139,8 @@ SDL_Rect BoardRenderer::getBlockSprite(const Block& block) {
 				sheet.y = 128;
 			}
 		}
-
+	} else if (_board.getState() == Board::GAME_OVER) {
+		sheet.y = 128;
 	} else {
 		sheet.y = 0;
 	}

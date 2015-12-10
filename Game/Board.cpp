@@ -16,7 +16,7 @@
 Board::Board() :
 		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
 				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
-				false), _state(RUNNING) {
+				false), _state(RUNNING), _graceTimer(0) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -342,19 +342,34 @@ void Board::raiseStack() {
 		_stackRaiseTimer = 0;
 	}
 	if (_stackOffset >= 32) {
-		for (int row = BOARD_HEIGHT - 2; row >= 0; --row) {
-			for (int col = 0; col < BOARD_WIDTH; ++col) {
-				_tiles[row + 1][col] = _tiles[row][col];
+		bool blockOnTopRow = false;
+		for (int col = 0; col < BOARD_WIDTH; ++col) {
+			if (_tiles[10][col].type == BLOCK) {
+				blockOnTopRow = true;
+				break;
 			}
 		}
-		for (int i = 0; i < BOARD_WIDTH; ++i) {
-			_tiles[0][i] = _bufferRow[i];
+		if (blockOnTopRow && !_activeBlocks) {
+			if (++_graceTimer >= (32 * _stackRaiseTicks) / 2) {
+				_state = GAME_OVER;
+			}
 		}
-		fillBufferRow();
-		_stackOffset = 0;
-		_stackRaiseForced = false;
-		if (_cursorY <= 10) {
-			++_cursorY;
+		if(!blockOnTopRow && !_activeBlocks){
+			_graceTimer = 0;
+			for (int row = BOARD_HEIGHT - 2; row >= 0; --row) {
+				for (int col = 0; col < BOARD_WIDTH; ++col) {
+					_tiles[row + 1][col] = _tiles[row][col];
+				}
+			}
+			for (int i = 0; i < BOARD_WIDTH; ++i) {
+				_tiles[0][i] = _bufferRow[i];
+			}
+			fillBufferRow();
+			_stackOffset = 0;
+			_stackRaiseForced = false;
+			if (_cursorY <= 10) {
+				++_cursorY;
+			}
 		}
 	}
 }
@@ -379,12 +394,14 @@ bool Board::activeBlocks() {
 }
 
 void Board::tick() {
-	initTick();
-	raiseStack();
-	handleBlockTimers();
-	handleFalling();
-	matchBlocks();
-	handleMatchedBlocks();
+	if (_state == RUNNING) {
+		initTick();
+		raiseStack();
+		handleBlockTimers();
+		handleFalling();
+		matchBlocks();
+		handleMatchedBlocks();
+	}
 }
 
 Board::~Board() {
@@ -427,7 +444,6 @@ int Board::getStackRaiseTimer() const {
 	return _stackRaiseTimer;
 }
 
-
 Board::BoardState Board::getState() const {
 	return _state;
 }
@@ -454,6 +470,10 @@ int Board::getTickMatched() const {
 
 int Board::getTickMatchRow() const {
 	return _tickMatchRow;
+}
+
+int Board::getGraceTimer() const {
+	return _graceTimer;
 }
 
 const Board::Tile& Board::getTile(int row, int col) const {
