@@ -6,6 +6,7 @@
  */
 
 #include "BoardRenderer.h"
+#include "../Game/Board.h"
 #include <iostream>
 #include "ChainPopup.h"
 #include "ComboPopup.h"
@@ -58,15 +59,15 @@ void BoardRenderer::drawBlocks() {
 	SDL_SetRenderDrawBlendMode(_SDLRenderer, SDL_BLENDMODE_BLEND);
 	for (int i = 0; i < Board::BOARD_HEIGHT; i++) {
 		for (int j = 0; j < Board::BOARD_WIDTH; j++) {
-			if (_board._tiles[i][j].type == BLOCK) {
-				Block& block = _board._tiles[i][j].b;
+			if (_board.getTile(i, j).type == BLOCK) {
+				const Block& block = _board.getTile(i, j).b;
 
 				SDL_Rect pos;
 				pos.h = TILE_SIZE;
 				pos.w = TILE_SIZE;
 				pos.x = j * TILE_SIZE;
 				pos.y = (BOARD_HEIGHT - (i + 1) * TILE_SIZE)
-						- _board._stackOffset;
+						- _board.getStackOffset();
 				int xOffset = TILE_SIZE * (double) block._swapTimer
 						/ _board.SWAP_DELAY;
 				if (block._state == SWAPPING_RIGHT) {
@@ -134,14 +135,14 @@ SDL_Rect BoardRenderer::getBlockSprite(const Block& block) {
 void BoardRenderer::drawBufferRow() {
 	SDL_SetTextureColorMod(_spriteSheet, 0x50, 0x50, 0x50);
 	for (int i = 0; i < Board::BOARD_WIDTH; i++) {
-		Block& block = _board._bufferRow[i].b;
+		const Block block = _board.getBufferRow(i).b;
 		SDL_Rect sheet = getBlockSprite(block);
 
 		SDL_Rect pos;
 		pos.h = TILE_SIZE;
 		pos.w = TILE_SIZE;
 		pos.x = i * TILE_SIZE;
-		pos.y = (BOARD_HEIGHT) - _board._stackOffset;
+		pos.y = (BOARD_HEIGHT) - _board.getStackOffset();
 		SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sheet, &pos);
 
 	}
@@ -152,9 +153,9 @@ void BoardRenderer::drawCursor() {
 	SDL_SetRenderDrawColor(_SDLRenderer, 0x00, 0x00, 0x00, 0xFF);
 
 	SDL_Rect cur;
-	cur.y = (BOARD_HEIGHT - (_board._cursorY + 1) * TILE_SIZE)
-			- _board._stackOffset;
-	cur.x = _board._cursorX * TILE_SIZE;
+	cur.y = (BOARD_HEIGHT - (_board.getCursorY() + 1) * TILE_SIZE)
+			- _board.getStackOffset();
+	cur.x = _board.getCursorX() * TILE_SIZE;
 	cur.w = 2 * TILE_SIZE;
 	cur.h = 2;
 	SDL_RenderFillRect(_SDLRenderer, &cur); //up
@@ -163,7 +164,7 @@ void BoardRenderer::drawCursor() {
 	SDL_RenderFillRect(_SDLRenderer, &cur); //left
 	cur.x += 2 * TILE_SIZE;
 	SDL_RenderFillRect(_SDLRenderer, &cur); //right
-	cur.x = _board._cursorX * TILE_SIZE;
+	cur.x = _board.getCursorX() * TILE_SIZE;
 	cur.y += TILE_SIZE;
 	cur.w = 2 * TILE_SIZE;
 	cur.h = 2;
@@ -172,22 +173,24 @@ void BoardRenderer::drawCursor() {
 }
 
 void BoardRenderer::handleChain() {
-	if (_board._tickChain) {
+	if (_board.isTickChain()) {
 		_popups.push_back(
-				new ChainPopup(_board._tickChainCol * TILE_SIZE + 5,
-						(BOARD_HEIGHT - (_board._tickChainRow + 1) * TILE_SIZE
-								- _board._stackOffset), _board._chainCounter,
-						60));
+				new ChainPopup(_board.getTickChainCol() * TILE_SIZE + 5,
+						(BOARD_HEIGHT
+								- (_board.getTickChainRow() + 1) * TILE_SIZE
+								- _board.getStackOffset()),
+						_board.getChainCounter(), 60));
 	}
 }
 
 void BoardRenderer::handleCombo() {
-	if (_board._tickMatched > 3) {
+	if (_board.getTickMatched() > 3) {
 		_popups.push_back(
-				new ComboPopup(_board._tickMatchCol * TILE_SIZE + 5,
-						(BOARD_HEIGHT - (_board._tickMatchRow + 1) * TILE_SIZE
-								- _board._stackOffset) + 30,
-						_board._tickMatched, 60));
+				new ComboPopup(_board.getTickMatchCol() * TILE_SIZE + 5,
+						(BOARD_HEIGHT
+								- (_board.getTickMatchRow() + 1) * TILE_SIZE
+								- _board.getStackOffset()) + 30,
+						_board.getTickMatched(), 60));
 	}
 }
 

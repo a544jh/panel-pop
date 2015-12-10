@@ -23,7 +23,7 @@ void Game::inputTogglePause() {
 	_paused = !_paused;
 }
 
-bool Game::isPaused() {
+const bool Game::isPaused() const {
 	return _paused;
 }
 

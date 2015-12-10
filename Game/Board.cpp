@@ -391,3 +391,71 @@ Board::~Board() {
 // TODO Auto-generated destructor stub
 }
 
+bool Board::isActiveBlocks() const {
+	return _activeBlocks;
+}
+
+const Board::Tile& Board::getBufferRow(int col) const {
+	return _bufferRow[col];
+}
+
+int Board::getChainCounter() const {
+	return _chainCounter;
+}
+
+int Board::getCursorX() const {
+	return _cursorX;
+}
+
+int Board::getCursorY() const {
+	return _cursorY;
+}
+
+int Board::getStackOffset() const {
+	return _stackOffset;
+}
+
+bool Board::isStackRaiseForced() const {
+	return _stackRaiseForced;
+}
+
+int Board::getStackRaiseTicks() const {
+	return _stackRaiseTicks;
+}
+
+int Board::getStackRaiseTimer() const {
+	return _stackRaiseTimer;
+}
+
+
+Board::BoardState Board::getState() const {
+	return _state;
+}
+
+bool Board::isTickChain() const {
+	return _tickChain;
+}
+
+int Board::getTickChainCol() const {
+	return _tickChainCol;
+}
+
+int Board::getTickChainRow() const {
+	return _tickChainRow;
+}
+
+int Board::getTickMatchCol() const {
+	return _tickMatchCol;
+}
+
+int Board::getTickMatched() const {
+	return _tickMatched;
+}
+
+int Board::getTickMatchRow() const {
+	return _tickMatchRow;
+}
+
+const Board::Tile& Board::getTile(int row, int col) const {
+	return _tiles[row][col];
+}

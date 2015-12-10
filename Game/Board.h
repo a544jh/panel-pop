@@ -16,24 +16,61 @@ enum Direction {
 };
 
 enum TileType {
-			AIR, BLOCK, GARBAGE
+	AIR, BLOCK, GARBAGE
 };
 
 class Board {
+
 public:
-
 	struct Tile {
-		Tile();
-		TileType type;
-		Block b;
-		GarbageBlock* g;
-	};
+			Tile();
+			TileType type;
+			Block b;
+			GarbageBlock* g;
 
-//TODO: Use getters!!
+		};
 	Board();
-	Tile _tiles[24][6];
-	Tile _bufferRow[6];
+
 	virtual ~Board();
+
+	void tick();
+	void inputMoveCursor(Direction);
+	void inputSwapBlocks();
+	void inputForceStackRaise();
+
+	enum BoardState {
+		RUNNING, PAUSED, GAME_OVER
+	} _state;
+
+	static const int BASE_EXPLOSION_TICKS = 61;
+	static const int ADD_EXPL_TICKS = 9; //the total explosion time for a combo is 61 + 9 * n, where n is the  number of blocks
+	static const int SWAP_DELAY = 3;
+	static const int BOARD_HEIGHT = 24;
+	static const int BOARD_WIDTH = 6;
+
+	bool isActiveBlocks() const;
+	const Tile& getBufferRow(int) const;
+	int getChainCounter() const;
+	int getCursorX() const;
+	int getCursorY() const;
+	int getStackOffset() const;
+	bool isStackRaiseForced() const;
+	int getStackRaiseTicks() const;
+	int getStackRaiseTimer() const;
+	BoardState getState() const;
+	bool isTickChain() const;
+	int getTickChainCol() const;
+	int getTickChainRow() const;
+	int getTickMatchCol() const;
+	int getTickMatched() const;
+	int getTickMatchRow() const;
+	const Tile& getTile(int,int) const;
+
+private:
+
+	Tile _tiles[BOARD_HEIGHT][BOARD_WIDTH];
+	Tile _bufferRow[BOARD_WIDTH];
+
 	int _cursorX, _cursorY;
 	int _tickMatched; //how many blocks got matched this tick
 	int _stackOffset;
@@ -47,19 +84,7 @@ public:
 	int _tickChainCol;
 	int _tickMatchRow;
 	int _tickMatchCol;
-	void tick();
-	void inputMoveCursor(Direction);
-	void inputSwapBlocks();
-	void inputForceStackRaise();
-	static const int BASE_EXPLOSION_TICKS = 61;
-	static const int ADD_EXPL_TICKS = 9; //the total explosion time for a combo is 61 + 9 * n, where n is the  number of blocks
-	static const int SWAP_DELAY = 3;
-	static const int BOARD_HEIGHT = 24;
-	static const int BOARD_WIDTH = 6;
-	enum BoardState {
-		RUNNING, PAUSED, GAME_OVER
-	} _state;
-private:
+
 	void initTick();
 	void initializeTiles();
 	void fillRandom();
