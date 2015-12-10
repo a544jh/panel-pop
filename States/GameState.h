@@ -21,6 +21,7 @@ public:
 private:
 	Game game;
 	GameRenderer renderer;
+	KeyboardController kbc;
 };
 
 #endif /* STATES_GAMESTATE_H_ */

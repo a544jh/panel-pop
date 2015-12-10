@@ -34,7 +34,6 @@ void KeyboardController::tick() {
 	if (input._keys[SDL_SCANCODE_S]) {
 		_board.inputForceStackRaise();
 	}
-	_board.tick();
 }
 
 KeyboardController::~KeyboardController() {

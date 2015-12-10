@@ -11,7 +11,8 @@
 
 StateManager::StateManager() :
 		_currentState(nullptr), _lastTick(0), _running(true), SDL(
-				SDLContext::getInstance()), input(InputManager::getInstance()) {
+				SDLContext::getInstance()), input(InputManager::getInstance()), _frameTime(
+				16) {
 	_currentState = new GameState();
 }
 
@@ -21,9 +22,10 @@ StateManager& StateManager::getInstance() {
 }
 
 void StateManager::run() {
+	bool tick;
 	while (_running) {
-		if (SDL_GetTicks() - _lastTick >= 16) {
-			//TODO: Manage tickrate somewhere else?
+		tick = (SDL_GetTicks() - _lastTick >= _frameTime);
+		if (tick) {
 			input.poll();
 			if (input._quit) {
 				//TODO: State transitions?
@@ -31,10 +33,12 @@ void StateManager::run() {
 				break;
 			}
 			_currentState->tick();
-			_lastTick = SDL_GetTicks();
 		}
 		SDL_Texture* t = _currentState->render();
 		SDL.renderTextureToWindow(t);
+		if(tick){
+			_lastTick = SDL_GetTicks();
+		}
 	}
 }
 

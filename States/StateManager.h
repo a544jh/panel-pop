@@ -24,6 +24,7 @@ private:
 	SDLContext& SDL;
 	InputManager& input;
 	uint32_t _lastTick;
+	uint32_t _frameTime;
 	bool _running;
 };
 

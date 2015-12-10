@@ -16,12 +16,12 @@
 Board::Board() :
 		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
 				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
-				false) {
+				false), _state(RUNNING) {
 	fillRandom();
 	fillBufferRow();
 }
 
-Tile::Tile() :
+Board::Tile::Tile() :
 		type(AIR), g(nullptr) {
 }
 
@@ -69,6 +69,9 @@ void Board::fillBufferRow() {
 }
 
 void Board::inputMoveCursor(Direction d) {
+	if (_state != RUNNING) {
+		return;
+	}
 
 	switch (d) {
 	case UP:
@@ -125,6 +128,9 @@ bool Board::matchTiles(int r1, int c1, int r2, int c2) {
 }
 
 void Board::inputSwapBlocks() {
+	if (_state != RUNNING) {
+		return;
+	}
 	if (!(swappable(_cursorY, _cursorX) && swappable(_cursorY, _cursorX + 1))) {
 		return;
 	}
@@ -354,6 +360,9 @@ void Board::raiseStack() {
 }
 
 void Board::inputForceStackRaise() {
+	if (_state != RUNNING) {
+		return;
+	}
 	if (!_activeBlocks) {
 		_stackRaiseForced = true;
 	}

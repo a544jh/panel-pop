@@ -7,25 +7,23 @@
 
 #include "Game.h"
 
-#include <SDL_scancode.h>
-#include "../InputManager.h"
 #include "Board.h"
 
-
-Game::Game() : _board(Board()), _kbc(KeyboardController(_board)), _paused(false) {
+Game::Game() :
+		_board(Board()), _paused(false) {
 }
 
 void Game::tick() {
-	InputManager& input = InputManager::getInstance();
-	if(input._keys[SDL_SCANCODE_P] && !input._prevKeys[SDL_SCANCODE_P]){
-		_paused = !_paused;
-	}
-	if(!_paused){
-		_kbc.tick();
+	if (!_paused) {
+		_board.tick();
 	}
 }
 
-bool Game::isPaused(){
+void Game::inputTogglePause() {
+	_paused = !_paused;
+}
+
+bool Game::isPaused() {
 	return _paused;
 }
 

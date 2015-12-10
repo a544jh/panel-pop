@@ -16,19 +16,20 @@ enum Direction {
 };
 
 enum TileType {
-	AIR, BLOCK, GARBAGE
-};
-
-struct Tile {
-	Tile();
-
-	TileType type;
-	Block b;
-	GarbageBlock* g;
+			AIR, BLOCK, GARBAGE
 };
 
 class Board {
 public:
+
+	struct Tile {
+		Tile();
+		TileType type;
+		Block b;
+		GarbageBlock* g;
+	};
+
+//TODO: Use getters!!
 	Board();
 	Tile _tiles[24][6];
 	Tile _bufferRow[6];
@@ -55,6 +56,9 @@ public:
 	static const int SWAP_DELAY = 3;
 	static const int BOARD_HEIGHT = 24;
 	static const int BOARD_WIDTH = 6;
+	enum BoardState {
+		RUNNING, PAUSED, GAME_OVER
+	} _state;
 private:
 	void initTick();
 	void initializeTiles();

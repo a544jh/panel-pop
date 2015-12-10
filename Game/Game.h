@@ -17,9 +17,9 @@ public:
 	Board _board;
 	virtual ~Game();
 	void tick();
+	void inputTogglePause();
 	bool isPaused();
 private:
-	KeyboardController _kbc;
 	bool _paused;
 };
 
