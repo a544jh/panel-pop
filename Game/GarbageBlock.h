@@ -10,11 +10,34 @@
 
 class GarbageBlock {
 public:
-	GarbageBlock();
+
+	enum Type {
+		NORMAL, GRAY
+	};
+
+	GarbageBlock(int,int,int,int, Type);
 	virtual ~GarbageBlock();
+
+	int getH() const {
+		return _h;
+	}
+
+	int getW() const {
+		return _w;
+	}
+
+	int getX() const {
+		return _x;
+	}
+
+	int getY() const {
+		return _y;
+	}
+
 private:
-	int x, y; //coordinates of upper-right corner;
-	int w, h;
+	int _x, _y; //coordinates of upper-right corner;
+	int _w, _h;
+	Type _type;
 };
 
 #endif /* GARBAGEBLOCK_H_ */

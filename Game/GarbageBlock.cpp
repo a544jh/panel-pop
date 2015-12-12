@@ -7,7 +7,8 @@
 
 #include "GarbageBlock.h"
 
-GarbageBlock::GarbageBlock() {
+GarbageBlock::GarbageBlock(int x, int y, int w, int h, Type t) :
+		_x(x), _y(y), _w(w), _h(h), _type(t) {
 	// TODO Auto-generated constructor stub
 
 }

@@ -335,11 +335,11 @@ void Board::raiseStack() {
 		++_stackRaiseTimer;
 		return;
 	}
-	if (_stackOffset < 32 && !_activeBlocks) {
+	if (_stackOffset < STACK_RAISE_STEPS && !_activeBlocks) {
 		++_stackOffset;
 		_stackRaiseTimer = 0;
 	}
-	if (_stackOffset >= 32) {
+	if (_stackOffset >= STACK_RAISE_STEPS) {
 		bool blockOnTopRow = false;
 		for (int col = 0; col < BOARD_WIDTH; ++col) {
 			if (_tiles[10][col].type == BLOCK) {
@@ -348,7 +348,7 @@ void Board::raiseStack() {
 			}
 		}
 		if (blockOnTopRow && !_activeBlocks) {
-			if (++_graceTimer >= (32 * _stackRaiseTicks) / 2) {
+			if (++_graceTimer >= (STACK_RAISE_STEPS * _stackRaiseTicks) / 2) {
 				_state = GAME_OVER;
 			}
 		}
