@@ -6,6 +6,7 @@
  */
 
 #include "Board.h"
+#include "GarbageBlock.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -15,7 +16,7 @@
 Board::Board() :
 		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
 				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
-				false), _state(RUNNING), _graceTimer(0) {
+				false), _state(RUNNING), _graceTimer(0), _blockOnTopRow(false) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -55,6 +56,18 @@ void Board::fillBufferRow() {
 	}
 }
 
+void Board::spawnGarbage(int x, int y, int w, int h, GarbageBlockType type) {
+	//TODO: checks and queue
+	_garbageBlocks.push_back(GarbageBlock(x, y, w, h, type));
+
+	for (int row = y; row >= y - (h - 1); --row) {
+		for (int col = x; col <= x + (w - 1); ++col) {
+			_tiles[row][col].type = GARBAGE;
+			_tiles[row][col].g = &_garbageBlocks.back();
+		}
+	}
+}
+
 void Board::inputMoveCursor(Direction d) {
 	if (_state != RUNNING) {
 		return;
@@ -91,7 +104,7 @@ void Board::inputMoveCursor(Direction d) {
 bool Board::swappable(int row, int col) {
 	//prevent block from swapping into empty space with a block above it
 	Tile& t = _tiles[row][col];
-	return ((t.type == AIR && _tiles[row + 1][col].type == AIR)
+	return ((t.type == AIR && _tiles[row + 1][col].type != BLOCK)
 			|| (t.type == BLOCK && t.b._state == NORMAL));
 }
 
@@ -131,6 +144,13 @@ void Board::initTick() {
 	_activeBlocks = activeBlocks();
 	if (!_activeBlocks) {
 		_chainCounter = 1;
+	}
+	_blockOnTopRow = false;
+	for (int col = 0; col < BOARD_WIDTH; ++col) {
+		if (_tiles[10][col].type != AIR) {
+			_blockOnTopRow = true;
+			break;
+		}
 	}
 }
 
@@ -194,8 +214,8 @@ void Board::handleMatchedBlocks() {
 	int matches = 1;
 	bool chain = false;
 	bool match = false;
-	for (int row = BOARD_HEIGHT; row >= 0; row--) {
-		for (int col = 0; col < BOARD_WIDTH; col++) {
+	for (int row = BOARD_HEIGHT - 1; row >= 0; --row) {
+		for (int col = 0; col < BOARD_WIDTH; ++col) {
 			Tile& tile = _tiles[row][col];
 
 			if (tile.type == BLOCK && tile.b._state == MATCHED) {
@@ -226,7 +246,7 @@ void Board::handleMatchedBlocks() {
 	}
 }
 
-void Board::deleteBlock(Tile& tile) {
+void Board::clearTile(Tile& tile) {
 	tile = Tile();
 }
 
@@ -237,7 +257,7 @@ void Board::handleBlockTimers() {
 			if (tile.type == BLOCK && tile.b._state == EXPLODING) {
 				++tile.b._explosionTimer;
 				if (tile.b._explosionTicks == tile.b._explosionTimer) {
-					deleteBlock(tile);
+					clearTile(tile);
 					// we need to set the chain flag for the blocks above, and set it on the others above when it's about to fall
 					if (_tiles[row + 1][col].type == BLOCK
 							&& _tiles[row + 1][col].b._state == NORMAL) {
@@ -308,11 +328,36 @@ void Board::handleFalling() {
 					tile.b._floatTimer = FLOAT_TICKS;
 				} else { //actual falling
 					_tiles[row - 1][col] = _tiles[row][col];
-					deleteBlock(_tiles[row][col]);
+					clearTile(_tiles[row][col]);
 				}
 			} else {
 				tile.b._falling = false;
 			}
+		}
+	}
+}
+
+void Board::handleGarbageFalling() {
+	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
+		int row = it->getY() - (it->getH());
+		int col = it->getX();
+		int endCol = col + (it->getW() - 1);
+		bool canFall = true;
+		for (int i = col; i <= endCol; ++i) {
+			if (getTile(row, i).type != AIR) {
+				canFall = false;
+				break;
+			}
+		}
+		if (canFall) {
+			for (int i = col; i <= endCol; ++i) {
+				clearTile(_tiles[it->getY()][i]);
+			}
+			for (int i = col; i <= endCol; ++i) {
+				_tiles[row][i].type = GARBAGE;
+				_tiles[row][i].g = &(*it);
+			}
+			--it->_y;
 		}
 	}
 }
@@ -327,20 +372,20 @@ void Board::raiseStack() {
 		_stackRaiseTimer = 0;
 	}
 	if (_stackOffset >= STACK_RAISE_STEPS) {
-		bool blockOnTopRow = false;
-		for (int col = 0; col < BOARD_WIDTH; ++col) {
-			if (_tiles[10][col].type == BLOCK) {
-				blockOnTopRow = true;
-				break;
-			}
-		}
-		if (blockOnTopRow && !_activeBlocks) {
+
+		if (_blockOnTopRow && !_activeBlocks) {
 			if (++_graceTimer >= (STACK_RAISE_STEPS * _stackRaiseTicks) / 2) {
 				_state = GAME_OVER;
 			}
 		}
-		if(!blockOnTopRow && !_activeBlocks){
+		if(!_blockOnTopRow){
 			_graceTimer = 0;
+		}
+		if (!_blockOnTopRow && !_activeBlocks) {
+			for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end();
+					++it) {
+				++it->_y;
+			}
 			for (int row = BOARD_HEIGHT - 2; row >= 0; --row) {
 				for (int col = 0; col < BOARD_WIDTH; ++col) {
 					_tiles[row + 1][col] = _tiles[row][col];
@@ -384,6 +429,7 @@ void Board::tick() {
 		raiseStack();
 		handleBlockTimers();
 		handleFalling();
+		handleGarbageFalling();
 		matchBlocks();
 		handleMatchedBlocks();
 	}
@@ -455,4 +501,8 @@ int Board::getGraceTimer() const {
 
 const Board::Tile& Board::getTile(int row, int col) const {
 	return _tiles[row][col];
+}
+
+const std::list<GarbageBlock>& Board::getGarbageBlocks() const {
+	return _garbageBlocks;
 }

@@ -9,7 +9,7 @@
 #define BOARD_H_
 
 #include "Block.h"
-class GarbageBlock;
+#include "GarbageBlock.h"
 
 enum Direction {
 	UP, RIGHT, DOWN, LEFT
@@ -18,6 +18,7 @@ enum Direction {
 enum TileType {
 	AIR, BLOCK, GARBAGE
 };
+
 
 class Board {
 
@@ -42,6 +43,7 @@ public:
 	void inputMoveCursor(Direction);
 	void inputSwapBlocks();
 	void inputForceStackRaise();
+	void spawnGarbage(int, int, int, int, GarbageBlockType);
 
 	static const int BASE_EXPLOSION_TICKS = 61;
 	static const int ADD_EXPL_TICKS = 9; //the total explosion time for a combo is 61 + 9 * n, where n is the  number of blocks
@@ -67,11 +69,13 @@ public:
 	int getTickMatchRow() const;
 	int getGraceTimer() const;
 	const Tile& getTile(int, int) const;
+	const std::list<GarbageBlock>& getGarbageBlocks() const;
 
 private:
 
 	Tile _tiles[BOARD_HEIGHT][BOARD_WIDTH];
 	Tile _bufferRow[BOARD_WIDTH];
+	std::list<GarbageBlock> _garbageBlocks;
 
 	BoardState _state;
 
@@ -87,6 +91,8 @@ private:
 	bool _tickChain; //true if a chain has occurred during the tick
 	int _tickMatchRow;
 	int _tickMatchCol;
+	bool _blockOnTopRow;
+
 
 	void initTick();
 	void initializeTiles();
@@ -97,9 +103,10 @@ private:
 	void handleMatchedBlocks();
 	void handleBlockTimers();
 	void swapBlocks(int, int);
-	void deleteBlock(Tile&);
+	void clearTile(Tile&);
 	void setChain(int, int);
 	void handleFalling();
+	void handleGarbageFalling();
 	void raiseStack();
 	bool matchTiles(int, int, int, int);
 	bool blockCanFall(int, int);

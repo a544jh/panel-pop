@@ -26,6 +26,7 @@ private:
 	Board& _board;
 	void drawGrid();
 	void drawBlocks();
+	void drawGarbageBlocks();
 	void drawCursor();
 	void drawBufferRow();
 	void handleChain();

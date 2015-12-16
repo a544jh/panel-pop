@@ -36,6 +36,9 @@ void KeyboardController::tick() {
 	if (input._keys[SDL_SCANCODE_S]) {
 		_board.inputForceStackRaise();
 	}
+	if(!input._prevKeys[SDL_SCANCODE_1] && input._keys[SDL_SCANCODE_1]){
+		_board.spawnGarbage(0, _board.BOARD_HEIGHT - 1,_board.BOARD_WIDTH,1,GarbageBlockType::NORMAL);
+	}
 }
 
 KeyboardController::~KeyboardController() {

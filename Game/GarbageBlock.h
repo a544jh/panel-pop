@@ -9,16 +9,19 @@
 #define GARBAGEBLOCK_H_
 
 #include "Block.h"
-#include "Board.h"
+
+
+//need to put this here because of circular dependencies...
+enum class GarbageBlockType {
+	NORMAL, GRAY
+};
 
 class GarbageBlock {
+
+	friend class Board;
+
 public:
-
-	enum Type {
-		NORMAL, GRAY
-	};
-
-	GarbageBlock(int,int,int,int, Type);
+	GarbageBlock(int,int,int,int, GarbageBlockType);
 	virtual ~GarbageBlock();
 
 	int getH() const {
@@ -40,8 +43,8 @@ public:
 private:
 	int _x, _y; //coordinates of upper-right corner;
 	int _w, _h;
-	Type _type;
-	Block _bufferRow[Board::BOARD_WIDTH];
+	GarbageBlockType _type;
+	Block _bufferRow[6];
 	void fillBufferRow();
 };
 

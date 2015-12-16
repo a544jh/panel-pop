@@ -10,6 +10,7 @@
 #include <iostream>
 #include "ChainPopup.h"
 #include "ComboPopup.h"
+#include "../Game/GarbageBlock.h"
 
 const int BoardRenderer::BOARD_WIDTH = 192;
 const int BoardRenderer::BOARD_HEIGHT = 384;
@@ -34,6 +35,7 @@ SDL_Texture* BoardRenderer::renderBoard() {
 
 	drawBlocks();
 	drawBufferRow();
+	drawGarbageBlocks();
 	//drawGrid();
 	drawCursor();
 	drawPopups();
@@ -163,6 +165,19 @@ void BoardRenderer::drawBufferRow() {
 
 	}
 	SDL_SetTextureColorMod(_spriteSheet, 0xff, 0xff, 0xff);
+}
+
+void BoardRenderer::drawGarbageBlocks() {
+	SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00, 0x00, 0xFF);
+	auto garbageBlocks = _board.getGarbageBlocks();
+	for (auto it = garbageBlocks.begin(); it != garbageBlocks.end(); ++it) {
+		SDL_Rect pos;
+		pos.h = TILE_SIZE * it->getH();
+		pos.w = TILE_SIZE * it->getW();
+		pos.x = it->getX() * TILE_SIZE;
+		pos.y = (BOARD_HEIGHT - (it->getY() + 1) * TILE_SIZE) - _board.getStackOffset();
+		SDL_RenderFillRect(_SDLRenderer, &pos);
+	}
 }
 
 void BoardRenderer::drawCursor() {
