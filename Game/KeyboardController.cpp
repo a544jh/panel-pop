@@ -6,7 +6,9 @@
  */
 
 #include "KeyboardController.h"
-#include <SDL_scancode.h>
+
+#include <SDL2/SDL.h>
+
 #include "Board.h"
 
 KeyboardController::KeyboardController(Board& b) : BoardController(b) {

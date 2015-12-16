@@ -7,7 +7,7 @@
 
 #include "GameState.h"
 
-#include <SDL_scancode.h>
+#include <SDL2/SDL.h>
 #include "../InputManager.h"
 GameState::GameState() :
 		game(), renderer(game), kbc(game._board) {

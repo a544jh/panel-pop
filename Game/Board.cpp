@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <list>
-#include <bitset>
 #include <iostream>
 
 Board::Board() :
@@ -37,13 +36,7 @@ void Board::fillRandom() {
 			}
 			colors.remove(_tiles[i][j - 1].b._color);
 			colors.remove(_tiles[i - 1][j].b._color);
-			auto it = colors.begin();
-
-			int r = (rand() % colors.size());
-			for (int k = 0; k < r; k++) {
-				it++;
-			}
-			_tiles[i][j].b._color = static_cast<BlockColor>(*it);
+			_tiles[i][j].b._color = Block::getRandomColor(colors);
 		}
 	}
 }
@@ -57,14 +50,8 @@ void Board::fillBufferRow() {
 		}
 		colors.remove(_tiles[0][i].b._color);
 		colors.remove(_bufferRow[i - 1].b._color);
-		auto it = colors.begin();
-
-		int r = (rand() % colors.size());
-		for (int k = 0; k < r; k++) {
-			it++;
-		}
 		_bufferRow[i].type = BLOCK;
-		_bufferRow[i].b._color = static_cast<BlockColor>(*it);
+		_bufferRow[i].b._color = Block::getRandomColor(colors);
 	}
 }
 

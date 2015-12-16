@@ -8,6 +8,9 @@
 #ifndef GARBAGEBLOCK_H_
 #define GARBAGEBLOCK_H_
 
+#include "Block.h"
+#include "Board.h"
+
 class GarbageBlock {
 public:
 
@@ -38,6 +41,8 @@ private:
 	int _x, _y; //coordinates of upper-right corner;
 	int _w, _h;
 	Type _type;
+	Block _bufferRow[Board::BOARD_WIDTH];
+	void fillBufferRow();
 };
 
 #endif /* GARBAGEBLOCK_H_ */

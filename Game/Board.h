@@ -9,7 +9,7 @@
 #define BOARD_H_
 
 #include "Block.h"
-#include "GarbageBlock.h"
+class GarbageBlock;
 
 enum Direction {
 	UP, RIGHT, DOWN, LEFT
