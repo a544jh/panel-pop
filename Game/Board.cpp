@@ -27,7 +27,7 @@ Board::Tile::Tile() :
 
 void Board::fillRandom() {
 	srand(time(NULL));
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < BOARD_WIDTH; j++) {
 			_tiles[i][j].type = BLOCK;
 			_tiles[i][j].b = Block();
@@ -147,7 +147,7 @@ void Board::initTick() {
 	}
 	_blockOnTopRow = false;
 	for (int col = 0; col < BOARD_WIDTH; ++col) {
-		if (_tiles[10][col].type != AIR) {
+		if (_tiles[11][col].type != AIR) {
 			_blockOnTopRow = true;
 			break;
 		}
@@ -233,6 +233,7 @@ void Board::handleMatchedBlocks() {
 						+ matches * ADD_EXPL_TICKS;
 				tile.b._explosionTicks = BASE_EXPLOSION_TICKS
 						+ _tickMatched * ADD_EXPL_TICKS;
+				triggerNeighbors(row, col);
 				++matches;
 			}
 			if (tile.b._state == NORMAL && !tile.b._falling && tile.b._chain) {
@@ -362,25 +363,62 @@ void Board::handleGarbageFalling() {
 	}
 }
 
+void Board::triggerNeighbors(int row, int col) {
+	int list[][2] = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
+	for (int n = 0; n < 4; ++n) {
+		int y = list[n][0];
+		int x = list[n][1];
+		triggerTile(row + y, col + x);
+	}
+}
+
+void Board::triggerGarbageNeighbors(GarbageBlock& g) {
+	for (int col = g.getX(); col <= g.getX() + (g.getW() - 1); ++col) {
+		triggerTile(g.getY() + 1, col);
+		triggerTile(g.getY() - (g.getH() - 1), col);
+	}
+	for (int row = g.getY(); row >= g.getY() - (g.getH() - 1); --row) {
+		triggerTile(row, g.getX() - 1);
+		triggerTile(row, g.getX() + (g.getW() - 1));
+	}
+}
+
+void Board::triggerTile(int row, int col) {
+	if(row < 0 || col < 0 || row >= BOARD_HEIGHT || col >= BOARD_WIDTH){
+		return;
+	}
+	Tile& tile = _tiles[row][col];
+	if (tile.type == GARBAGE) {
+		if (tile.g->getState() != GarbageBlockState::TRIGGERED) {
+			tile.g->trigger();
+			triggerGarbageNeighbors(*tile.g);
+		}
+	}
+}
+
 void Board::raiseStack() {
+	//increase the timer
 	if (!_stackRaiseForced && _stackRaiseTimer < _stackRaiseTicks) {
 		++_stackRaiseTimer;
 		return;
 	}
-	if (_stackOffset < STACK_RAISE_STEPS && !_activeBlocks) {
+	//raise the stack one step
+	if (_stackOffset < STACK_RAISE_STEPS && !_activeBlocks && !_blockOnTopRow) {
 		++_stackOffset;
 		_stackRaiseTimer = 0;
 	}
-	if (_stackOffset >= STACK_RAISE_STEPS) {
+	//when blocks are on top row
+	if (_blockOnTopRow && !_activeBlocks) {
+		if (++_graceTimer >= (STACK_RAISE_STEPS * _stackRaiseTicks) / 2) {
+			_state = GAME_OVER;
+		}
+	}
+	if (!_blockOnTopRow) {
+		_graceTimer = 0;
+	}
 
-		if (_blockOnTopRow && !_activeBlocks) {
-			if (++_graceTimer >= (STACK_RAISE_STEPS * _stackRaiseTicks) / 2) {
-				_state = GAME_OVER;
-			}
-		}
-		if(!_blockOnTopRow){
-			_graceTimer = 0;
-		}
+	//shift up the blocks and buffer row
+	if (_stackOffset >= STACK_RAISE_STEPS) {
 		if (!_blockOnTopRow && !_activeBlocks) {
 			for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end();
 					++it) {

@@ -16,6 +16,10 @@ enum class GarbageBlockType {
 	NORMAL, GRAY
 };
 
+enum class GarbageBlockState {
+	NORMAL, TRIGGERED
+};
+
 class GarbageBlock {
 
 	friend class Board;
@@ -40,12 +44,20 @@ public:
 		return _y;
 	}
 
+	GarbageBlockState getState() const {
+		return _state;
+	}
+
 private:
 	int _x, _y; //coordinates of upper-right corner;
 	int _w, _h;
 	GarbageBlockType _type;
+	GarbageBlockState _state;
 	Block _bufferRow[6];
+	int _transformationTicks; //ticks it takes for block to transform
+
 	void fillBufferRow();
+	void trigger();
 };
 
 #endif /* GARBAGEBLOCK_H_ */

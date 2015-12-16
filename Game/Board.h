@@ -19,7 +19,6 @@ enum TileType {
 	AIR, BLOCK, GARBAGE
 };
 
-
 class Board {
 
 public:
@@ -93,7 +92,6 @@ private:
 	int _tickMatchCol;
 	bool _blockOnTopRow;
 
-
 	void initTick();
 	void initializeTiles();
 	void fillRandom();
@@ -107,6 +105,9 @@ private:
 	void setChain(int, int);
 	void handleFalling();
 	void handleGarbageFalling();
+	void triggerNeighbors(int, int);
+	void triggerGarbageNeighbors(GarbageBlock&);
+	void triggerTile(int, int);
 	void raiseStack();
 	bool matchTiles(int, int, int, int);
 	bool blockCanFall(int, int);

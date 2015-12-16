@@ -168,7 +168,6 @@ void BoardRenderer::drawBufferRow() {
 }
 
 void BoardRenderer::drawGarbageBlocks() {
-	SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00, 0x00, 0xFF);
 	auto garbageBlocks = _board.getGarbageBlocks();
 	for (auto it = garbageBlocks.begin(); it != garbageBlocks.end(); ++it) {
 		SDL_Rect pos;
@@ -176,6 +175,11 @@ void BoardRenderer::drawGarbageBlocks() {
 		pos.w = TILE_SIZE * it->getW();
 		pos.x = it->getX() * TILE_SIZE;
 		pos.y = (BOARD_HEIGHT - (it->getY() + 1) * TILE_SIZE) - _board.getStackOffset();
+		Uint8 r = 0x00;
+		if (it->getState() == GarbageBlockState::TRIGGERED) {
+			r += 0xA0;
+		}
+		SDL_SetRenderDrawColor(_SDLRenderer, 0x80, r, r, 0xFF);
 		SDL_RenderFillRect(_SDLRenderer, &pos);
 	}
 }
