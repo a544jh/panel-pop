@@ -51,6 +51,7 @@ public:
 	static const int BOARD_WIDTH = 6;
 	static const int FLOAT_TICKS = 12;
 	static const int STACK_RAISE_STEPS = 32;
+	static const int GARBAGE_TRANSFORM_STEP_TICKS = 8;
 
 	bool hasActiveBlocks() const;
 	const Tile& getBufferRow(int) const;
@@ -92,6 +93,7 @@ private:
 	int _tickMatchCol;
 	bool _blockOnTopRow;
 
+
 	void initTick();
 	void initializeTiles();
 	void fillRandom();
@@ -99,6 +101,7 @@ private:
 	bool activeBlocks();
 	void matchBlocks();
 	void handleMatchedBlocks();
+	void handleTriggeredBlocks();
 	void handleBlockTimers();
 	void swapBlocks(int, int);
 	void clearTile(Tile&);

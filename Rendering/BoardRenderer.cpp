@@ -170,17 +170,60 @@ void BoardRenderer::drawBufferRow() {
 void BoardRenderer::drawGarbageBlocks() {
 	auto garbageBlocks = _board.getGarbageBlocks();
 	for (auto it = garbageBlocks.begin(); it != garbageBlocks.end(); ++it) {
-		SDL_Rect pos;
-		pos.h = TILE_SIZE * it->getH();
-		pos.w = TILE_SIZE * it->getW();
-		pos.x = it->getX() * TILE_SIZE;
-		pos.y = (BOARD_HEIGHT - (it->getY() + 1) * TILE_SIZE) - _board.getStackOffset();
-		Uint8 r = 0x00;
-		if (it->getState() == GarbageBlockState::TRIGGERED) {
-			r += 0xA0;
+		GarbageBlock & gb = *it;
+		for (int y = it->getY() - (it->getH() - 1); y <= it->getY(); ++y) {
+			for (int x = it->getX() + (it->getW() - 1); x >= it->getX(); --x) {
+				SDL_Rect pos;
+				pos.h = TILE_SIZE;
+				pos.w = TILE_SIZE;
+				pos.x = x * TILE_SIZE;
+				pos.y = (BOARD_HEIGHT - (y + 1) * TILE_SIZE)
+						- _board.getStackOffset();
+				if (it->getState() == GarbageBlockState::TRANSFORMING) {
+					if (it->getTransformationTimer() <= 45) {
+						if (it->getTransformationTimer() % 2 == 0) {
+							//blink
+							SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0xFF,
+									0xFF, 0xFF);
+						} else {
+							//normal
+							SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00,
+									0x00, 0xFF);
+						}
+					} else {
+						//lower right corner is 0,0
+						int rx = it->getX() - x;
+						int ry = y - (it->getY() - (it->getH() - 1));
+						int size = it->getW() * it->getH();
+						//block has been revealed
+						if (it->getTransformationTimer()
+								/ (it->getTransformationTicks() + 45)
+								>= (it->getW() * ry + rx) / size) {
+							if (ry == 0) {
+								SDL_Rect sheet = getBlockSprite(
+										it->getBufferRow(it->getW() - rx - 1));
+								SDL_SetTextureColorMod(_spriteSheet, 0x50, 0x50,
+										0x50);
+								SDL_RenderCopy(_SDLRenderer, _spriteSheet,
+										&sheet, &pos);
+								SDL_SetTextureColorMod(_spriteSheet, 0xFF, 0xFF,
+										0xFF);
+								continue;
+							} else {
+								SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0xA0,
+										0xA0, 0xFF);
+
+							}
+						}
+					}
+				} else {
+					//normal
+					SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00, 0x00,
+							0xFF);
+				}
+				SDL_RenderFillRect(_SDLRenderer, &pos);
+			}
 		}
-		SDL_SetRenderDrawColor(_SDLRenderer, 0x80, r, r, 0xFF);
-		SDL_RenderFillRect(_SDLRenderer, &pos);
 	}
 }
 

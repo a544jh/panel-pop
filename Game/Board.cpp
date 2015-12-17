@@ -247,6 +247,24 @@ void Board::handleMatchedBlocks() {
 	}
 }
 
+void Board::handleTriggeredBlocks() {
+	int maxSize = 0;
+	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
+		if (it->getState() == GarbageBlockState::TRIGGERED) {
+			int size = it->getW() * it->getH();
+			if (size > maxSize) {
+				maxSize = size;
+			}
+		}
+	}
+	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
+		GarbageBlock& gb = *it;
+		if (it->getState() == GarbageBlockState::TRIGGERED) {
+			it->transform(maxSize * GARBAGE_TRANSFORM_STEP_TICKS);
+		}
+	}
+}
+
 void Board::clearTile(Tile& tile) {
 	tile = Tile();
 }
@@ -277,6 +295,32 @@ void Board::handleBlockTimers() {
 			}
 		}
 	}
+
+	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
+		if (it->getState() == GarbageBlockState::TRANSFORMING) {
+			if (++it->_transformationTimer == it->_transformationTicks) {
+				//transform & shrink the block
+				it->_transformationTicks = 0;
+				it->_transformationTimer = 0;
+				it->_state = GarbageBlockState::NORMAL;
+				for (int i = 0; i < it->getW(); ++i) {
+					int row = it->getY() - (it->getH() - 1);
+					int col = it->getX() + i;
+
+					_tiles[row][col].type = BLOCK;
+					_tiles[row][col].g = nullptr;
+					Block bk = it->getBufferRow(i);
+					//TODO: define copy assignment
+					_tiles[row][col].b._color = bk._color;
+					_tiles[row][col].b._chain = bk._chain;
+				}
+				if (--it->_h <= 0) {
+					it = _garbageBlocks.erase(it);
+				}
+			}
+		}
+	}
+
 }
 
 void Board::swapBlocks(int row, int col) {
@@ -384,12 +428,12 @@ void Board::triggerGarbageNeighbors(GarbageBlock& g) {
 }
 
 void Board::triggerTile(int row, int col) {
-	if(row < 0 || col < 0 || row >= BOARD_HEIGHT || col >= BOARD_WIDTH){
+	if (row < 0 || col < 0 || row >= BOARD_HEIGHT || col >= BOARD_WIDTH) {
 		return;
 	}
 	Tile& tile = _tiles[row][col];
 	if (tile.type == GARBAGE) {
-		if (tile.g->getState() != GarbageBlockState::TRIGGERED) {
+		if (tile.g->getState() == GarbageBlockState::NORMAL) {
 			tile.g->trigger();
 			triggerGarbageNeighbors(*tile.g);
 		}
@@ -470,6 +514,7 @@ void Board::tick() {
 		handleGarbageFalling();
 		matchBlocks();
 		handleMatchedBlocks();
+		handleTriggeredBlocks();
 	}
 }
 

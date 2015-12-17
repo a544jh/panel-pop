@@ -17,7 +17,7 @@ enum class GarbageBlockType {
 };
 
 enum class GarbageBlockState {
-	NORMAL, TRIGGERED
+	NORMAL, TRIGGERED, TRANSFORMING
 };
 
 class GarbageBlock {
@@ -28,25 +28,15 @@ public:
 	GarbageBlock(int,int,int,int, GarbageBlockType);
 	virtual ~GarbageBlock();
 
-	int getH() const {
-		return _h;
-	}
-
-	int getW() const {
-		return _w;
-	}
-
-	int getX() const {
-		return _x;
-	}
-
-	int getY() const {
-		return _y;
-	}
-
-	GarbageBlockState getState() const {
-		return _state;
-	}
+	const Block& getBufferRow(int) const;
+	int getH() const;
+	GarbageBlockState getState() const;
+	int getTransformationTicks() const;
+	int getTransformationTimer() const;
+	GarbageBlockType getType() const;
+	int getW() const;
+	int getX() const;
+	int getY() const;
 
 private:
 	int _x, _y; //coordinates of upper-right corner;
@@ -55,9 +45,11 @@ private:
 	GarbageBlockState _state;
 	Block _bufferRow[6];
 	int _transformationTicks; //ticks it takes for block to transform
+	int _transformationTimer;
 
 	void fillBufferRow();
 	void trigger();
+	void transform(int);
 };
 
 #endif /* GARBAGEBLOCK_H_ */
