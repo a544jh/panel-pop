@@ -9,7 +9,8 @@
 
 GarbageBlock::GarbageBlock(int x, int y, int w, int h, GarbageBlockType t) :
 		_x(x), _y(y), _w(w), _h(h), _type(t), _state(GarbageBlockState::NORMAL), _transformationTicks(
-				0), _transformationTimer(0) {
+				0), _transformationTimer(0), _animationTicks(0), _falling(false) {
+	fillBufferRow();
 }
 
 GarbageBlock::~GarbageBlock() {
@@ -32,7 +33,7 @@ void GarbageBlock::trigger() {
 	_state = GarbageBlockState::TRIGGERED;
 }
 
-void GarbageBlock::transform(int tt){
+void GarbageBlock::transform(int tt) {
 	_state = GarbageBlockState::TRANSFORMING;
 	_transformationTicks = tt;
 }
@@ -71,4 +72,8 @@ int GarbageBlock::getX() const {
 
 int GarbageBlock::getY() const {
 	return _y;
+}
+
+int GarbageBlock::getAnimationTicks() const {
+	return _animationTicks;
 }

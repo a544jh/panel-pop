@@ -45,6 +45,7 @@ public:
 	void spawnGarbage(int, int, int, int, GarbageBlockType);
 
 	static const int BASE_EXPLOSION_TICKS = 61;
+	static const int BASE_TRANSFORMATION_TICKS = 45;
 	static const int ADD_EXPL_TICKS = 9; //the total explosion time for a combo is 61 + 9 * n, where n is the  number of blocks
 	static const int SWAP_DELAY = 3;
 	static const int BOARD_HEIGHT = 24;
@@ -93,7 +94,6 @@ private:
 	int _tickMatchCol;
 	bool _blockOnTopRow;
 
-
 	void initTick();
 	void initializeTiles();
 	void fillRandom();
@@ -105,15 +105,16 @@ private:
 	void handleBlockTimers();
 	void swapBlocks(int, int);
 	void clearTile(Tile&);
-	void setChain(int, int);
+	void setChainAbove(int, int);
 	void handleFalling();
 	void handleGarbageFalling();
 	void triggerNeighbors(int, int);
-	void triggerGarbageNeighbors(GarbageBlock&);
-	void triggerTile(int, int);
+	void triggerGarbageNeighbors(GarbageBlock&, Tile&);
+	void triggerTile(int, int, Tile&);
 	void raiseStack();
 	bool matchTiles(int, int, int, int);
 	bool blockCanFall(int, int);
+	bool garbageBlockCanFall(GarbageBlock&);
 	bool swappable(int, int);
 };
 

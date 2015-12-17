@@ -192,13 +192,14 @@ void BoardRenderer::drawGarbageBlocks() {
 						}
 					} else {
 						//lower right corner is 0,0
-						int rx = it->getX() - x;
+						int rx = (it->getX() + (it->getW() - 1)) - x;
 						int ry = y - (it->getY() - (it->getH() - 1));
 						int size = it->getW() * it->getH();
 						//block has been revealed
-						if (it->getTransformationTimer()
-								/ (it->getTransformationTicks() + 45)
-								>= (it->getW() * ry + rx) / size) {
+						double time = it->getTransformationTimer() - 45;
+						int ticks = it->getAnimationTicks();
+						double block = it->getW() * ry + rx;
+						if (time / ticks >= block / size) {
 							if (ry == 0) {
 								SDL_Rect sheet = getBlockSprite(
 										it->getBufferRow(it->getW() - rx - 1));
@@ -210,10 +211,15 @@ void BoardRenderer::drawGarbageBlocks() {
 										0xFF);
 								continue;
 							} else {
-								SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0xA0,
-										0xA0, 0xFF);
+								//normal
+								SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00,
+										0x00, 0xFF);
 
 							}
+						} else {
+							//transforming block
+							SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0xA0,
+									0xA0, 0xFF);
 						}
 					}
 				} else {

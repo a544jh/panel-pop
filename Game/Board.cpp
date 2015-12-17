@@ -118,6 +118,24 @@ bool Board::blockCanFall(int row, int col) {
 	}
 }
 
+bool Board::garbageBlockCanFall(GarbageBlock& gb) {
+	bool canFall = true;
+	int row = gb.getY() - (gb.getH());
+	int col = gb.getX();
+	int endCol = col + (gb.getW() - 1);
+	if (gb.getState() != GarbageBlockState::NORMAL) {
+		canFall = false;
+	} else {
+		for (int i = col; i <= endCol; ++i) {
+			if (getTile(row, i).type != AIR) {
+				canFall = false;
+				break;
+			}
+		}
+	}
+	return canFall;
+}
+
 bool Board::matchTiles(int r1, int c1, int r2, int c2) {
 	Tile& t1 = _tiles[r1][c1];
 	Tile& t2 = _tiles[r2][c2];
@@ -252,6 +270,7 @@ void Board::handleTriggeredBlocks() {
 	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
 		if (it->getState() == GarbageBlockState::TRIGGERED) {
 			int size = it->getW() * it->getH();
+			it->_animationTicks = size * GARBAGE_TRANSFORM_STEP_TICKS;
 			if (size > maxSize) {
 				maxSize = size;
 			}
@@ -260,7 +279,9 @@ void Board::handleTriggeredBlocks() {
 	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
 		GarbageBlock& gb = *it;
 		if (it->getState() == GarbageBlockState::TRIGGERED) {
-			it->transform(maxSize * GARBAGE_TRANSFORM_STEP_TICKS);
+			it->transform(
+					maxSize * GARBAGE_TRANSFORM_STEP_TICKS
+							+ BASE_TRANSFORMATION_TICKS);
 		}
 	}
 }
@@ -309,10 +330,7 @@ void Board::handleBlockTimers() {
 
 					_tiles[row][col].type = BLOCK;
 					_tiles[row][col].g = nullptr;
-					Block bk = it->getBufferRow(i);
-					//TODO: define copy assignment
-					_tiles[row][col].b._color = bk._color;
-					_tiles[row][col].b._chain = bk._chain;
+					_tiles[row][col].b = it->getBufferRow(i);
 				}
 				if (--it->_h <= 0) {
 					it = _garbageBlocks.erase(it);
@@ -340,7 +358,7 @@ void Board::swapBlocks(int row, int col) {
 }
 
 //sets the chain flag for the block and the ones above it
-void Board::setChain(int row, int col) {
+void Board::setChainAbove(int row, int col) {
 	for (int y = row; y < BOARD_HEIGHT; ++y) {
 		Tile& tile = _tiles[y][col];
 		if (tile.type == BLOCK) {
@@ -363,7 +381,7 @@ void Board::handleFalling() {
 						}
 					}
 					if (tile.b._chain) {
-						setChain(row, col);
+						setChainAbove(row, col);
 					}
 				}
 			}
@@ -384,17 +402,13 @@ void Board::handleFalling() {
 
 void Board::handleGarbageFalling() {
 	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
-		int row = it->getY() - (it->getH());
-		int col = it->getX();
-		int endCol = col + (it->getW() - 1);
-		bool canFall = true;
-		for (int i = col; i <= endCol; ++i) {
-			if (getTile(row, i).type != AIR) {
-				canFall = false;
-				break;
-			}
-		}
-		if (canFall) {
+		if (garbageBlockCanFall(*it)) {
+
+			it->_falling = true;
+
+			int row = it->getY() - (it->getH());
+			int col = it->getX();
+			int endCol = col + (it->getW() - 1);
 			for (int i = col; i <= endCol; ++i) {
 				clearTile(_tiles[it->getY()][i]);
 			}
@@ -403,6 +417,8 @@ void Board::handleGarbageFalling() {
 				_tiles[row][i].g = &(*it);
 			}
 			--it->_y;
+		} else {
+			it->_falling = false;
 		}
 	}
 }
@@ -412,30 +428,34 @@ void Board::triggerNeighbors(int row, int col) {
 	for (int n = 0; n < 4; ++n) {
 		int y = list[n][0];
 		int x = list[n][1];
-		triggerTile(row + y, col + x);
+		triggerTile(row + y, col + x, _tiles[row][col]);
 	}
 }
 
-void Board::triggerGarbageNeighbors(GarbageBlock& g) {
+void Board::triggerGarbageNeighbors(GarbageBlock& g, Tile& t) {
 	for (int col = g.getX(); col <= g.getX() + (g.getW() - 1); ++col) {
-		triggerTile(g.getY() + 1, col);
-		triggerTile(g.getY() - (g.getH() - 1), col);
+		triggerTile(g.getY() + 1, col, t);
+		triggerTile(g.getY() - g.getH(), col, t);
 	}
 	for (int row = g.getY(); row >= g.getY() - (g.getH() - 1); --row) {
-		triggerTile(row, g.getX() - 1);
-		triggerTile(row, g.getX() + (g.getW() - 1));
+		triggerTile(row, g.getX() - 1, t);
+		triggerTile(row, g.getX() + (g.getW() - 1), t);
 	}
 }
 
-void Board::triggerTile(int row, int col) {
+void Board::triggerTile(int row, int col, Tile& triggerer) {
 	if (row < 0 || col < 0 || row >= BOARD_HEIGHT || col >= BOARD_WIDTH) {
 		return;
 	}
-	Tile& tile = _tiles[row][col];
-	if (tile.type == GARBAGE) {
-		if (tile.g->getState() == GarbageBlockState::NORMAL) {
-			tile.g->trigger();
-			triggerGarbageNeighbors(*tile.g);
+	Tile& triggered = _tiles[row][col];
+	if (triggered.type == GARBAGE) {
+		if (triggered.g->getState() == GarbageBlockState::NORMAL) {
+			if (triggerer.type != GARBAGE
+					|| (triggerer.type == GARBAGE
+							&& triggerer.g->getType() == triggered.g->getType())) {
+				triggered.g->trigger();
+				triggerGarbageNeighbors(*triggered.g, triggerer);
+			}
 		}
 	}
 }
@@ -499,6 +519,11 @@ bool Board::activeBlocks() {
 	for (Tile* it = &_tiles[0][0];
 			it != &_tiles[0][0] + BOARD_WIDTH * BOARD_HEIGHT; ++it) {
 		if (it->type == BLOCK && (it->b._state != NORMAL || it->b._falling)) {
+			return true;
+		}
+	}
+	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
+		if (it->getState() != GarbageBlockState::NORMAL || it->_falling) {
 			return true;
 		}
 	}
