@@ -6,23 +6,25 @@
  */
 
 #include "GameState.h"
-
+#include "../Config/KeyboardControllerConfig.h"
 #include <SDL2/SDL.h>
 #include "../InputManager.h"
-GameState::GameState() :
-		game(), renderer(game), kbc(game._board) {
+GameState::GameState(KeyboardControllerConfig& c1, KeyboardControllerConfig& c2) :
+		game(), renderer(game), kbc(game._board, c1),
+		kbc2(game._board2, c2) {
 }
 
 void GameState::tick() {
 	InputManager& input = InputManager::getInstance();
-	if (input._keys[SDL_SCANCODE_P] && !input._prevKeys[SDL_SCANCODE_P]) {
+	if (input.keyDown(SDL_SCANCODE_5)) {
 		game.inputTogglePause();
 	}
-	if (input._keys[SDL_SCANCODE_R] && !input._prevKeys[SDL_SCANCODE_R]) {
+	if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
 			game.reset();
 		}
 	if (!game.isPaused()) {
 		kbc.tick();
+		kbc2.tick();
 	}
 	game.tick();
 	renderer.tick();

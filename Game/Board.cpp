@@ -16,7 +16,8 @@
 Board::Board() :
 		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
 				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
-				false), _state(RUNNING), _graceTimer(0), _blockOnTopRow(false) {
+				false), _state(RUNNING), _graceTimer(0), _blockOnTopRow(false), _tickChainEnd(
+				false), _lastChain(0) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -159,8 +160,13 @@ void Board::inputSwapBlocks() {
 void Board::initTick() {
 	_tickMatched = 0;
 	_tickChain = false;
+	_tickChainEnd = false;
 	_activeBlocks = activeBlocks();
 	if (!_activeBlocks) {
+		if (_chainCounter > 1) {
+			_tickChainEnd = true;
+			_lastChain = _chainCounter;
+		}
 		_chainCounter = 1;
 	}
 	_blockOnTopRow = false;
@@ -613,4 +619,12 @@ const Board::Tile& Board::getTile(int row, int col) const {
 
 const std::list<GarbageBlock>& Board::getGarbageBlocks() const {
 	return _garbageBlocks;
+}
+
+bool Board::isTickChainEnd() const {
+	return _tickChainEnd;
+}
+
+int Board::getLastChain() const {
+	return _lastChain;
 }

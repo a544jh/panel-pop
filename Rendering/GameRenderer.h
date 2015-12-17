@@ -22,6 +22,7 @@ public:
 private:
 	Game& _game;
 	BoardRenderer _boardRenderer;
+	BoardRenderer _boardRenderer2;
 };
 
 #endif /* GAMERENDERER_H_ */

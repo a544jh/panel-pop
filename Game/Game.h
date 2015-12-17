@@ -15,6 +15,7 @@ class Game {
 public:
 	Game();
 	Board _board;
+	Board _board2;
 	virtual ~Game();
 	void tick();
 	void reset();
@@ -22,6 +23,7 @@ public:
 	const bool isPaused() const;
 private:
 	bool _paused;
+	void handleGarbageSpawning(Board&, Board&);
 };
 
 #endif /* GAME_H_ */

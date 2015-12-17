@@ -33,3 +33,7 @@ void InputManager::poll() {
 	}
 }
 
+bool InputManager::keyDown(int key) {
+	return !_prevKeys[key] && _keys[key];
+}
+

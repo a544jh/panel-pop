@@ -24,6 +24,7 @@ class Board {
 public:
 	struct Tile {
 		Tile();
+
 		TileType type;
 		Block b;
 		GarbageBlock* g;
@@ -65,10 +66,12 @@ public:
 	int getStackRaiseTimer() const;
 	BoardState getState() const;
 	bool isTickChain() const;
+	bool isTickChainEnd() const;
 	int getTickMatchCol() const;
 	int getTickMatched() const;
 	int getTickMatchRow() const;
 	int getGraceTimer() const;
+	int getLastChain() const;
 	const Tile& getTile(int, int) const;
 	const std::list<GarbageBlock>& getGarbageBlocks() const;
 
@@ -90,6 +93,8 @@ private:
 	bool _activeBlocks;
 	int _chainCounter;
 	bool _tickChain; //true if a chain has occurred during the tick
+	bool _tickChainEnd;
+	int _lastChain;
 	int _tickMatchRow;
 	int _tickMatchCol;
 	bool _blockOnTopRow;

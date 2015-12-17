@@ -12,11 +12,13 @@
 #include "../InputManager.h"
 #include <array>
 
+#include "../Config/KeyboardControllerConfig.h"
 class KeyboardController: public BoardController {
 public:
-	KeyboardController(Board&);
+	KeyboardController(Board&, KeyboardControllerConfig&);
 	void tick();
 	virtual ~KeyboardController();
+	KeyboardControllerConfig _config;
 };
 
 #endif /* GAME_KEYBOARDCONTROLLER_H_ */
