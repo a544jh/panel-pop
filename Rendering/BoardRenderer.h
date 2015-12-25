@@ -34,6 +34,7 @@ private:
 	void handlePopups();
 	void drawPopups();
 	SDL_Rect getBlockSprite(const Block&);
+	SDL_Rect getGarbageBlockSprite(int,int, const GarbageBlock&);
 	std::list<Popup*> _popups;
 };
 

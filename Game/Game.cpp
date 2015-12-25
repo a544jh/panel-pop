@@ -33,10 +33,10 @@ void Game::handleGarbageSpawning(Board& b1, Board& b2) {
 				GarbageBlockType::NORMAL);
 	}
 
-	if (combo >= 4 && combo <= 5) {
-		b2.spawnGarbage(0, y, combo, 1, GarbageBlockType::NORMAL);
+	if (combo >= 4 && combo <= 7) {
+		b2.spawnGarbage(0, y, combo - 1, 1, GarbageBlockType::NORMAL);
 	}
-	if (b1.getTickMatched() >= 6) {
+	if (b1.getTickMatched() >= 12) {
 		for (int i = 0; i < 5 - combo; ++i)
 			b2.spawnGarbage(0, y - i, Board::BOARD_WIDTH, 1, GarbageBlockType::NORMAL);
 	}

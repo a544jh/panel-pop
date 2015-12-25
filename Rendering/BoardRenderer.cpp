@@ -107,46 +107,91 @@ void BoardRenderer::drawBlocks() {
 }
 
 SDL_Rect BoardRenderer::getBlockSprite(const Block& block) {
-	SDL_Rect sheet;
-	sheet.w = TILE_SIZE;
-	sheet.h = TILE_SIZE;
+	SDL_Rect sprite;
+	sprite.w = TILE_SIZE;
+	sprite.h = TILE_SIZE;
 	switch (block._color) {
 	case BlockColor::CYAN:
-		sheet.x = 64;
+		sprite.x = 64;
 		break;
 	case BlockColor::GREEN:
-		sheet.x = 32;
+		sprite.x = 32;
 		break;
 	case BlockColor::PURPLE:
-		sheet.x = 96;
+		sprite.x = 96;
 		break;
 	case BlockColor::RED:
-		sheet.x = 128;
+		sprite.x = 128;
 		break;
 	case BlockColor::YELLOW:
-		sheet.x = 0;
+		sprite.x = 0;
 		break;
 	default:
-		sheet.x = 0;
+		sprite.x = 0;
 	}
 	if (block._state == EXPLODING) {
 		if (block._explosionTimer <= 45) {
 			if (block._explosionTimer % 2 == 0) {
-				sheet.y = 0;
+				sprite.y = 0;
 			} else {
-				sheet.y = 160;
+				sprite.y = 160;
 			}
 		} else {
 			if (block._explosionTimer < block._explosionAnimTicks) {
-				sheet.y = 128;
+				sprite.y = 128;
 			}
 		}
 	} else if (_board.getState() == Board::GAME_OVER) {
-		sheet.y = 128;
+		sprite.y = 128;
 	} else {
-		sheet.y = 0;
+		sprite.y = 0;
 	}
-	return sheet;
+	return sprite;
+
+}
+
+SDL_Rect BoardRenderer::getGarbageBlockSprite(int rx, int ry,
+		const GarbageBlock& b) {
+	SDL_Rect sprite;
+	sprite.w = TILE_SIZE;
+	sprite.h = TILE_SIZE;
+	sprite.y = 0;
+	bool blink = b.getTransformationTimer() % 2 != 0
+			&& b.getTransformationTimer() <= 45;
+	int t = 0;
+	if (rx == 0) {
+		t = 2; //right
+	} else if (rx == b.getW() - 1) {
+		t = 0; //left
+	} else {
+		t = 1; //middle
+	}
+	if (b.getH() == 1
+			|| (b.getState() == GarbageBlockState::TRANSFORMING && b.getH() == 2
+					&& b.getTransformationTimer() > 45)) {
+		sprite.x = 224 + t * TILE_SIZE;
+		if (blink) {
+			sprite.y += TILE_SIZE;
+		}
+		return sprite;
+	} else {
+		int u = 0;
+		if (ry == 0
+				|| (b.getState() == GarbageBlockState::TRANSFORMING && ry == 1
+						&& b.getTransformationTimer() > 45)) {
+			u = 2; //down
+		} else if (ry == b.getH() - 1) {
+			u = 0; // up
+		} else {
+			u = 1; //middle
+		}
+		sprite.x = 320 + t * TILE_SIZE;
+		sprite.y = 0 + u * TILE_SIZE;
+		if (blink) {
+			sprite.y += 3 * TILE_SIZE;
+		}
+		return sprite;
+	}
 
 }
 
@@ -179,57 +224,43 @@ void BoardRenderer::drawGarbageBlocks() {
 				pos.x = x * TILE_SIZE;
 				pos.y = (BOARD_HEIGHT - (y + 1) * TILE_SIZE)
 						- _board.getStackOffset();
-				if (it->getState() == GarbageBlockState::TRANSFORMING) {
-					if (it->getTransformationTimer() <= 45) {
-						if (it->getTransformationTimer() % 2 == 0) {
-							//blink
-							SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0xFF,
-									0xFF, 0xFF);
-						} else {
-							//normal
-							SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00,
-									0x00, 0xFF);
-						}
-					} else {
-						//lower right corner is 0,0
-						int rx = (it->getX() + (it->getW() - 1)) - x;
-						int ry = y - (it->getY() - (it->getH() - 1));
-						int size = it->getW() * it->getH();
-						//block has been revealed
-						double time = it->getTransformationTimer() - 45;
-						int ticks = it->getAnimationTicks();
-						double block = it->getW() * ry + rx;
-						if (time / ticks >= block / size) {
-							if (ry == 0) {
-								SDL_Rect sheet = getBlockSprite(
-										it->getBufferRow(it->getW() - rx - 1));
-								SDL_SetTextureColorMod(_spriteSheet, 0x50, 0x50,
-										0x50);
-								SDL_RenderCopy(_SDLRenderer, _spriteSheet,
-										&sheet, &pos);
-								SDL_SetTextureColorMod(_spriteSheet, 0xFF, 0xFF,
-										0xFF);
-								continue;
-							} else {
-								//normal
-								SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00,
-										0x00, 0xFF);
 
-							}
-						} else {
-							//transforming block
-							SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0xA0,
-									0xA0, 0xFF);
-						}
+				//lower right corner is 0,0
+				int rx = (it->getX() + (it->getW() - 1)) - x;
+				int ry = y - (it->getY() - (it->getH() - 1));
+				int size = it->getW() * it->getH();
+				//block has been revealed
+				double time = it->getTransformationTimer() - 45;
+				int ticks = it->getAnimationTicks();
+				double block = it->getW() * ry + rx;
+				if (it->getTransformationTimer() <= 45) {
+					//normal
+					SDL_Rect sprite = getGarbageBlockSprite(rx, ry, *it);
+					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
+				} else if (time / ticks >= block / size) {
+					if (ry == 0) {
+						//draw revealed block
+						SDL_Rect sprite = getBlockSprite(
+								it->getBufferRow(it->getW() - rx - 1));
+						SDL_SetTextureColorMod(_spriteSheet, 0x50, 0x50, 0x50);
+						SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite,
+								&pos);
+						SDL_SetTextureColorMod(_spriteSheet, 0xFF, 0xFF, 0xFF);
+						continue;
+					} else {
+						//normal
+						SDL_Rect sprite = getGarbageBlockSprite(rx, ry, *it);
+						SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite,
+								&pos);
 					}
 				} else {
-					//normal
-					SDL_SetRenderDrawColor(_SDLRenderer, 0x80, 0x00, 0x00,
-							0xFF);
+					//transforming block
+					SDL_Rect sprite = { 480, 0, TILE_SIZE, TILE_SIZE };
+					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
 				}
-				SDL_RenderFillRect(_SDLRenderer, &pos);
 			}
 		}
+
 	}
 }
 
