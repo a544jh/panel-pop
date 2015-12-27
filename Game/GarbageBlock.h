@@ -33,7 +33,7 @@ public:
 	GarbageBlockState getState() const;
 	int getTransformationTicks() const;
 	int getTransformationTimer() const;
-	int getAnimationTicks() const;
+	int getAnimationStart() const;
 	GarbageBlockType getType() const;
 	int getW() const;
 	int getX() const;
@@ -47,12 +47,11 @@ private:
 	Block _bufferRow[6];
 	int _transformationTicks; //ticks it takes for block to transform
 	int _transformationTimer;
-	int _animationTicks; //tick for animation to complete
+	int _animationStart;
 	bool _falling;
 
 	void fillBufferRow();
 	void trigger();
-	void transform(int);
 };
 
 #endif /* GARBAGEBLOCK_H_ */

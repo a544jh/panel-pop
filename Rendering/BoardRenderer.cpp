@@ -156,8 +156,15 @@ SDL_Rect BoardRenderer::getGarbageBlockSprite(int rx, int ry,
 	sprite.w = TILE_SIZE;
 	sprite.h = TILE_SIZE;
 	sprite.y = 0;
+	int h = b.getH();
+	//handle transforming block as one smaller (after blinking)
+	if(b.getState() == GarbageBlockState::TRANSFORMING
+			&& b.getTransformationTimer() > Board::BASE_TRANSFORMATION_TICKS){
+		--h;
+		--ry;
+	}
 	bool blink = b.getTransformationTimer() % 2 != 0
-			&& b.getTransformationTimer() <= 45;
+			&& b.getTransformationTimer() <= Board::BASE_TRANSFORMATION_TICKS;
 	int t = 0;
 	if (rx == 0) {
 		t = 2; //right
@@ -166,9 +173,7 @@ SDL_Rect BoardRenderer::getGarbageBlockSprite(int rx, int ry,
 	} else {
 		t = 1; //middle
 	}
-	if (b.getH() == 1
-			|| (b.getState() == GarbageBlockState::TRANSFORMING && b.getH() == 2
-					&& b.getTransformationTimer() > 45)) {
+	if (h == 1) {
 		sprite.x = 224 + t * TILE_SIZE;
 		if (blink) {
 			sprite.y += TILE_SIZE;
@@ -176,11 +181,9 @@ SDL_Rect BoardRenderer::getGarbageBlockSprite(int rx, int ry,
 		return sprite;
 	} else {
 		int u = 0;
-		if (ry == 0
-				|| (b.getState() == GarbageBlockState::TRANSFORMING && ry == 1
-						&& b.getTransformationTimer() > 45)) {
+		if (ry == 0) {
 			u = 2; //down
-		} else if (ry == b.getH() - 1) {
+		} else if (ry == h - 1) {
 			u = 0; // up
 		} else {
 			u = 1; //middle
@@ -229,15 +232,18 @@ void BoardRenderer::drawGarbageBlocks() {
 				int rx = (it->getX() + (it->getW() - 1)) - x;
 				int ry = y - (it->getY() - (it->getH() - 1));
 				int size = it->getW() * it->getH();
-				//block has been revealed
-				double time = it->getTransformationTimer() - 45;
-				int ticks = it->getAnimationTicks();
+
+				double time = it->getTransformationTimer()
+						- it->getAnimationStart();
+				int ticks = it->getW() * it->getH()
+						* Board::GARBAGE_TRANSFORM_STEP_TICKS;
 				double block = it->getW() * ry + rx;
-				if (it->getTransformationTimer() <= 45) {
+				if (it->getTransformationTimer()
+						<= Board::BASE_TRANSFORMATION_TICKS) {
 					//normal
 					SDL_Rect sprite = getGarbageBlockSprite(rx, ry, *it);
 					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
-				} else if (time / ticks >= block / size) {
+				} else if (time / ticks >= block / size) { //block has been revealed
 					if (ry == 0) {
 						//draw revealed block
 						SDL_Rect sprite = getBlockSprite(

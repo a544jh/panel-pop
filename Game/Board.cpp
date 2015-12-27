@@ -272,22 +272,25 @@ void Board::handleMatchedBlocks() {
 }
 
 void Board::handleTriggeredBlocks() {
-	int maxSize = 0;
-	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
-		if (it->getState() == GarbageBlockState::TRIGGERED) {
-			int size = it->getW() * it->getH();
-			it->_animationTicks = size * GARBAGE_TRANSFORM_STEP_TICKS;
-			if (size > maxSize) {
-				maxSize = size;
+	int animStart = BASE_TRANSFORMATION_TICKS;
+	for (int row = 0; row < BOARD_HEIGHT; ++row) {
+		for (int col = BOARD_WIDTH - 1; col >= 0; --col) {
+			Tile& t = _tiles[row][col];
+			if (t.type == GARBAGE && t.g->_state == GarbageBlockState::TRIGGERED
+					&& t.g->_transformationTimer != 1) {
+				t.g->_transformationTimer = 1; //this is ugly! :P
+				t.g->_animationStart = animStart;
+				animStart += t.g->_w * t.g->_h * GARBAGE_TRANSFORM_STEP_TICKS;
 			}
 		}
 	}
 	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
 		GarbageBlock& gb = *it;
-		if (it->getState() == GarbageBlockState::TRIGGERED) {
-			it->transform(
-					maxSize * GARBAGE_TRANSFORM_STEP_TICKS
-							+ BASE_TRANSFORMATION_TICKS);
+		if (it->getState() == GarbageBlockState::TRIGGERED
+				&& it->getTransformationTimer() == 1) {
+			it->_transformationTimer = 0;
+			it->_state = GarbageBlockState::TRANSFORMING;
+			it->_transformationTicks = animStart;
 		}
 	}
 }
@@ -325,6 +328,7 @@ void Board::handleBlockTimers() {
 
 	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
 		if (it->getState() == GarbageBlockState::TRANSFORMING) {
+			GarbageBlock& gb = *it;
 			if (++it->_transformationTimer == it->_transformationTicks) {
 				//transform & shrink the block
 				it->_transformationTicks = 0;
@@ -467,17 +471,17 @@ void Board::triggerTile(int row, int col, Tile& triggerer) {
 }
 
 void Board::raiseStack() {
-	//increase the timer
+//increase the timer
 	if (!_stackRaiseForced && _stackRaiseTimer < _stackRaiseTicks) {
 		++_stackRaiseTimer;
 		return;
 	}
-	//raise the stack one step
+//raise the stack one step
 	if (_stackOffset < STACK_RAISE_STEPS && !_activeBlocks && !_blockOnTopRow) {
 		++_stackOffset;
 		_stackRaiseTimer = 0;
 	}
-	//when blocks are on top row
+//when blocks are on top row
 	if (_blockOnTopRow && !_activeBlocks) {
 		if (++_graceTimer >= (STACK_RAISE_STEPS * _stackRaiseTicks) / 2) {
 			_state = GAME_OVER;
@@ -487,7 +491,7 @@ void Board::raiseStack() {
 		_graceTimer = 0;
 	}
 
-	//shift up the blocks and buffer row
+//shift up the blocks and buffer row
 	if (_stackOffset >= STACK_RAISE_STEPS) {
 		if (!_blockOnTopRow && !_activeBlocks) {
 			for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end();
