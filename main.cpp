@@ -4,6 +4,9 @@
  *  Created on: Aug 15, 2015
  *      Author: axel
  */
+#include <stdlib.h>
+#include <time.h>
+
 #include "SDLContext.h"
 #include "Game/Game.h"
 #include "Rendering/GameRenderer.h"
@@ -11,6 +14,7 @@
 #include "States/StateManager.h"
 
 int main(int argc, char* args[]) {
+	srand(time(NULL));
 	SDLContext& SDL = SDLContext::getInstance();
 	InputManager& input = InputManager::getInstance();
 	SDL.init();

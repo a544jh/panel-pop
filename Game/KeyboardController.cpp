@@ -35,23 +35,24 @@ void KeyboardController::tick() {
 		_board.inputForceStackRaise();
 	}
 
-
 	//debug stuff...
-	if (!input._prevKeys[SDL_SCANCODE_1] && input._keys[SDL_SCANCODE_1]) {
-		_board.spawnGarbage(0, _board.BOARD_HEIGHT - 1, 4, 1,
-				GarbageBlockType::NORMAL);
+	if (input.keyDown(SDL_SCANCODE_1)) {
+		_board.queueGarbage(false, 3, GarbageBlockType::NORMAL);
 	}
-	if (!input._prevKeys[SDL_SCANCODE_2] && input._keys[SDL_SCANCODE_2]) {
-		_board.spawnGarbage(0, _board.BOARD_HEIGHT - 1, _board.BOARD_WIDTH, 1,
-				GarbageBlockType::NORMAL);
+	if (input.keyDown(SDL_SCANCODE_2)) {
+		_board.queueGarbage(false, 4, GarbageBlockType::NORMAL);
 	}
-	if (!input._prevKeys[SDL_SCANCODE_3] && input._keys[SDL_SCANCODE_3]) {
-		_board.spawnGarbage(0, _board.BOARD_HEIGHT - 1, _board.BOARD_WIDTH, 3,
-				GarbageBlockType::NORMAL);
+	if (input.keyDown(SDL_SCANCODE_3)) {
+		_board.queueGarbage(false, 5, GarbageBlockType::NORMAL);
 	}
-	if (!input._prevKeys[SDL_SCANCODE_4] && input._keys[SDL_SCANCODE_4]) {
-		_board.spawnGarbage(0, _board.BOARD_HEIGHT - 1, _board.BOARD_WIDTH, 12,
-				GarbageBlockType::NORMAL);
+	if (input.keyDown(SDL_SCANCODE_4)) {
+		_board.queueGarbage(false, 6, GarbageBlockType::NORMAL);
+	}
+	if (input.keyDown(SDL_SCANCODE_6)) {
+		_board.queueGarbage(true, 3, GarbageBlockType::NORMAL);
+	}
+	if (input.keyDown(SDL_SCANCODE_7)) {
+		_board.queueGarbage(true, 12, GarbageBlockType::NORMAL);
 	}
 }
 

@@ -6,18 +6,16 @@
  */
 
 #include "Board.h"
-#include "GarbageBlock.h"
 
-#include <stdlib.h>
-#include <time.h>
-#include <list>
 #include <iostream>
+#include <list>
+
 
 Board::Board() :
 		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
 				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
 				false), _state(RUNNING), _graceTimer(0), _blockOnTopRow(false), _tickChainEnd(
-				false), _lastChain(0) {
+				false), _lastChain(0), _garbageSpawnPositions( { 0 }) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -27,7 +25,7 @@ Board::Tile::Tile() :
 }
 
 void Board::fillRandom() {
-	srand(time(NULL));
+
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < BOARD_WIDTH; j++) {
 			_tiles[i][j].type = BLOCK;
@@ -44,7 +42,6 @@ void Board::fillRandom() {
 }
 
 void Board::fillBufferRow() {
-	srand(time(NULL));
 	for (int i = 0; i < BOARD_WIDTH; i++) {
 		std::list<int> colors;
 		for (int k = 0; k < BlockColor::COUNT; k++) {
@@ -57,8 +54,70 @@ void Board::fillBufferRow() {
 	}
 }
 
-void Board::spawnGarbage(int x, int y, int w, int h, GarbageBlockType type) {
+void Board::queueGarbage(bool fullWidth, int size, GarbageBlockType type) {
 	//TODO: checks and queue
+	GarbageSpawn g = { fullWidth, type, size, 80 };
+	_garbageQueue.push_back(g); //is there another way to do this properly?
+}
+
+void Board::handleGarbageQueue() {
+	int y = 11;
+
+	//find lowest insertion point
+	for (int row = BOARD_HEIGHT - 1; row >= y; --row) {
+		for (int col = 0; col < BOARD_WIDTH; ++col) {
+			if (_tiles[row][col].type != AIR) {
+				y = row + 1;
+				goto end;
+			}
+		}
+	}
+	end:
+
+	for (auto it = _garbageQueue.begin(); it != _garbageQueue.end(); ++it) {
+
+		if (y >= BOARD_HEIGHT) {
+			break;
+		}
+		if (--it->spawnTimer <= 0 && !_activeBlocks) {
+			int x = 0;
+			int w, h;
+
+			if (it->fullWidth) {
+				w = BOARD_WIDTH;
+				h = it->size;
+				y += h - 1;
+			} else {
+				if (it->size == 3) {
+					x = _garbageSpawnPositions[0]++ % 2 * 3;
+				} else if (it->size < 6) {
+					x = _garbageSpawnPositions[it->size - 3]++
+							% (6 - it->size + 1);
+				}
+				w = it->size;
+				h = 1;
+			}
+			if (spawnGarbage(x, y, w, h, it->type)) {
+				++y;
+				it = _garbageQueue.erase(it);
+				continue;
+			}
+		}
+
+	}
+}
+
+bool Board::spawnGarbage(int x, int y, int w, int h, GarbageBlockType type) {
+
+	int r = y - h;
+	for (int row = r; row < BOARD_HEIGHT; ++row) {
+		for (int col = 0; col < BOARD_WIDTH; ++col) {
+			if (_tiles[row][col].type != AIR) {
+				return false;
+			}
+		}
+	}
+
 	_garbageBlocks.push_back(GarbageBlock(x, y, w, h, type));
 
 	for (int row = y; row >= y - (h - 1); --row) {
@@ -67,6 +126,7 @@ void Board::spawnGarbage(int x, int y, int w, int h, GarbageBlockType type) {
 			_tiles[row][col].g = &_garbageBlocks.back();
 		}
 	}
+	return true;
 }
 
 void Board::inputMoveCursor(Direction d) {
@@ -121,7 +181,7 @@ bool Board::blockCanFall(int row, int col) {
 
 bool Board::garbageBlockCanFall(GarbageBlock& gb) {
 	bool canFall = true;
-	int row = gb.getY() - (gb.getH());
+	int row = gb.getY() - gb.getH();
 	int col = gb.getX();
 	int endCol = col + (gb.getW() - 1);
 	if (gb.getState() != GarbageBlockState::NORMAL) {
@@ -449,7 +509,7 @@ void Board::triggerGarbageNeighbors(GarbageBlock& g, Tile& t) {
 	}
 	for (int row = g.getY(); row >= g.getY() - (g.getH() - 1); --row) {
 		triggerTile(row, g.getX() - 1, t);
-		triggerTile(row, g.getX() + (g.getW() - 1), t);
+		triggerTile(row, g.getX() + g.getW(), t);
 	}
 }
 
@@ -544,6 +604,7 @@ void Board::tick() {
 	if (_state == RUNNING) {
 		initTick();
 		raiseStack();
+		handleGarbageQueue();
 		handleBlockTimers();
 		handleFalling();
 		handleGarbageFalling();

@@ -31,6 +31,13 @@ public:
 
 	};
 
+	struct GarbageSpawn {
+		bool fullWidth;
+		GarbageBlockType type;
+		int size;
+		int spawnTimer;
+	};
+
 	enum BoardState {
 		RUNNING, PAUSED, GAME_OVER
 	};
@@ -43,7 +50,7 @@ public:
 	void inputMoveCursor(Direction);
 	void inputSwapBlocks();
 	void inputForceStackRaise();
-	void spawnGarbage(int, int, int, int, GarbageBlockType);
+	void queueGarbage(bool, int, GarbageBlockType);
 
 	static const int BASE_EXPLOSION_TICKS = 61;
 	static const int BASE_TRANSFORMATION_TICKS = 45;
@@ -80,9 +87,10 @@ private:
 	Tile _tiles[BOARD_HEIGHT][BOARD_WIDTH];
 	Tile _bufferRow[BOARD_WIDTH];
 	std::list<GarbageBlock> _garbageBlocks;
+	std::list<GarbageSpawn> _garbageQueue;
 
 	BoardState _state;
-
+	int _garbageSpawnPositions[3];
 	int _cursorX, _cursorY;
 	int _tickMatched; //how many blocks got matched this tick
 	int _stackOffset;
@@ -105,6 +113,7 @@ private:
 	void fillBufferRow();
 	bool activeBlocks();
 	void matchBlocks();
+	void handleGarbageQueue();
 	void handleMatchedBlocks();
 	void handleTriggeredBlocks();
 	void handleBlockTimers();
@@ -121,6 +130,7 @@ private:
 	bool blockCanFall(int, int);
 	bool garbageBlockCanFall(GarbageBlock&);
 	bool swappable(int, int);
+	bool spawnGarbage(int,int,int,int, GarbageBlockType);
 };
 
 #endif /* BOARD_H_ */
