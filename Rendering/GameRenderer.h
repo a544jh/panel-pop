@@ -13,6 +13,7 @@
 #include "BoardRenderer.h"
 #include <SDL2/SDL.h>
 
+#include "GbQueueRenderer.h"
 class GameRenderer: public Renderer {
 public:
 	GameRenderer(Game&);
@@ -23,6 +24,8 @@ private:
 	Game& _game;
 	BoardRenderer _boardRenderer;
 	BoardRenderer _boardRenderer2;
+	GbQueueRenderer _gbqr;
+	GbQueueRenderer _gbqr2;
 };
 
 #endif /* GAMERENDERER_H_ */

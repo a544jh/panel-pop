@@ -686,6 +686,10 @@ const std::list<GarbageBlock>& Board::getGarbageBlocks() const {
 	return _garbageBlocks;
 }
 
+const std::list<Board::GarbageSpawn>& Board::getGarbageQueue() const {
+	return _garbageQueue;
+}
+
 bool Board::isTickChainEnd() const {
 	return _tickChainEnd;
 }

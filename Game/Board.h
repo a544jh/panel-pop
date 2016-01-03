@@ -81,6 +81,7 @@ public:
 	int getLastChain() const;
 	const Tile& getTile(int, int) const;
 	const std::list<GarbageBlock>& getGarbageBlocks() const;
+	const std::list<GarbageSpawn>& getGarbageQueue() const;
 
 private:
 
