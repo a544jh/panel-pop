@@ -10,11 +10,12 @@
 #include "Board.h"
 
 Game::Game() :
-		_paused(false) {
+		_paused(false), _ticksRun(0) {
 }
 
 void Game::tick() {
 	if (!_paused) {
+		++_ticksRun;
 		handleGarbageSpawning(_board, _board2);
 		handleGarbageSpawning(_board2, _board);
 		_board.tick();

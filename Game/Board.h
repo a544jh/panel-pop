@@ -79,6 +79,7 @@ public:
 	int getTickMatchRow() const;
 	int getGraceTimer() const;
 	int getLastChain() const;
+	unsigned int getTicksRun() const;
 	const Tile& getTile(int, int) const;
 	const std::list<GarbageBlock>& getGarbageBlocks() const;
 	const std::list<GarbageSpawn>& getGarbageQueue() const;
@@ -91,20 +92,21 @@ private:
 	std::list<GarbageSpawn> _garbageQueue;
 
 	BoardState _state;
+	unsigned int _ticksRun;
 	int _garbageSpawnPositions[3];
 	int _cursorX, _cursorY;
 	int _tickMatched; //how many blocks got matched this tick
 	int _stackOffset;
-	int _stackRaiseTicks;
+	int _stackRaiseTicks; //ticks to raise stack one step
 	int _stackRaiseTimer;
 	int _graceTimer;
 	bool _stackRaiseForced;
 	bool _activeBlocks;
 	int _chainCounter;
 	bool _tickChain; //true if a chain has occurred during the tick
-	bool _tickChainEnd;
-	int _lastChain;
-	int _tickMatchRow;
+	bool _tickChainEnd; //true if chain ended on this tick
+	int _lastChain; //size of last chain
+	int _tickMatchRow; //location of the match
 	int _tickMatchCol;
 	bool _blockOnTopRow;
 

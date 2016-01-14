@@ -21,8 +21,14 @@ public:
 	void reset();
 	void inputTogglePause();
 	const bool isPaused() const;
+
+	int getTicksRun() const {
+		return _ticksRun;
+	}
+
 private:
 	bool _paused;
+	int _ticksRun;
 	void handleGarbageSpawning(Board&, Board&);
 };
 

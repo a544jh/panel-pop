@@ -15,7 +15,7 @@ Board::Board() :
 		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
 				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
 				false), _state(RUNNING), _graceTimer(0), _blockOnTopRow(false), _tickChainEnd(
-				false), _lastChain(0), _garbageSpawnPositions( { 0 }) {
+				false), _lastChain(0), _garbageSpawnPositions( { 0 }), _ticksRun(0) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -236,6 +236,7 @@ void Board::initTick() {
 			break;
 		}
 	}
+	++_ticksRun;
 }
 
 void Board::matchBlocks() {
@@ -696,4 +697,8 @@ bool Board::isTickChainEnd() const {
 
 int Board::getLastChain() const {
 	return _lastChain;
+}
+
+unsigned int Board::getTicksRun() const {
+	return _ticksRun;
 }

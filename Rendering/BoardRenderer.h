@@ -16,7 +16,7 @@
 
 class BoardRenderer : public Renderer {
 public:
-	static const int BOARD_WIDTH, BOARD_HEIGHT, TILE_SIZE;
+	static const int BOARD_WIDTH, BOARD_HEIGHT, TILE_SIZE, CURSOR_ANIM_TICKS;
 
 	BoardRenderer(Board&);
 	virtual ~BoardRenderer();
