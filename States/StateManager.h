@@ -16,6 +16,8 @@ class StateManager {
 public:
 	static StateManager& getInstance();
 	void run();
+	void switchToState(State*);
+	void startGame();
 private:
 	StateManager();
 	StateManager(StateManager const&) = delete;

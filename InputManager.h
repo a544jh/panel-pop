@@ -20,6 +20,7 @@ public:
 	 std::array<bool, KEYBOARD_SIZE> _keys;
 	 std::array<bool, KEYBOARD_SIZE> _prevKeys;
 	 bool keyDown(int); // key pressed down this poll
+	 bool anyKeyDown();
 private:
 	InputManager();
 	InputManager(InputManager const&) = delete;

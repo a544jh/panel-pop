@@ -7,19 +7,18 @@
 
 #include "StateManager.h"
 
+#include <SDL_scancode.h>
+#include <SDL_timer.h>
+
 #include "../Config/KeyboardControllerConfig.h"
 #include "GameState.h"
-#include "../SDLContext.h"
+#include "TitleScreen.h"
 
 StateManager::StateManager() :
 		_currentState(nullptr), _lastTick(0), _running(true), SDL(
 				SDLContext::getInstance()), input(InputManager::getInstance()), _frameTime(
 				16) {
-	//KeyboardControllerConfig c = {SDL_SCANCODE_UP,SDL_SCANCODE_DOWN,SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT,SDL_SCANCODE_Z,SDL_SCANCODE_X};
-	KeyboardControllerConfig c = {SDL_SCANCODE_UP,SDL_SCANCODE_DOWN,SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT,SDL_SCANCODE_X,SDL_SCANCODE_Z};
-	KeyboardControllerConfig c2 = {SDL_SCANCODE_R,SDL_SCANCODE_F,SDL_SCANCODE_D,SDL_SCANCODE_G,SDL_SCANCODE_T,SDL_SCANCODE_Y};
-	//passed as reference but the KeyboardController copies it :P
-	_currentState = new GameState(c, c2);
+	_currentState = new TitleScreen();
 }
 
 StateManager& StateManager::getInstance() {
@@ -49,5 +48,20 @@ void StateManager::run() {
 			_lastTick = SDL_GetTicks();
 		}
 	}
+}
+
+void StateManager::switchToState(State* state){
+	delete _currentState;
+	_currentState = state;
+}
+
+void StateManager::startGame(){
+	//TODO:different game configurations
+	//KeyboardControllerConfig c = {SDL_SCANCODE_UP,SDL_SCANCODE_DOWN,SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT,SDL_SCANCODE_Z,SDL_SCANCODE_X};
+	KeyboardControllerConfig c = {SDL_SCANCODE_UP,SDL_SCANCODE_DOWN,SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT,SDL_SCANCODE_X,SDL_SCANCODE_Z};
+	KeyboardControllerConfig c2 = {SDL_SCANCODE_R,SDL_SCANCODE_F,SDL_SCANCODE_D,SDL_SCANCODE_G,SDL_SCANCODE_T,SDL_SCANCODE_Y};
+	//passed as reference but the KeyboardController copies it :P
+
+	switchToState(new GameState(c, c2));
 }
 
