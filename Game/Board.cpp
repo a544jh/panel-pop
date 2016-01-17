@@ -222,6 +222,7 @@ void Board::initTick() {
 	_tickChain = false;
 	_tickChainEnd = false;
 	_activeBlocks = activeBlocks();
+	//detect chain end
 	if (!_activeBlocks) {
 		if (_chainCounter > 1) {
 			_tickChainEnd = true;
@@ -229,12 +230,17 @@ void Board::initTick() {
 		}
 		_chainCounter = 1;
 	}
+	//check top row for blocks
 	_blockOnTopRow = false;
 	for (int col = 0; col < BOARD_WIDTH; ++col) {
 		if (_tiles[11][col].type != AIR) {
 			_blockOnTopRow = true;
 			break;
 		}
+	}
+	//speed up stack raising (within 2 mins)
+	if(_ticksRun % 1440 == 1439 && _stackRaiseTicks > 0) {
+		--_stackRaiseTicks;
 	}
 	++_ticksRun;
 }
