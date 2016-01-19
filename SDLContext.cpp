@@ -48,10 +48,11 @@ bool SDLContext::init()
 		}
 
 	int imgFlags = IMG_INIT_PNG;
-	if(! IMG_Init(imgFlags) & imgFlags){
+	if(! (IMG_Init(imgFlags) & imgFlags)){
 		std::cout << IMG_GetError();
 		success = false;
 	}
+
 
 	success = loadSpriteSheet();
 	return success;
@@ -89,8 +90,10 @@ void SDLContext::toggleFullscreen() {
 	uint32_t flags = SDL_GetWindowFlags(_window);
 	if ((flags & SDL_WINDOW_FULLSCREEN) == SDL_WINDOW_FULLSCREEN){
 		SDL_SetWindowFullscreen(_window,0);
+		SDL_ShowCursor(SDL_ENABLE);
 	} else {
 		SDL_SetWindowFullscreen(_window,SDL_WINDOW_FULLSCREEN);
+		SDL_ShowCursor(SDL_DISABLE);
 	}
 }
 
