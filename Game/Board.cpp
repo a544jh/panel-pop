@@ -34,8 +34,10 @@ void Board::fillRandom() {
 			for (int k = 0; k < BlockColor::COUNT; k++) {
 				colors.push_back(k);
 			}
-			if (j - 1 >= 0 && i - 1 >= 0) {
+			if (j - 1 >= 0) {
 				colors.remove(_tiles[i][j - 1].b._color);
+			}
+			if (i - 1 >= 0) {
 				colors.remove(_tiles[i - 1][j].b._color);
 			}
 			_tiles[i][j].b._color = Block::getRandomColor(colors);
@@ -403,7 +405,6 @@ void Board::handleBlockTimers() {
 
 	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
 		if (it->getState() == GarbageBlockState::TRANSFORMING) {
-			GarbageBlock& gb = *it;
 			if (++it->_transformationTimer == it->_transformationTicks) {
 				//transform & shrink the block
 				it->_transformationTicks = 0;
@@ -419,7 +420,9 @@ void Board::handleBlockTimers() {
 				}
 				if (--it->_h <= 0) {
 					it = _garbageBlocks.erase(it);
+					continue;
 				}
+				it->fillBufferRow();
 			}
 		}
 	}
