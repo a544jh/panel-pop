@@ -10,12 +10,12 @@
 #include <iostream>
 #include <list>
 
-
 Board::Board() :
 		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
 				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
 				false), _state(RUNNING), _graceTimer(0), _blockOnTopRow(false), _tickChainEnd(
-				false), _lastChain(0), _garbageSpawnPositions( { 0 }), _ticksRun(0) {
+				false), _lastChain(0), _garbageSpawnPositions( { 0 }), _ticksRun(
+				0) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -79,7 +79,9 @@ void Board::handleGarbageQueue() {
 		if (y >= BOARD_HEIGHT) {
 			break;
 		}
+		//block is going to spawn now
 		if (--it->spawnTimer <= 0 && !_activeBlocks) {
+			//determine spawn position
 			int x = 0;
 			int w, h;
 
@@ -108,7 +110,11 @@ void Board::handleGarbageQueue() {
 }
 
 bool Board::spawnGarbage(int x, int y, int w, int h, GarbageBlockType type) {
+	if (y >= BOARD_HEIGHT || x >= BOARD_WIDTH) {
+		return false;
+	}
 
+	//check that tiles are free
 	int r = y - h;
 	for (int row = r; row < BOARD_HEIGHT; ++row) {
 		for (int col = 0; col < BOARD_WIDTH; ++col) {
@@ -239,7 +245,7 @@ void Board::initTick() {
 		}
 	}
 	//speed up stack raising (within 2 mins)
-	if(_ticksRun % 1440 == 1439 && _stackRaiseTicks > 0) {
+	if (_ticksRun % 1440 == 1439 && _stackRaiseTicks > 0) {
 		--_stackRaiseTicks;
 	}
 	++_ticksRun;
