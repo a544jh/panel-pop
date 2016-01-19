@@ -34,8 +34,10 @@ void Board::fillRandom() {
 			for (int k = 0; k < BlockColor::COUNT; k++) {
 				colors.push_back(k);
 			}
-			colors.remove(_tiles[i][j - 1].b._color);
-			colors.remove(_tiles[i - 1][j].b._color);
+			if (j - 1 >= 0 && i - 1 >= 0) {
+				colors.remove(_tiles[i][j - 1].b._color);
+				colors.remove(_tiles[i - 1][j].b._color);
+			}
 			_tiles[i][j].b._color = Block::getRandomColor(colors);
 		}
 	}
