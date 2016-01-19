@@ -7,8 +7,7 @@
 
 #include "StateManager.h"
 
-#include <SDL_scancode.h>
-#include <SDL_timer.h>
+#include <SDL2/SDL.h>
 
 #include "../Config/KeyboardControllerConfig.h"
 #include "GameState.h"

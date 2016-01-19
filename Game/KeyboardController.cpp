@@ -31,7 +31,7 @@ void KeyboardController::tick() {
 	if (input.keyDown(_config.swap)) {
 		_board.inputSwapBlocks();
 	}
-	if (input.keyDown(_config.raiseStack)) {
+	if (input.keyPressed(_config.raiseStack)) {
 		_board.inputForceStackRaise();
 	}
 

@@ -37,6 +37,10 @@ bool InputManager::keyDown(int key) {
 	return !_prevKeys[key] && _keys[key];
 }
 
+bool InputManager::keyPressed(int key) {
+	return _keys[key];
+}
+
 bool InputManager::anyKeyDown(){
 	for(int i = 0; i < KEYBOARD_SIZE; ++i){
 		if(_keys[i]){
