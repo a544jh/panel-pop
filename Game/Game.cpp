@@ -10,17 +10,22 @@
 #include "Board.h"
 
 Game::Game() :
-		_paused(false), _ticksRun(0) {
+		_paused(false), _ticksRun(0), _advanceTick(false) {
 }
 
 void Game::tick() {
-	if (!_paused) {
+	if (!_paused || _advanceTick) {
+		_advanceTick = false;
 		++_ticksRun;
 		handleGarbageSpawning(_board, _board2);
 		handleGarbageSpawning(_board2, _board);
 		_board.tick();
 		_board2.tick();
 	}
+}
+
+bool Game::isAdvanceTick() const {
+	return _advanceTick;
 }
 
 void Game::handleGarbageSpawning(Board& b1, Board& b2) {
@@ -57,6 +62,10 @@ void Game::reset() {
 
 void Game::inputTogglePause() {
 	_paused = !_paused;
+}
+
+void Game::inputAdvanceTick() {
+	_advanceTick = true;
 }
 
 const bool Game::isPaused() const {

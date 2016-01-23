@@ -19,10 +19,13 @@ void GameState::tick() {
 	if (input.keyDown(SDL_SCANCODE_5)) {
 		game.inputTogglePause();
 	}
+	if (input.keyPressed(SDL_SCANCODE_K)) {
+			game.inputAdvanceTick();
+		}
 	if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
 			game.reset();
 		}
-	if (!game.isPaused()) {
+	if (!game.isPaused() || game.isAdvanceTick()) {
 		kbc.tick();
 		kbc2.tick();
 	}

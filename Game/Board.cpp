@@ -175,8 +175,8 @@ void Board::inputMoveCursor(Direction d) {
 bool Board::swappable(int row, int col) {
 	//prevent block from swapping into empty space with a block above it
 	Tile& t = _tiles[row][col];
-	return ((t.type == AIR && _tiles[row + 1][col].type != BLOCK)
-			|| (t.type == BLOCK && t.b._state == NORMAL));
+	return (((t.type == AIR && _tiles[row + 1][col].type != BLOCK)
+			|| t.type == BLOCK ) && t.b._state == NORMAL);
 }
 
 bool Board::blockCanFall(int row, int col) {
@@ -198,7 +198,9 @@ bool Board::garbageBlockCanFall(GarbageBlock& gb) {
 		canFall = false;
 	} else {
 		for (int i = col; i <= endCol; ++i) {
-			if (getTile(row, i).type != AIR) {
+			if (_tiles[row][i].type != AIR
+					|| (_tiles[row][i].type == AIR
+							&& _tiles[row][i].b._state != NORMAL)) {
 				canFall = false;
 				break;
 			}
