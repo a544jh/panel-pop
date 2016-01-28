@@ -21,6 +21,14 @@ void Game::tick() {
 		handleGarbageSpawning(_board2, _board);
 		_board.tick();
 		_board2.tick();
+		if (_board.getState() == Board::GAME_OVER
+				|| _board2.getState() == Board::GAME_OVER) {
+			if (_board.getState() == Board::RUNNING) {
+				_board.pause();
+			} else if (_board2.getState() == Board::RUNNING) {
+				_board2.pause();
+			}
+		}
 	}
 }
 
@@ -29,7 +37,7 @@ bool Game::isAdvanceTick() const {
 }
 
 void Game::handleGarbageSpawning(Board& b1, Board& b2) {
-	//TODO: make it like the actual game
+//TODO: make it like the actual game
 
 	int combo = b1.getTickMatched();
 

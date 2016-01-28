@@ -8,6 +8,9 @@
 #ifndef BOARD_H_
 #define BOARD_H_
 
+#include <cstdint>
+#include <list>
+
 #include "Block.h"
 #include "GarbageBlock.h"
 
@@ -39,7 +42,7 @@ public:
 	};
 
 	enum BoardState {
-		RUNNING, PAUSED, GAME_OVER
+		RUNNING, COUNTDOWN, PAUSED, GAME_OVER
 	};
 
 	Board();
@@ -61,6 +64,7 @@ public:
 	static const int FLOAT_TICKS = 12;
 	static const int STACK_RAISE_STEPS = 32;
 	static const int GARBAGE_TRANSFORM_STEP_TICKS = 8;
+	static const int COUNTDOWN_MS = 3000;
 
 	bool hasActiveBlocks() const;
 	const Tile& getBufferRow(int) const;
@@ -80,9 +84,11 @@ public:
 	int getGraceTimer() const;
 	int getLastChain() const;
 	unsigned int getTicksRun() const;
+	uint32_t getStartTime() const;
 	const Tile& getTile(int, int) const;
 	const std::list<GarbageBlock>& getGarbageBlocks() const;
 	const std::list<GarbageSpawn>& getGarbageQueue() const;
+	void pause();
 
 private:
 
@@ -93,6 +99,7 @@ private:
 
 	BoardState _state;
 	unsigned int _ticksRun;
+	uint32_t _startTime;
 	int _garbageSpawnPositions[3];
 	int _cursorX, _cursorY;
 	int _tickMatched; //how many blocks got matched this tick

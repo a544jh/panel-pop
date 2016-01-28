@@ -7,15 +7,16 @@
 
 #include "Board.h"
 
+#include <SDL_timer.h>
 #include <iostream>
 #include <list>
 
 Board::Board() :
 		_cursorX(2), _cursorY(5), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
 				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
-				false), _state(RUNNING), _graceTimer(0), _blockOnTopRow(false), _tickChainEnd(
+				false), _state(COUNTDOWN), _graceTimer(0), _blockOnTopRow(false), _tickChainEnd(
 				false), _lastChain(0), _garbageSpawnPositions( { 0 }), _ticksRun(
-				0) {
+				0), _startTime(SDL_GetTicks()) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -176,7 +177,7 @@ bool Board::swappable(int row, int col) {
 	//prevent block from swapping into empty space with a block above it
 	Tile& t = _tiles[row][col];
 	return (((t.type == AIR && _tiles[row + 1][col].type != BLOCK)
-			|| t.type == BLOCK ) && t.b._state == NORMAL);
+			|| t.type == BLOCK) && t.b._state == NORMAL);
 }
 
 bool Board::blockCanFall(int row, int col) {
@@ -621,7 +622,11 @@ bool Board::activeBlocks() {
 }
 
 void Board::tick() {
-	if (_state == RUNNING) {
+	if (_state == COUNTDOWN) {
+		if (SDL_GetTicks() - _startTime > COUNTDOWN_MS) {
+			_state = RUNNING;
+		}
+	} else if (_state == RUNNING) {
 		initTick();
 		raiseStack();
 		handleGarbageQueue();
@@ -632,6 +637,10 @@ void Board::tick() {
 		handleMatchedBlocks();
 		handleTriggeredBlocks();
 	}
+}
+
+void Board::pause(){
+	_state = PAUSED;
 }
 
 Board::~Board() {
@@ -720,4 +729,8 @@ int Board::getLastChain() const {
 
 unsigned int Board::getTicksRun() const {
 	return _ticksRun;
+}
+
+uint32_t Board::getStartTime() const {
+	return _startTime;
 }
