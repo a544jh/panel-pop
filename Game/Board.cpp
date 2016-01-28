@@ -11,7 +11,7 @@
 #include <list>
 
 Board::Board() :
-		_cursorX(0), _cursorY(0), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
+		_cursorX(2), _cursorY(5), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
 				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
 				false), _state(RUNNING), _graceTimer(0), _blockOnTopRow(false), _tickChainEnd(
 				false), _lastChain(0), _garbageSpawnPositions( { 0 }), _ticksRun(
@@ -26,7 +26,7 @@ Board::Tile::Tile() :
 
 void Board::fillRandom() {
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		for (int j = 0; j < BOARD_WIDTH; j++) {
 			_tiles[i][j].type = BLOCK;
 			_tiles[i][j].b = Block();

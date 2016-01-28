@@ -8,7 +8,8 @@
 #ifndef SDLCONTEXT_H_
 #define SDLCONTEXT_H_
 
-#include <SDL2/SDL.h>
+#include <SDL_ttf.h>
+#include <string>
 
 class SDLContext {
 public:
@@ -21,6 +22,10 @@ public:
 	SDL_Texture* getSpriteSheet();
 	void renderTextureToWindow(SDL_Texture*);
 	void toggleFullscreen();
+
+	SDL_Texture* makeTextureFromFont(std::string, SDL_Color, TTF_Font*);
+	TTF_Font* _psFont;
+	TTF_Font* _squareFont;
 private:
 	SDLContext();
 	SDLContext(SDLContext const&) = delete;
@@ -29,7 +34,9 @@ private:
 	SDL_Window* _window;
 	SDL_Renderer* _renderer;
 	SDL_Texture* _spriteSheet;
+
 	bool loadSpriteSheet();
+	bool loadFonts();
 };
 
 #endif /* SDLCONTEXT_H_ */

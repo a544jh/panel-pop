@@ -32,7 +32,6 @@ void Game::handleGarbageSpawning(Board& b1, Board& b2) {
 	//TODO: make it like the actual game
 
 	int combo = b1.getTickMatched();
-	int y = Board::BOARD_HEIGHT - 1;
 
 	if (b1.isTickChainEnd()) {
 		b2.queueGarbage(true, b1.getLastChain() - 1, GarbageBlockType::NORMAL);

@@ -29,5 +29,13 @@ SDL_Texture* TitleScreenRenderer::render() {
 		SDL_Rect box = {311,262,190,14};
 		SDL_RenderFillRect(_SDLRenderer,&box);
 	}
+
+	SDL_Color color = {0,0,0};
+	SDL_Texture* testfont = _SDLContext.makeTextureFromFont("PANEL POP",color,_SDLContext._squareFont);
+	SDL_SetTextureAlphaMod(testfont, 0x50);
+	SDL_Rect testr {50,350,0,0};
+	SDL_QueryTexture(testfont,NULL,NULL,&testr.w,&testr.h);
+	SDL_RenderCopy(_SDLRenderer, testfont,NULL,&testr);
+	SDL_DestroyTexture(testfont);
 	return _texture;
 }

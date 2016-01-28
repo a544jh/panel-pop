@@ -18,6 +18,8 @@ public:
 	void run();
 	void switchToState(State*);
 	void startGame();
+	float getAvgFps() const;
+
 private:
 	StateManager();
 	StateManager(StateManager const&) = delete;
@@ -28,6 +30,11 @@ private:
 	uint32_t _lastTick;
 	uint32_t _frameTime;
 	bool _running;
+	uint32_t _framesRun;
+	uint32_t _startTime;
+	uint32_t _lastFrame;
+	float _avgFps;
+	void showFps();
 };
 
 #endif /* STATEMANAGER_H_ */
