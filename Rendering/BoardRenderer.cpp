@@ -55,7 +55,7 @@ SDL_Texture* BoardRenderer::renderBoard() {
 	if (_board.getState() == Board::COUNTDOWN) {
 		SDL_Rect pos = { 2, 100 };
 		SDL_QueryTexture(_readyText, NULL, NULL, &pos.w, &pos.h);
-		pos.x = (BOARD_WIDTH - pos.w) / 2;
+		//pos.x = (BOARD_WIDTH - pos.w) / 2;
 		SDL_RenderCopy(_SDLRenderer, _readyText, NULL, &pos);
 		pos.y += 42;
 		SDL_Texture* digit;

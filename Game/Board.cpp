@@ -141,7 +141,7 @@ bool Board::spawnGarbage(int x, int y, int w, int h, GarbageBlockType type) {
 }
 
 void Board::inputMoveCursor(Direction d) {
-	if (_state != RUNNING) {
+	if (_state != RUNNING && _state != COUNTDOWN) {
 		return;
 	}
 
