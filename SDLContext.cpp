@@ -67,34 +67,38 @@ SDL_Texture* SDLContext::getSpriteSheet() {
 }
 
 bool SDLContext::loadSpriteSheet() {
-	std::string path = "assets/sprites.png";
-	SDL_Surface* surface = IMG_Load(path.c_str());
-	if (surface == NULL) {
-		std::cout << IMG_GetError();
-		return false;
-	}
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
-	SDL_FreeSurface(surface);
-	_spriteSheet = texture;
-	return true;
+	_spriteSheet = makeTextureFromImage("assets/sprites.png");
+	return _spriteSheet != NULL;
 }
 
-bool SDLContext::loadFonts(){
-	_psFont = TTF_OpenFont("assets/fonts/PressStart2P.ttf",16);
-	_squareFont = TTF_OpenFont("assets/fonts/square_sans_serif_7.ttf",85);
-	if(_psFont || _squareFont == NULL){
+bool SDLContext::loadFonts() {
+	_psFont = TTF_OpenFont("assets/fonts/PressStart2P.ttf", 16);
+	_squareFont = TTF_OpenFont("assets/fonts/square_sans_serif_7.ttf", 48);
+	if (_psFont == NULL || _squareFont == NULL) {
 		std::cout << TTF_GetError();
 		return false;
 	}
 	return true;
 }
 
-SDL_Texture* SDLContext::makeTextureFromFont(std::string text, SDL_Color color, TTF_Font* font){
+SDL_Texture* SDLContext::makeTextureFromFont(std::string text, SDL_Color color,
+		TTF_Font* font) {
 	SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), color);
-	if(surface == NULL){
-			std::cout << TTF_GetError();
-			return NULL;
-		}
+	if (surface == NULL) {
+		std::cout << TTF_GetError();
+		return NULL;
+	}
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
+	SDL_FreeSurface(surface);
+	return texture;
+}
+
+SDL_Texture* SDLContext::makeTextureFromImage(std::string path) {
+	SDL_Surface* surface = IMG_Load(path.c_str());
+	if (surface == NULL) {
+		std::cout << IMG_GetError();
+		return nullptr;
+	}
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
 	SDL_FreeSurface(surface);
 	return texture;

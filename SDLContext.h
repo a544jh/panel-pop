@@ -23,6 +23,7 @@ public:
 	void renderTextureToWindow(SDL_Texture*);
 	void toggleFullscreen();
 
+	SDL_Texture* makeTextureFromImage(std::string);
 	SDL_Texture* makeTextureFromFont(std::string, SDL_Color, TTF_Font*);
 	TTF_Font* _psFont;
 	TTF_Font* _squareFont;

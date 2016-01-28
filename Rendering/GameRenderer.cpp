@@ -12,6 +12,7 @@ GameRenderer::GameRenderer(Game& game) :
 				_game._board2), _gbqr(_game._board), _gbqr2(_game._board2) {
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, 640, 480);
+	_bg = _SDLContext.makeTextureFromImage("assets/2p.png");
 
 }
 
@@ -33,17 +34,19 @@ SDL_Texture* GameRenderer::renderGame() {
 	SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(_SDLRenderer);
 
+	SDL_RenderCopy(_SDLRenderer, _bg, NULL, NULL);
+
 	SDL_Rect rekt;
-	rekt.x = 0;
-	rekt.y = 0;
+	rekt.x = 58;
+	rekt.y = 43;
 	rekt.w = _boardRenderer.BOARD_WIDTH;
 	rekt.h = _boardRenderer.BOARD_HEIGHT;
 	SDL_RenderCopy(_SDLRenderer, boardTexture, NULL, &rekt);
-	SDL_Rect gbqp = { 192, 184, 38, 200 };
+	SDL_Rect gbqp = { 258, 307, 38, 120 };
 	SDL_RenderCopy(_SDLRenderer, gbq, NULL, &gbqp);
 
-	rekt.x = 300;
-	gbqp.x = 492;
+	rekt.x = 390;
+	gbqp.x = 344;
 
 	SDL_RenderCopy(_SDLRenderer, boardTexture2, NULL, &rekt);
 	SDL_RenderCopy(_SDLRenderer, gbq2, NULL, &gbqp);
@@ -58,5 +61,6 @@ SDL_Texture* GameRenderer::renderGame() {
 }
 
 GameRenderer::~GameRenderer() {
+	SDL_DestroyTexture(_bg);
 }
 

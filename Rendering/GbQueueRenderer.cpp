@@ -10,7 +10,7 @@
 GbQueueRenderer::GbQueueRenderer(Board& b) :
 		_board(b) {
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
-			SDL_TEXTUREACCESS_TARGET, 38, 200);
+			SDL_TEXTUREACCESS_TARGET, 38, 120);
 	SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
 }
 
@@ -18,7 +18,7 @@ SDL_Texture* GbQueueRenderer::renderQueue() {
 	SDL_SetRenderTarget(_SDLRenderer, _texture);
 	SDL_SetRenderDrawColor(_SDLRenderer, 0x00, 0x00, 0x00, 0x00);
 	SDL_RenderClear(_SDLRenderer);
-	SDL_Rect pos = { 0, 200, 38, 8 };
+	SDL_Rect pos = { 0, 120, 38, 8 };
 	for (auto it = _board.getGarbageQueue().begin();
 			it != _board.getGarbageQueue().end(); ++it) {
 		if (it->spawnTimer <= 0) {

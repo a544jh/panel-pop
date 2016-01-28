@@ -11,10 +11,7 @@
 #include <string>
 
 TitleScreenRenderer::TitleScreenRenderer() {
-	std::string path = "assets/title.png";
-	SDL_Surface* surface = IMG_Load(path.c_str());
-	_titleImg = SDL_CreateTextureFromSurface(_SDLRenderer, surface);
-	SDL_FreeSurface(surface);
+	_titleImg = _SDLContext.makeTextureFromImage("assets/title.png");
 }
 
 TitleScreenRenderer::~TitleScreenRenderer() {
@@ -30,12 +27,12 @@ SDL_Texture* TitleScreenRenderer::render() {
 		SDL_RenderFillRect(_SDLRenderer,&box);
 	}
 
-	SDL_Color color = {0,0,0};
-	SDL_Texture* testfont = _SDLContext.makeTextureFromFont("PANEL POP",color,_SDLContext._squareFont);
-	SDL_SetTextureAlphaMod(testfont, 0x50);
-	SDL_Rect testr {50,350,0,0};
-	SDL_QueryTexture(testfont,NULL,NULL,&testr.w,&testr.h);
-	SDL_RenderCopy(_SDLRenderer, testfont,NULL,&testr);
-	SDL_DestroyTexture(testfont);
+//	SDL_Color color = {0,0,0};
+//	SDL_Texture* testfont = _SDLContext.makeTextureFromFont("PANEL POP",color,_SDLContext._squareFont);
+//	SDL_SetTextureAlphaMod(testfont, 0x50);
+//	SDL_Rect testr {50,350,0,0};
+//	SDL_QueryTexture(testfont,NULL,NULL,&testr.w,&testr.h);
+//	SDL_RenderCopy(_SDLRenderer, testfont,NULL,&testr);
+//	SDL_DestroyTexture(testfont);
 	return _texture;
 }

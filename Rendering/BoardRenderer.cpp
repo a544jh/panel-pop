@@ -21,6 +21,7 @@ BoardRenderer::BoardRenderer(Board& board) :
 		_board(board) {
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, BOARD_WIDTH, BOARD_HEIGHT);
+	SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
 }
 
 void BoardRenderer::tick() {
@@ -31,7 +32,7 @@ void BoardRenderer::tick() {
 
 SDL_Texture* BoardRenderer::renderBoard() {
 	SDL_SetRenderTarget(_SDLRenderer, _texture);
-	SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0xFF, 0x00);
 	SDL_RenderClear(_SDLRenderer);
 
 	drawBlocks();
