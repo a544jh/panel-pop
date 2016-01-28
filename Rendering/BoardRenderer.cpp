@@ -22,6 +22,16 @@ BoardRenderer::BoardRenderer(Board& board) :
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, BOARD_WIDTH, BOARD_HEIGHT);
 	SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
+	_readyText = _SDLContext.makeTextureFromFont("READY", { 0, 0, 0 },
+			_SDLContext._squareFont);
+	_3Text = _SDLContext.makeTextureFromFont("3", { 0, 0, 0 },
+			_SDLContext._squareFont);
+	_2Text = _SDLContext.makeTextureFromFont("2", { 0, 0, 0 },
+			_SDLContext._squareFont);
+	_1Text = _SDLContext.makeTextureFromFont("1", { 0, 0, 0 },
+			_SDLContext._squareFont);
+	_goText = _SDLContext.makeTextureFromFont("GO!", { 0, 0, 0 },
+			_SDLContext._squareFont);
 }
 
 void BoardRenderer::tick() {
@@ -41,6 +51,33 @@ SDL_Texture* BoardRenderer::renderBoard() {
 	//drawGrid();
 	drawCursor();
 	drawPopups();
+	uint32_t time = SDL_GetTicks() - _board.getStartTime();
+	if (_board.getState() == Board::COUNTDOWN) {
+		SDL_Rect pos = { 2, 100 };
+		SDL_QueryTexture(_readyText, NULL, NULL, &pos.w, &pos.h);
+		pos.x = (BOARD_WIDTH - pos.w) / 2;
+		SDL_RenderCopy(_SDLRenderer, _readyText, NULL, &pos);
+		pos.y += 42;
+		SDL_Texture* digit;
+
+		if (time < Board::COUNTDOWN_MS / 3) {
+			digit = _3Text;
+		} else if (time < 2 * Board::COUNTDOWN_MS / 3) {
+			digit = _2Text;
+		} else {
+			digit = _1Text;
+		}
+		SDL_QueryTexture(digit, NULL, NULL, &pos.w, &pos.h);
+		pos.x = (BOARD_WIDTH - pos.w) / 2;
+		SDL_RenderCopy(_SDLRenderer, digit, NULL, &pos);
+	}
+	if (time < Board::COUNTDOWN_MS + Board::COUNTDOWN_MS / 3
+			&& time > Board::COUNTDOWN_MS) {
+		SDL_Rect pos = { 0, 142 };
+		SDL_QueryTexture(_goText, NULL, NULL, &pos.w, &pos.h);
+		pos.x = (BOARD_WIDTH - pos.w) / 2;
+		SDL_RenderCopy(_SDLRenderer, _goText, NULL, &pos);
+	}
 
 	return _texture;
 }
@@ -61,6 +98,11 @@ void BoardRenderer::drawGrid() {
 
 void BoardRenderer::drawBlocks() {
 	SDL_SetRenderDrawBlendMode(_SDLRenderer, SDL_BLENDMODE_BLEND);
+	if (_board.getState() == Board::COUNTDOWN) {
+		SDL_SetTextureAlphaMod(_spriteSheet, 0x50);
+	} else {
+		SDL_SetTextureAlphaMod(_spriteSheet, 0xff);
+	}
 	for (int i = 0; i < Board::BOARD_HEIGHT; i++) {
 		for (int j = 0; j < Board::BOARD_WIDTH; j++) {
 			if (_board.getTile(i, j).type == BLOCK) {
@@ -305,6 +347,11 @@ void BoardRenderer::handleCombo() {
 }
 
 BoardRenderer::~BoardRenderer() {
+	SDL_DestroyTexture(_readyText);
+	SDL_DestroyTexture(_3Text);
+	SDL_DestroyTexture(_2Text);
+	SDL_DestroyTexture(_1Text);
+	SDL_DestroyTexture(_goText);
 }
 
 void BoardRenderer::drawPopups() {

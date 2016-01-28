@@ -13,7 +13,6 @@ GameRenderer::GameRenderer(Game& game) :
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, 640, 480);
 	_bg = _SDLContext.makeTextureFromImage("assets/2p.png");
-
 }
 
 void GameRenderer::tick() {

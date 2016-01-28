@@ -14,7 +14,7 @@
 #include <list>
 #include "Popup.h"
 
-class BoardRenderer : public Renderer {
+class BoardRenderer: public Renderer {
 public:
 	static const int BOARD_WIDTH, BOARD_HEIGHT, TILE_SIZE, CURSOR_ANIM_TICKS;
 
@@ -34,8 +34,14 @@ private:
 	void handlePopups();
 	void drawPopups();
 	SDL_Rect getBlockSprite(const Block&);
-	SDL_Rect getGarbageBlockSprite(int,int, const GarbageBlock&);
+	SDL_Rect getGarbageBlockSprite(int, int, const GarbageBlock&);
 	std::list<Popup*> _popups;
+
+	SDL_Texture* _readyText;
+	SDL_Texture* _3Text;
+	SDL_Texture* _2Text;
+	SDL_Texture* _1Text;
+	SDL_Texture* _goText;
 };
 
 #endif /* BOARDRENDERER_H_ */
