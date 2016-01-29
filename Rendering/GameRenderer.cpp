@@ -12,7 +12,9 @@ GameRenderer::GameRenderer(Game& game) :
 				_game._board2), _gbqr(_game._board), _gbqr2(_game._board2) {
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, 640, 480);
-	_bg = _SDLContext.makeTextureFromImage("assets/2p.png");
+	_bg = _SDLContext.makeTextureFromImage("assets/bg1.png");
+	_2pbg = _SDLContext.makeTextureFromImage("assets/2p.png");
+	SDL_SetTextureBlendMode(_2pbg, SDL_BLENDMODE_BLEND);
 }
 
 void GameRenderer::tick() {
@@ -34,6 +36,7 @@ SDL_Texture* GameRenderer::renderGame() {
 	SDL_RenderClear(_SDLRenderer);
 
 	SDL_RenderCopy(_SDLRenderer, _bg, NULL, NULL);
+	SDL_RenderCopy(_SDLRenderer, _2pbg, NULL, NULL);
 
 	SDL_Rect rekt;
 	rekt.x = 58;
@@ -61,5 +64,6 @@ SDL_Texture* GameRenderer::renderGame() {
 
 GameRenderer::~GameRenderer() {
 	SDL_DestroyTexture(_bg);
+	SDL_DestroyTexture(_2pbg);
 }
 

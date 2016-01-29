@@ -30,15 +30,15 @@ BoardRenderer::BoardRenderer(Board& board) :
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, BOARD_WIDTH, BOARD_HEIGHT);
 	SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
-	_readyText = _SDLContext.makeTextureFromFont("READY", { 0, 0, 0 },
+	_readyText = _SDLContext.makeTextureFromFont("READY", { 255, 255, 255 },
 			_SDLContext._squareFont);
-	_3Text = _SDLContext.makeTextureFromFont("3", { 0, 0, 0 },
+	_3Text = _SDLContext.makeTextureFromFont("3", { 255, 255, 255 },
 			_SDLContext._squareFont);
-	_2Text = _SDLContext.makeTextureFromFont("2", { 0, 0, 0 },
+	_2Text = _SDLContext.makeTextureFromFont("2", { 255, 255, 255 },
 			_SDLContext._squareFont);
-	_1Text = _SDLContext.makeTextureFromFont("1", { 0, 0, 0 },
+	_1Text = _SDLContext.makeTextureFromFont("1", { 255, 255, 255 },
 			_SDLContext._squareFont);
-	_goText = _SDLContext.makeTextureFromFont("GO!", { 0, 0, 0 },
+	_goText = _SDLContext.makeTextureFromFont("GO!", { 255, 255, 255 },
 			_SDLContext._squareFont);
 }
 
@@ -105,7 +105,7 @@ void BoardRenderer::drawGrid() {
 }
 
 void BoardRenderer::drawBlocks() {
-	SDL_SetRenderDrawBlendMode(_SDLRenderer, SDL_BLENDMODE_BLEND);
+	//SDL_SetRenderDrawBlendMode(_SDLRenderer, SDL_BLENDMODE_BLEND);
 	if (_board.getState() == Board::COUNTDOWN) {
 		SDL_SetTextureAlphaMod(_spriteSheet, 0xa0);
 	} else {

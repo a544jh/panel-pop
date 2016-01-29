@@ -31,6 +31,7 @@ void Game::tick() {
 			} else if (_board2.getState() == Board::RUNNING) {
 				_board2.pause();
 			}
+			inputTogglePause();
 		}
 	}
 }
@@ -66,6 +67,7 @@ void Game::handleGarbageSpawning(Board& b1, Board& b2) {
 }
 
 void Game::reset() {
+	_paused = false;
 	_startTime = SDL_GetTicks();
 	_board = Board(this); //fix this :P
 	_board2 = Board(this);

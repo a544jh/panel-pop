@@ -27,6 +27,7 @@ private:
 	GbQueueRenderer _gbqr;
 	GbQueueRenderer _gbqr2;
 	SDL_Texture* _bg;
+	SDL_Texture* _2pbg;
 };
 
 #endif /* GAMERENDERER_H_ */
