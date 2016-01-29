@@ -14,6 +14,8 @@
 #include "Block.h"
 #include "GarbageBlock.h"
 
+class Game;
+
 enum Direction {
 	UP, RIGHT, DOWN, LEFT
 };
@@ -45,7 +47,7 @@ public:
 		RUNNING, COUNTDOWN, PAUSED, GAME_OVER
 	};
 
-	Board();
+	Board(Game*);
 
 	virtual ~Board();
 
@@ -84,11 +86,12 @@ public:
 	int getGraceTimer() const;
 	int getLastChain() const;
 	unsigned int getTicksRun() const;
-	uint32_t getStartTime() const;
 	const Tile& getTile(int, int) const;
 	const std::list<GarbageBlock>& getGarbageBlocks() const;
 	const std::list<GarbageSpawn>& getGarbageQueue() const;
 	void pause();
+	Game& getGame() const;
+	uint32_t getTime() const;
 
 private:
 
@@ -99,7 +102,6 @@ private:
 
 	BoardState _state;
 	unsigned int _ticksRun;
-	uint32_t _startTime;
 	int _garbageSpawnPositions[3];
 	int _cursorX, _cursorY;
 	int _tickMatched; //how many blocks got matched this tick
@@ -141,6 +143,7 @@ private:
 	bool garbageBlockCanFall(GarbageBlock&);
 	bool swappable(int, int);
 	bool spawnGarbage(int,int,int,int, GarbageBlockType);
+	Game* _game;
 };
 
 #endif /* BOARD_H_ */

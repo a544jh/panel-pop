@@ -11,6 +11,7 @@
 #include "Board.h"
 #include "KeyboardController.h"
 
+
 class Game {
 public:
 	Game();
@@ -28,12 +29,15 @@ public:
 	}
 
 	bool isAdvanceTick() const;
+	uint32_t getTime();
 
 private:
 	bool _paused;
 	int _ticksRun;
 	void handleGarbageSpawning(Board&, Board&);
 	bool _advanceTick; //debug "frame advance" feature
+	uint32_t _startTime;
+	uint32_t _pausedTime;
 };
 
 #endif /* GAME_H_ */

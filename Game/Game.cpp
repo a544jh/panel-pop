@@ -7,10 +7,13 @@
 
 #include "Game.h"
 
-#include "Board.h"
+#include <SDL_timer.h>
+
+#include "GarbageBlock.h"
 
 Game::Game() :
-		_paused(false), _ticksRun(0), _advanceTick(false) {
+		_paused(false), _ticksRun(0), _advanceTick(false), _startTime(
+				SDL_GetTicks()), _pausedTime(0), _board(this), _board2(this) {
 }
 
 void Game::tick() {
@@ -63,12 +66,27 @@ void Game::handleGarbageSpawning(Board& b1, Board& b2) {
 }
 
 void Game::reset() {
-	_board = Board(); //fix this :P
-	_board2 = Board();
+	_startTime = SDL_GetTicks();
+	_board = Board(this); //fix this :P
+	_board2 = Board(this);
 }
 
 void Game::inputTogglePause() {
+	if (!_paused) {
+		_pausedTime = SDL_GetTicks() - _startTime;
+		_startTime = 0;
+	} else {
+		_startTime = SDL_GetTicks() - _pausedTime;
+		_pausedTime = 0;
+	}
 	_paused = !_paused;
+}
+
+uint32_t Game::getTime() {
+	if(_paused){
+		return _pausedTime;
+	}
+	return SDL_GetTicks() - _startTime;
 }
 
 void Game::inputAdvanceTick() {

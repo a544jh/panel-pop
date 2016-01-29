@@ -6,16 +6,24 @@
  */
 
 #include "BoardRenderer.h"
-#include "../Game/Board.h"
-#include <iostream>
+
+#include <stddef.h>
+#include <SDL_blendmode.h>
+#include <SDL_pixels.h>
+#include <SDL_rect.h>
+#include <SDL_render.h>
+#include <cstdint>
+
+#include "../Game/Block.h"
+#include "../Game/GarbageBlock.h"
+#include "../SDLContext.h"
 #include "ChainPopup.h"
 #include "ComboPopup.h"
-#include "../Game/GarbageBlock.h"
 
 const int BoardRenderer::BOARD_WIDTH = 192;
 const int BoardRenderer::BOARD_HEIGHT = 384;
 const int BoardRenderer::TILE_SIZE = 32;
-const int BoardRenderer::CURSOR_ANIM_TICKS = 30;
+const int BoardRenderer::CURSOR_ANIM_MS = 500;
 
 BoardRenderer::BoardRenderer(Board& board) :
 		_board(board) {
@@ -51,7 +59,7 @@ SDL_Texture* BoardRenderer::renderBoard() {
 	//drawGrid();
 	drawCursor();
 	drawPopups();
-	uint32_t time = SDL_GetTicks() - _board.getStartTime();
+	uint32_t time = _board.getTime();
 	if (_board.getState() == Board::COUNTDOWN) {
 		SDL_Rect pos = { 2, 100 };
 		SDL_QueryTexture(_readyText, NULL, NULL, &pos.w, &pos.h);
@@ -99,7 +107,7 @@ void BoardRenderer::drawGrid() {
 void BoardRenderer::drawBlocks() {
 	SDL_SetRenderDrawBlendMode(_SDLRenderer, SDL_BLENDMODE_BLEND);
 	if (_board.getState() == Board::COUNTDOWN) {
-		SDL_SetTextureAlphaMod(_spriteSheet, 0x50);
+		SDL_SetTextureAlphaMod(_spriteSheet, 0xa0);
 	} else {
 		SDL_SetTextureAlphaMod(_spriteSheet, 0xff);
 	}
@@ -315,7 +323,7 @@ void BoardRenderer::drawGarbageBlocks() {
 
 void BoardRenderer::drawCursor() {
 	SDL_Rect sprite = { 224, 64, 76, 44 };
-	if (_board.getTicksRun() % (2 * CURSOR_ANIM_TICKS) >= CURSOR_ANIM_TICKS) {
+	if (_board.getTime() % (2 * CURSOR_ANIM_MS) >= CURSOR_ANIM_MS) {
 		sprite.y += 44;
 	}
 	SDL_Rect pos = { (_board.getCursorX() * TILE_SIZE) - 6, (BOARD_HEIGHT

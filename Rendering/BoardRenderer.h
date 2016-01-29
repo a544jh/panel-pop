@@ -8,15 +8,15 @@
 #ifndef BOARDRENDERER_H_
 #define BOARDRENDERER_H_
 
-#include "../Game/Board.h"
-#include "Renderer.h"
-#include <SDL2/SDL.h>
 #include <list>
+
+#include "../Game/Board.h"
 #include "Popup.h"
+
 
 class BoardRenderer: public Renderer {
 public:
-	static const int BOARD_WIDTH, BOARD_HEIGHT, TILE_SIZE, CURSOR_ANIM_TICKS;
+	static const int BOARD_WIDTH, BOARD_HEIGHT, TILE_SIZE, CURSOR_ANIM_MS;
 
 	BoardRenderer(Board&);
 	virtual ~BoardRenderer();

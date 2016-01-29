@@ -9,14 +9,15 @@
 
 #include <SDL_timer.h>
 #include <iostream>
-#include <list>
 
-Board::Board() :
-		_cursorX(2), _cursorY(5), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
-				0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
-				false), _state(COUNTDOWN), _graceTimer(0), _blockOnTopRow(false), _tickChainEnd(
-				false), _lastChain(0), _garbageSpawnPositions( { 0 }), _ticksRun(
-				0), _startTime(SDL_GetTicks()) {
+#include "Game.h"
+
+Board::Board(Game* game) :
+_game(game),_cursorX(2), _cursorY(5), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
+		0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
+		false), _state(COUNTDOWN), _graceTimer(0), _blockOnTopRow(false), _tickChainEnd(
+		false), _lastChain(0), _garbageSpawnPositions( {0} ), _ticksRun(
+		0) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -252,7 +253,8 @@ void Board::initTick() {
 		}
 	}
 	//speed up stack raising (within 2 mins)
-	if (_ticksRun % 1440 == 1439 && _stackRaiseTicks > 0) {
+	if (_game->getTime() % 12000 == 11999
+			&& _stackRaiseTicks > 0) {
 		--_stackRaiseTicks;
 	}
 	++_ticksRun;
@@ -623,7 +625,7 @@ bool Board::activeBlocks() {
 
 void Board::tick() {
 	if (_state == COUNTDOWN) {
-		if (SDL_GetTicks() - _startTime > COUNTDOWN_MS) {
+		if (_game->getTime() > COUNTDOWN_MS) {
 			_state = RUNNING;
 		}
 	} else if (_state == RUNNING) {
@@ -639,7 +641,7 @@ void Board::tick() {
 	}
 }
 
-void Board::pause(){
+void Board::pause() {
 	_state = PAUSED;
 }
 
@@ -731,6 +733,10 @@ unsigned int Board::getTicksRun() const {
 	return _ticksRun;
 }
 
-uint32_t Board::getStartTime() const {
-	return _startTime;
+Game& Board::getGame() const {
+	return *_game;
+}
+
+uint32_t Board::getTime() const {
+	return _game->getTime();
 }
