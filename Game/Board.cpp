@@ -253,8 +253,7 @@ void Board::initTick() {
 		}
 	}
 	//speed up stack raising (within 2 mins)
-	if (_game->getTime() % 12000 == 11999
-			&& _stackRaiseTicks > 0) {
+	if (_ticksRun % 1440 == 1439 && _stackRaiseTicks > 0) {
 		--_stackRaiseTicks;
 	}
 	++_ticksRun;
