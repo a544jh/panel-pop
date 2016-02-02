@@ -17,7 +17,7 @@
 class Game;
 
 enum Direction {
-	UP, RIGHT, DOWN, LEFT
+	UP, RIGHT, DOWN, LEFT, NONE
 };
 
 enum TileType {

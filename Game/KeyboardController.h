@@ -19,6 +19,12 @@ public:
 	void tick();
 	virtual ~KeyboardController();
 	KeyboardControllerConfig _config;
+	const uint32_t REPEAT_MS = 200; //until direction starts repeating
+
+private:
+	Direction _directionHeld;
+	uint32_t _holdBegin;
+	int getDirectionKey(Direction);
 };
 
 #endif /* GAME_KEYBOARDCONTROLLER_H_ */

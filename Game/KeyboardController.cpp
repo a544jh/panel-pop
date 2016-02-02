@@ -12,20 +12,52 @@
 #include "Board.h"
 
 KeyboardController::KeyboardController(Board& b, KeyboardControllerConfig& c) :
-		BoardController(b), _config(c) {
+		BoardController(b), _config(c), _directionHeld(NONE), _holdBegin(0) {
+}
+
+int KeyboardController::getDirectionKey(Direction d) {
+	switch (d) {
+	case UP:
+		return _config.up;
+		break;
+	case DOWN:
+		return _config.down;
+		break;
+	case LEFT:
+		return _config.left;
+		break;
+	case RIGHT:
+		return _config.right;
+		break;
+	default:
+		return 0;
+		break;
+	}
 }
 
 void KeyboardController::tick() {
 	InputManager& input = InputManager::getInstance();
+	Direction directions[] = { UP, DOWN, LEFT, RIGHT };
 
-	if (input.keyDown(_config.up)) {
-		_board.inputMoveCursor(UP);
-	} else if (input.keyDown(_config.down)) {
-		_board.inputMoveCursor(DOWN);
-	} else if (input.keyDown(_config.left)) {
-		_board.inputMoveCursor(LEFT);
-	} else if (input.keyDown(_config.right)) {
-		_board.inputMoveCursor(RIGHT);
+	for (int i = 0; i < 4; ++i) {
+		if (directions[i] == _directionHeld) {
+			if (!input.keyPressed(getDirectionKey(_directionHeld))) {
+				_directionHeld = NONE;
+				break;
+			} else if (SDL_GetTicks() - _holdBegin >= REPEAT_MS) {
+				_board.inputMoveCursor(_directionHeld);
+			}
+		}
+	}
+
+	if (_directionHeld == NONE || SDL_GetTicks() - _holdBegin < REPEAT_MS) {
+		for (int i = 0; i < 4; ++i) {
+			if (input.keyDown(getDirectionKey(directions[i]))) {
+				_board.inputMoveCursor(directions[i]);
+				_directionHeld = directions[i];
+				_holdBegin = SDL_GetTicks();
+			}
+		}
 	}
 
 	if (input.keyDown(_config.swap)) {

@@ -21,6 +21,7 @@ public:
 	 std::array<bool, KEYBOARD_SIZE> _prevKeys;
 	 bool keyDown(int); // key pressed down this poll
 	 bool anyKeyDown();
+	 bool keyUp(int);
 	 bool keyPressed(int); // key is down now
 private:
 	InputManager();
