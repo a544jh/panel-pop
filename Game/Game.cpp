@@ -24,15 +24,15 @@ void Game::tick() {
 		handleGarbageSpawning(_board2, _board);
 		_board.tick();
 		_board2.tick();
-		if (_board.getState() == Board::GAME_OVER
-				|| _board2.getState() == Board::GAME_OVER) {
-			if (_board.getState() == Board::RUNNING) {
-				_board.pause();
-			} else if (_board2.getState() == Board::RUNNING) {
-				_board2.pause();
-			}
-			inputTogglePause();
-		}
+//		if (_board.getState() == Board::GAME_OVER
+//				|| _board2.getState() == Board::GAME_OVER) {
+//			if (_board.getState() == Board::RUNNING) {
+//				_board.pause();
+//			} else if (_board2.getState() == Board::RUNNING) {
+//				_board2.pause();
+//			}
+//			inputTogglePause();
+//		}
 	}
 }
 

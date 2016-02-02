@@ -19,10 +19,10 @@ public:
 	SDL_Texture* render();
 	virtual ~GameState();
 private:
-	Game game;
-	GameRenderer renderer;
-	KeyboardController kbc;
-	KeyboardController kbc2;
+	Game _game;
+	GameRenderer _renderer;
+	KeyboardController _kbc;
+	KeyboardController _kbc2;
 };
 
 #endif /* STATES_GAMESTATE_H_ */

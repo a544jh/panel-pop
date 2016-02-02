@@ -7,6 +7,16 @@
 
 #include "GameRenderer.h"
 
+#include <stddef.h>
+#include <SDL2/SDL_blendmode.h>
+#include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_render.h>
+#include <sstream>
+#include <iomanip>
+
+#include "../SDLContext.h"
+
 GameRenderer::GameRenderer(Game& game) :
 		_game(game), _boardRenderer(_game._board), _boardRenderer2(
 				_game._board2), _gbqr(_game._board), _gbqr2(_game._board2) {
@@ -53,6 +63,8 @@ SDL_Texture* GameRenderer::renderGame() {
 	SDL_RenderCopy(_SDLRenderer, boardTexture2, NULL, &rekt);
 	SDL_RenderCopy(_SDLRenderer, gbq2, NULL, &gbqp);
 
+	renderStatsText();
+
 	if (_game.isPaused()) {
 		SDL_SetTextureColorMod(_texture, 0x50, 0x50, 0x50);
 	} else {
@@ -60,6 +72,26 @@ SDL_Texture* GameRenderer::renderGame() {
 	}
 
 	return _texture;
+}
+
+void GameRenderer::renderStatsText() {
+	//time
+	std::ostringstream os;
+	uint32_t time;
+	if (_game._board.getState() == Board::COUNTDOWN) {
+		time = 0;
+	} else {
+		time = _game.getTime() - Board::COUNTDOWN_MS;
+	}
+	os << (time / 1000 / 60) << "\u2019" << std::setw(2) << std::setfill('0')
+			<< ((time / 1000) % 60) << "\u201d";
+	SDL_Texture* timeTexture = _SDLContext.makeTextureFromFont(os.str(), { 255,
+			255, 255 }, _SDLContext._psFont);
+	SDL_Rect pos = { 280, 218, 0, 0 };
+	SDL_QueryTexture(timeTexture, NULL, NULL, &pos.w, &pos.h);
+	SDL_RenderCopy(_SDLRenderer, timeTexture, NULL, &pos);
+	SDL_RenderDrawRect(_SDLRenderer,&pos);
+	SDL_DestroyTexture(timeTexture);
 }
 
 GameRenderer::~GameRenderer() {

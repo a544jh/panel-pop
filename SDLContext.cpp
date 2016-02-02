@@ -83,7 +83,7 @@ bool SDLContext::loadFonts() {
 
 SDL_Texture* SDLContext::makeTextureFromFont(std::string text, SDL_Color color,
 		TTF_Font* font) {
-	SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), color);
+	SDL_Surface* surface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
 	if (surface == NULL) {
 		std::cout << TTF_GetError();
 		return NULL;

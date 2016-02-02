@@ -10,31 +10,31 @@
 #include <SDL2/SDL.h>
 #include "../InputManager.h"
 GameState::GameState(KeyboardControllerConfig& c1, KeyboardControllerConfig& c2) :
-		game(), renderer(game), kbc(game._board, c1),
-		kbc2(game._board2, c2) {
+		_game(), _renderer(_game), _kbc(_game._board, c1),
+		_kbc2(_game._board2, c2) {
 }
 
 void GameState::tick() {
 	InputManager& input = InputManager::getInstance();
 	if (input.keyDown(SDL_SCANCODE_5)) {
-		game.inputTogglePause();
+		_game.inputTogglePause();
 	}
 	if (input.keyPressed(SDL_SCANCODE_K)) {
-			game.inputAdvanceTick();
+			_game.inputAdvanceTick();
 		}
 	if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
-			game.reset();
+			_game.reset();
 		}
-	if (!game.isPaused() || game.isAdvanceTick()) {
-		kbc.tick();
-		kbc2.tick();
+	if (!_game.isPaused() || _game.isAdvanceTick()) {
+		_kbc.tick();
+		_kbc2.tick();
 	}
-	game.tick();
-	renderer.tick();
+	_game.tick();
+	_renderer.tick();
 }
 
 SDL_Texture* GameState::render() {
-	return renderer.renderGame();
+	return _renderer.renderGame();
 }
 
 GameState::~GameState() {

@@ -14,6 +14,7 @@
 #include "States/StateManager.h"
 
 int main(int argc, char* args[]) {
+	setlocale(LC_ALL,"");
 	srand(time(NULL));
 	SDLContext& SDL = SDLContext::getInstance();
 	InputManager& input = InputManager::getInstance();

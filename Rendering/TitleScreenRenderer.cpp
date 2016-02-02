@@ -11,6 +11,8 @@
 #include <string>
 
 TitleScreenRenderer::TitleScreenRenderer() {
+	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
+			SDL_TEXTUREACCESS_TARGET, 640, 480);
 	_titleImg = _SDLContext.makeTextureFromImage("assets/title.png");
 }
 
@@ -19,12 +21,13 @@ TitleScreenRenderer::~TitleScreenRenderer() {
 }
 
 SDL_Texture* TitleScreenRenderer::render() {
-	SDL_RenderCopy(_SDLRenderer,_titleImg,NULL,NULL);
+	SDL_SetRenderTarget(_SDLRenderer, _texture);
+	SDL_RenderCopy(_SDLRenderer, _titleImg, NULL, NULL);
 	//blinking text
-	if(SDL_GetTicks() % 1000 < 500){
-		SDL_SetRenderDrawColor(_SDLRenderer,0xff,0xff,0xff,0xff);
-		SDL_Rect box = {311,262,190,14};
-		SDL_RenderFillRect(_SDLRenderer,&box);
+	if (SDL_GetTicks() % 1000 < 500) {
+		SDL_SetRenderDrawColor(_SDLRenderer, 0xff, 0xff, 0xff, 0xff);
+		SDL_Rect box = { 311, 262, 190, 14 };
+		SDL_RenderFillRect(_SDLRenderer, &box);
 	}
 
 //	SDL_Color color = {0,0,0};
