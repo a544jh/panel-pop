@@ -36,9 +36,11 @@ void Game::tick() {
 			}
 			if (_p1MatchPoints >= MATCH_POINTS) {
 				_p1MatchPoints = 0;
+				_p2MatchPoints = 0;
 				++_p1Points;
 			}
 			if (_p2MatchPoints >= MATCH_POINTS) {
+				_p1MatchPoints = 0;
 				_p2MatchPoints = 0;
 				++_p2Points;
 			}

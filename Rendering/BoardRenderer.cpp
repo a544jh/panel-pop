@@ -111,9 +111,7 @@ SDL_Texture* BoardRenderer::renderBoard() {
 		drawCursor();
 	}
 	drawPopups();
-	if (_board.getState() == Board::COUNTDOWN) {
-		drawCountdown();
-	}
+	drawCountdown();
 	if (_board.getState() == Board::WON
 			|| _board.getState() == Board::GAME_OVER) {
 		drawGameOver();
