@@ -8,11 +8,11 @@
 #include "StateManager.h"
 
 #include <stddef.h>
-#include <SDL_pixels.h>
-#include <SDL_rect.h>
-#include <SDL_render.h>
-#include <SDL_scancode.h>
-#include <SDL_timer.h>
+#include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_scancode.h>
+#include <SDL2/SDL_timer.h>
 #include <sstream>
 
 #include "../Config/KeyboardControllerConfig.h"

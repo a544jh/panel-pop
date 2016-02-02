@@ -7,7 +7,7 @@
 
 #include "Board.h"
 
-#include <SDL_timer.h>
+#include <SDL2/SDL_timer.h>
 #include <iostream>
 
 #include "Game.h"

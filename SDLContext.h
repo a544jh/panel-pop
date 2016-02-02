@@ -8,7 +8,7 @@
 #ifndef SDLCONTEXT_H_
 #define SDLCONTEXT_H_
 
-#include <SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include <string>
 
 class SDLContext {

@@ -8,10 +8,10 @@
 #include "BoardRenderer.h"
 
 #include <stddef.h>
-#include <SDL_blendmode.h>
-#include <SDL_pixels.h>
-#include <SDL_rect.h>
-#include <SDL_render.h>
+#include <SDL2/SDL_blendmode.h>
+#include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_render.h>
 #include <cstdint>
 
 #include "../Game/Block.h"
