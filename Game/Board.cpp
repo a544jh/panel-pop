@@ -640,8 +640,8 @@ void Board::tick() {
 	}
 }
 
-void Board::pause() {
-	_state = PAUSED;
+void Board::win() {
+	_state = WON;
 }
 
 Board::~Board() {

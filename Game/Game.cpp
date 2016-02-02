@@ -24,20 +24,47 @@ void Game::tick() {
 		handleGarbageSpawning(_board2, _board);
 		_board.tick();
 		_board2.tick();
-//		if (_board.getState() == Board::GAME_OVER
-//				|| _board2.getState() == Board::GAME_OVER) {
-//			if (_board.getState() == Board::RUNNING) {
-//				_board.pause();
-//			} else if (_board2.getState() == Board::RUNNING) {
-//				_board2.pause();
-//			}
-//			inputTogglePause();
-//		}
+
+		if (_board.getState() == Board::GAME_OVER
+				|| _board2.getState() == Board::GAME_OVER) {
+			if (_board.getState() == Board::RUNNING) {
+				_board.win();
+				++_p1MatchPoints;
+			} else if (_board2.getState() == Board::RUNNING) {
+				_board2.win();
+				++_p2MatchPoints;
+			}
+			if (_p1MatchPoints >= MATCH_POINTS) {
+				_p1MatchPoints = 0;
+				++_p1Points;
+			}
+			if (_p2MatchPoints >= MATCH_POINTS) {
+				_p2MatchPoints = 0;
+				++_p2Points;
+			}
+			inputTogglePause();
+		}
 	}
 }
 
 bool Game::isAdvanceTick() const {
 	return _advanceTick;
+}
+
+int Game::getP1MatchPoints() const {
+	return _p1MatchPoints;
+}
+
+int Game::getP1Points() const {
+	return _p1Points;
+}
+
+int Game::getP2MatchPoints() const {
+	return _p2MatchPoints;
+}
+
+int Game::getP2Points() const {
+	return _p2Points;
 }
 
 void Game::handleGarbageSpawning(Board& b1, Board& b2) {
@@ -85,7 +112,7 @@ void Game::inputTogglePause() {
 }
 
 uint32_t Game::getTime() {
-	if(_paused){
+	if (_paused) {
 		return _pausedTime;
 	}
 	return SDL_GetTicks() - _startTime;

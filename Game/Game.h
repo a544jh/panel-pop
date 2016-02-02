@@ -17,6 +17,9 @@ public:
 	Game();
 	Board _board;
 	Board _board2;
+
+	static const int MATCH_POINTS = 2;
+
 	virtual ~Game();
 	void tick();
 	void reset();
@@ -30,6 +33,10 @@ public:
 
 	bool isAdvanceTick() const;
 	uint32_t getTime();
+	int getP1MatchPoints() const;
+	int getP1Points() const;
+	int getP2MatchPoints() const;
+	int getP2Points() const;
 
 private:
 	bool _paused;
@@ -38,6 +45,10 @@ private:
 	bool _advanceTick; //debug "frame advance" feature
 	uint32_t _startTime;
 	uint32_t _pausedTime;
+	int _p1MatchPoints;
+	int _p2MatchPoints;
+	int _p1Points;
+	int _p2Points;
 };
 
 #endif /* GAME_H_ */

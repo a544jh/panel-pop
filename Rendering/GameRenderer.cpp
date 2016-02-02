@@ -64,6 +64,7 @@ SDL_Texture* GameRenderer::renderGame() {
 	SDL_RenderCopy(_SDLRenderer, gbq2, NULL, &gbqp);
 
 	renderStatsText();
+	renderMatchPoints();
 
 	if (_game.isPaused()) {
 		SDL_SetTextureColorMod(_texture, 0x50, 0x50, 0x50);
@@ -90,8 +91,45 @@ void GameRenderer::renderStatsText() {
 	SDL_Rect pos = { 280, 218, 0, 0 };
 	SDL_QueryTexture(timeTexture, NULL, NULL, &pos.w, &pos.h);
 	SDL_RenderCopy(_SDLRenderer, timeTexture, NULL, &pos);
-	SDL_RenderDrawRect(_SDLRenderer,&pos);
 	SDL_DestroyTexture(timeTexture);
+	//points
+	os.str("");
+	os.clear();
+	os << "\u25c0" << std::setw(2) << std::setfill('0') << _game.getP1Points()
+			<< ' ' << std::setw(2) << std::setfill('0') << _game.getP2Points()
+			<< "\u25b6";
+	SDL_Texture* pointsTexture = _SDLContext.makeTextureFromFont(os.str(), {
+			255, 255, 255 }, _SDLContext._psFont);
+	pos = {264,180,0,0};
+	SDL_QueryTexture(pointsTexture, NULL, NULL, &pos.w, &pos.h);
+	SDL_RenderCopy(_SDLRenderer, pointsTexture, NULL, &pos);
+	SDL_DestroyTexture(pointsTexture);
+}
+
+void GameRenderer::renderMatchPoints() {
+	//p1
+	SDL_Rect sprite = { 0, 361, 21, 21 };
+	SDL_Rect pos = { 259, 35, 21, 21 };
+	for (int i = 0; i < Game::MATCH_POINTS; ++i) {
+		if (_game.getP1MatchPoints() >= Game::MATCH_POINTS - i) {
+			sprite.x = 21;
+		} else {
+			sprite.x = 0;
+		}
+		SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
+		pos.y += 23;
+	}
+	//p2
+	pos = {359,35,21,21};
+	for (int i = 0; i < Game::MATCH_POINTS; ++i) {
+		if (_game.getP2MatchPoints() >= Game::MATCH_POINTS - i) {
+			sprite.x = 21;
+		} else {
+			sprite.x = 0;
+		}
+		SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
+		pos.y += 23;
+	}
 }
 
 GameRenderer::~GameRenderer() {

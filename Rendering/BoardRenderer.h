@@ -35,6 +35,9 @@ private:
 	void drawPopups();
 	SDL_Rect getBlockSprite(const Block&);
 	SDL_Rect getGarbageBlockSprite(int, int, const GarbageBlock&);
+	void drawCountdown();
+	void drawGameOver();
+
 	std::list<Popup*> _popups;
 
 	SDL_Texture* _readyText;
@@ -42,6 +45,8 @@ private:
 	SDL_Texture* _2Text;
 	SDL_Texture* _1Text;
 	SDL_Texture* _goText;
+	SDL_Texture* _loseText;
+	SDL_Texture* _winText;
 };
 
 #endif /* BOARDRENDERER_H_ */

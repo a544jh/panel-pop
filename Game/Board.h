@@ -44,7 +44,7 @@ public:
 	};
 
 	enum BoardState {
-		RUNNING, COUNTDOWN, PAUSED, GAME_OVER
+		RUNNING, COUNTDOWN, WON, GAME_OVER
 	};
 
 	Board(Game*);
@@ -89,7 +89,7 @@ public:
 	const Tile& getTile(int, int) const;
 	const std::list<GarbageBlock>& getGarbageBlocks() const;
 	const std::list<GarbageSpawn>& getGarbageQueue() const;
-	void pause();
+	void win();
 	Game& getGame() const;
 	uint32_t getTime() const;
 

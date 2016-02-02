@@ -40,6 +40,10 @@ BoardRenderer::BoardRenderer(Board& board) :
 			_SDLContext._squareFont);
 	_goText = _SDLContext.makeTextureFromFont("GO!", { 255, 255, 255 },
 			_SDLContext._squareFont);
+	_winText = _SDLContext.makeTextureFromFont("WIN!", { 255, 255, 255 },
+			_SDLContext._squareFont);
+	_loseText = _SDLContext.makeTextureFromFont("LOSE!", { 255, 255, 255 },
+			_SDLContext._squareFont);
 }
 
 void BoardRenderer::tick() {
@@ -48,17 +52,7 @@ void BoardRenderer::tick() {
 	handlePopups();
 }
 
-SDL_Texture* BoardRenderer::renderBoard() {
-	SDL_SetRenderTarget(_SDLRenderer, _texture);
-	SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0xFF, 0x00);
-	SDL_RenderClear(_SDLRenderer);
-
-	drawBlocks();
-	drawBufferRow();
-	drawGarbageBlocks();
-	//drawGrid();
-	drawCursor();
-	drawPopups();
+void BoardRenderer::drawCountdown() {
 	uint32_t time = _board.getTime();
 	if (_board.getState() == Board::COUNTDOWN) {
 		SDL_Rect pos = { 2, 100 };
@@ -67,7 +61,6 @@ SDL_Texture* BoardRenderer::renderBoard() {
 		SDL_RenderCopy(_SDLRenderer, _readyText, NULL, &pos);
 		pos.y += 42;
 		SDL_Texture* digit;
-
 		if (time < Board::COUNTDOWN_MS / 3) {
 			digit = _3Text;
 		} else if (time < 2 * Board::COUNTDOWN_MS / 3) {
@@ -75,6 +68,7 @@ SDL_Texture* BoardRenderer::renderBoard() {
 		} else {
 			digit = _1Text;
 		}
+
 		SDL_QueryTexture(digit, NULL, NULL, &pos.w, &pos.h);
 		pos.x = (BOARD_WIDTH - pos.w) / 2;
 		SDL_RenderCopy(_SDLRenderer, digit, NULL, &pos);
@@ -86,7 +80,44 @@ SDL_Texture* BoardRenderer::renderBoard() {
 		pos.x = (BOARD_WIDTH - pos.w) / 2;
 		SDL_RenderCopy(_SDLRenderer, _goText, NULL, &pos);
 	}
+}
 
+void BoardRenderer::drawGameOver() {
+	if (_board.getState() == Board::WON) {
+		SDL_Rect pos = { 2, 100 };
+		SDL_QueryTexture(_winText, NULL, NULL, &pos.w, &pos.h);
+		pos.x = (BOARD_WIDTH - pos.w) / 2;
+		SDL_RenderCopy(_SDLRenderer, _winText, NULL, &pos);
+	}
+	if (_board.getState() == Board::GAME_OVER) {
+		SDL_Rect pos = { 2, 100 };
+		SDL_QueryTexture(_loseText, NULL, NULL, &pos.w, &pos.h);
+		pos.x = (BOARD_WIDTH - pos.w) / 2;
+		SDL_RenderCopy(_SDLRenderer, _loseText, NULL, &pos);
+	}
+}
+
+SDL_Texture* BoardRenderer::renderBoard() {
+	SDL_SetRenderTarget(_SDLRenderer, _texture);
+	SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0xFF, 0x00);
+	SDL_RenderClear(_SDLRenderer);
+
+	drawBlocks();
+	drawBufferRow();
+	drawGarbageBlocks();
+	//drawGrid();
+	if (_board.getState() == Board::COUNTDOWN
+			|| _board.getState() == Board::RUNNING) {
+		drawCursor();
+	}
+	drawPopups();
+	if (_board.getState() == Board::COUNTDOWN) {
+		drawCountdown();
+	}
+	if (_board.getState() == Board::WON
+			|| _board.getState() == Board::GAME_OVER) {
+		drawGameOver();
+	}
 	return _texture;
 }
 
@@ -156,6 +187,7 @@ void BoardRenderer::drawBlocks() {
 			}
 		}
 	}
+	SDL_SetTextureAlphaMod(_spriteSheet, 0xff);
 }
 
 SDL_Rect BoardRenderer::getBlockSprite(const Block& block) {
@@ -360,6 +392,8 @@ BoardRenderer::~BoardRenderer() {
 	SDL_DestroyTexture(_2Text);
 	SDL_DestroyTexture(_1Text);
 	SDL_DestroyTexture(_goText);
+	SDL_DestroyTexture(_loseText);
+	SDL_DestroyTexture(_winText);
 }
 
 void BoardRenderer::drawPopups() {

@@ -29,6 +29,7 @@ private:
 	SDL_Texture* _bg;
 	SDL_Texture* _2pbg;
 	void renderStatsText();
+	void renderMatchPoints();
 };
 
 #endif /* GAMERENDERER_H_ */
