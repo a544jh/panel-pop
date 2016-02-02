@@ -39,15 +39,10 @@ void KeyboardController::tick() {
 	InputManager& input = InputManager::getInstance();
 	Direction directions[] = { UP, DOWN, LEFT, RIGHT };
 
-	for (int i = 0; i < 4; ++i) {
-		if (directions[i] == _directionHeld) {
-			if (!input.keyPressed(getDirectionKey(_directionHeld))) {
-				_directionHeld = NONE;
-				break;
-			} else if (SDL_GetTicks() - _holdBegin >= REPEAT_MS) {
-				_board.inputMoveCursor(_directionHeld);
-			}
-		}
+	if (!input.keyPressed(getDirectionKey(_directionHeld))) {
+		_directionHeld = NONE;
+	} else if (SDL_GetTicks() - _holdBegin >= REPEAT_MS) {
+		_board.inputMoveCursor(_directionHeld);
 	}
 
 	if (_directionHeld == NONE || SDL_GetTicks() - _holdBegin < REPEAT_MS) {
