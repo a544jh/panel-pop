@@ -11,7 +11,6 @@
 #include "Board.h"
 #include "KeyboardController.h"
 
-
 class Game {
 public:
 	Game();
@@ -24,7 +23,7 @@ public:
 	void tick();
 	void reset();
 	void inputTogglePause();
-	void inputAdvanceTick();//debug "frame advance" feature
+	void inputAdvanceTick(); //debug "frame advance" feature
 	const bool isPaused() const;
 
 	int getTicksRun() const {
@@ -39,7 +38,9 @@ public:
 	int getP2Points() const;
 
 private:
-	bool _paused;
+	enum class State {
+		RUNNING, PAUSED, ENDED
+	} _state;
 	int _ticksRun;
 	bool _advanceTick; //debug "frame advance" feature
 	uint32_t _startTime;

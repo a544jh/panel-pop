@@ -73,7 +73,7 @@ void Board::fillBufferRow() {
 }
 
 void Board::queueGarbage(bool fullWidth, int size, GarbageBlockType type) {
-	//TODO: checks and queue
+	//TODO: maybe locking for ongoing chains
 	GarbageSpawn g = { fullWidth, type, size, 80 };
 	_garbageQueue.push_back(g); //is there another way to do this properly?
 }

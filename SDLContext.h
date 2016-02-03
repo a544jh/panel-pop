@@ -25,6 +25,8 @@ public:
 
 	SDL_Texture* makeTextureFromImage(std::string);
 	SDL_Texture* makeTextureFromFont(std::string, SDL_Color, TTF_Font*);
+	void renderText(std::string, SDL_Color, TTF_Font*, int, int);
+
 	TTF_Font* _psFont;
 	TTF_Font* _squareFont;
 private:

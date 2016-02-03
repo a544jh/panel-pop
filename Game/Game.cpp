@@ -14,7 +14,7 @@
 Game::Game() :
 				_board(this),
 				_board2(this),
-				_paused(false),
+				_state(State::RUNNING),
 				_ticksRun(0),
 				_advanceTick(false),
 				_startTime(SDL_GetTicks()),
@@ -26,7 +26,7 @@ Game::Game() :
 }
 
 void Game::tick() {
-	if (!_paused || _advanceTick) {
+	if (_state == State::RUNNING || _advanceTick) {
 		_advanceTick = false;
 		++_ticksRun;
 		handleGarbageSpawning(_board, _board2);
@@ -53,7 +53,8 @@ void Game::tick() {
 				_p2MatchPoints = 0;
 				++_p2Points;
 			}
-			inputTogglePause();
+			_pausedTime = SDL_GetTicks() - _startTime;
+			_state = State::ENDED;
 		}
 	}
 }
@@ -79,7 +80,6 @@ int Game::getP2Points() const {
 }
 
 void Game::handleGarbageSpawning(Board& b1, Board& b2) {
-//TODO: make it like the actual game
 
 	int combo = b1.getTickMatched();
 
@@ -105,25 +105,26 @@ void Game::handleGarbageSpawning(Board& b1, Board& b2) {
 }
 
 void Game::reset() {
-	_paused = false;
+	_state = State::RUNNING;
 	_startTime = SDL_GetTicks();
 	_board = Board(this); //fix this :P
 	_board2 = Board(this);
 }
 
 void Game::inputTogglePause() {
-	if (!_paused) {
+	if (_state == State::RUNNING) {
 		_pausedTime = SDL_GetTicks() - _startTime;
 		_startTime = 0;
+		_state = State::PAUSED;
 	} else {
 		_startTime = SDL_GetTicks() - _pausedTime;
 		_pausedTime = 0;
+		_state = State::RUNNING;
 	}
-	_paused = !_paused;
 }
 
 uint32_t Game::getTime() {
-	if (_paused) {
+	if (_state != State::RUNNING) {
 		return _pausedTime;
 	}
 	return SDL_GetTicks() - _startTime;
@@ -134,7 +135,7 @@ void Game::inputAdvanceTick() {
 }
 
 const bool Game::isPaused() const {
-	return _paused;
+	return _state == State::PAUSED;
 }
 
 Game::~Game() {

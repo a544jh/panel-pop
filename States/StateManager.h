@@ -34,6 +34,7 @@ private:
 	uint32_t _startTime;
 	uint32_t _lastFrame;
 	float _avgFps;
+	bool _showFps;
 	void showFps();
 };
 

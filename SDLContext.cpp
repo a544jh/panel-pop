@@ -109,6 +109,15 @@ SDL_Texture* SDLContext::makeTextureFromImage(std::string path) {
 	return texture;
 }
 
+void SDLContext::renderText(std::string text, SDL_Color color, TTF_Font* font,
+		int x, int y) {
+	SDL_Texture* texture = makeTextureFromFont(text, color, font);
+	SDL_Rect r = { x, y, 0, 0 };
+	SDL_QueryTexture(texture, NULL, NULL, &r.w, &r.h);
+	SDL_RenderCopy(_renderer, texture, NULL, &r);
+	SDL_DestroyTexture(texture);
+}
+
 void SDLContext::renderTextureToWindow(SDL_Texture* texture) {
 	SDL_SetRenderTarget(_renderer, NULL);
 	SDL_RenderCopy(_renderer, texture, NULL, NULL);

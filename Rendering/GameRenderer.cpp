@@ -18,8 +18,11 @@
 #include "../SDLContext.h"
 
 GameRenderer::GameRenderer(Game& game) :
-		_game(game), _boardRenderer(_game._board), _boardRenderer2(
-				_game._board2), _gbqr(_game._board), _gbqr2(_game._board2) {
+				_game(game),
+				_boardRenderer(_game._board),
+				_boardRenderer2(_game._board2),
+				_gbqr(_game._board),
+				_gbqr2(_game._board2) {
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, 640, 480);
 	_bg = _SDLContext.makeTextureFromImage("assets/bg1.png");
@@ -53,16 +56,17 @@ SDL_Texture* GameRenderer::renderGame() {
 	rekt.y = 43;
 	rekt.w = _boardRenderer.BOARD_WIDTH;
 	rekt.h = _boardRenderer.BOARD_HEIGHT;
-	SDL_RenderCopy(_SDLRenderer, boardTexture, NULL, &rekt);
-	SDL_Rect gbqp = { 258, 307, 38, 120 };
-	SDL_RenderCopy(_SDLRenderer, gbq, NULL, &gbqp);
+	if (!_game.isPaused()) {
+		SDL_RenderCopy(_SDLRenderer, boardTexture, NULL, &rekt);
+		SDL_Rect gbqp = { 258, 307, 38, 120 };
+		SDL_RenderCopy(_SDLRenderer, gbq, NULL, &gbqp);
 
-	rekt.x = 390;
-	gbqp.x = 344;
+		rekt.x = 390;
+		gbqp.x = 344;
 
-	SDL_RenderCopy(_SDLRenderer, boardTexture2, NULL, &rekt);
-	SDL_RenderCopy(_SDLRenderer, gbq2, NULL, &gbqp);
-
+		SDL_RenderCopy(_SDLRenderer, boardTexture2, NULL, &rekt);
+		SDL_RenderCopy(_SDLRenderer, gbq2, NULL, &gbqp);
+	}
 	renderStatsText();
 	renderMatchPoints();
 
@@ -86,24 +90,16 @@ void GameRenderer::renderStatsText() {
 	}
 	os << (time / 1000 / 60) << "\u2019" << std::setw(2) << std::setfill('0')
 			<< ((time / 1000) % 60) << "\u201d";
-	SDL_Texture* timeTexture = _SDLContext.makeTextureFromFont(os.str(), { 255,
-			255, 255 }, _SDLContext._psFont);
-	SDL_Rect pos = { 280, 218, 0, 0 };
-	SDL_QueryTexture(timeTexture, NULL, NULL, &pos.w, &pos.h);
-	SDL_RenderCopy(_SDLRenderer, timeTexture, NULL, &pos);
-	SDL_DestroyTexture(timeTexture);
+	_SDLContext.renderText(os.str(), { 255, 255, 255 }, _SDLContext._psFont,
+			280, 218);
 	//points
 	os.str("");
 	os.clear();
 	os << "\u25c0" << std::setw(2) << std::setfill('0') << _game.getP1Points()
 			<< ' ' << std::setw(2) << std::setfill('0') << _game.getP2Points()
 			<< "\u25b6";
-	SDL_Texture* pointsTexture = _SDLContext.makeTextureFromFont(os.str(), {
-			255, 255, 255 }, _SDLContext._psFont);
-	pos = {264,180,0,0};
-	SDL_QueryTexture(pointsTexture, NULL, NULL, &pos.w, &pos.h);
-	SDL_RenderCopy(_SDLRenderer, pointsTexture, NULL, &pos);
-	SDL_DestroyTexture(pointsTexture);
+	_SDLContext.renderText(os.str(), { 255, 255, 255 }, _SDLContext._psFont,
+			264, 180);
 }
 
 void GameRenderer::renderMatchPoints() {

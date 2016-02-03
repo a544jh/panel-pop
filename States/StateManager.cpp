@@ -7,12 +7,11 @@
 
 #include "StateManager.h"
 
-#include <stddef.h>
 #include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_scancode.h>
 #include <SDL2/SDL_timer.h>
+#include <iomanip>
 #include <sstream>
 
 #include "../Config/KeyboardControllerConfig.h"
@@ -29,7 +28,8 @@ StateManager::StateManager() :
 				_framesRun(0),
 				_startTime(SDL_GetTicks()),
 				_lastFrame(0),
-				_avgFps(0) {
+				_avgFps(0),
+				_showFps(false) {
 	_currentState = new TitleScreen();
 }
 
@@ -52,18 +52,23 @@ void StateManager::run() {
 				_running = false;
 				break;
 			}
-			if (input._keys[SDL_SCANCODE_LALT]
-					&& input._keys[SDL_SCANCODE_RETURN]
-					&& !input._prevKeys[SDL_SCANCODE_RETURN]) {
+			if (input.keyPressed(SDL_SCANCODE_LALT)
+					&& input.keyDown(SDL_SCANCODE_RETURN)) {
 				SDL.toggleFullscreen();
+			}
+			if (input.keyPressed(SDL_SCANCODE_LCTRL)
+					&& input.keyDown(SDL_SCANCODE_F)) {
+				_showFps = !_showFps;
 			}
 			_currentState->tick();
 		}
 		if (render) {
 			SDL_Texture* t = _currentState->render();
 
-			//SDL_SetRenderTarget(SDL.getRenderer(), t);
-			//showFps();
+			if (_showFps) {
+				SDL_SetRenderTarget(SDL.getRenderer(), t);
+				showFps();
+			}
 
 			SDL.renderTextureToWindow(t);
 			_lastFrame = SDL_GetTicks();
@@ -104,11 +109,6 @@ void StateManager::showFps() {
 	if (_avgFps > 2000000) {
 		_avgFps = 0;
 	}
-	ss << _avgFps;
-	SDL_Texture* fps = SDL.makeTextureFromFont(ss.str(), { 0, 0, 0 },
-			SDL._psFont);
-	SDL_Rect r = { 0, 0, 0, 0 };
-	SDL_QueryTexture(fps, NULL, NULL, &r.w, &r.h);
-	SDL_RenderCopy(SDL.getRenderer(), fps, NULL, &r);
-	SDL_DestroyTexture(fps);
+	ss << std::setprecision(5) << _avgFps;
+	SDL.renderText(ss.str(), { 0, 0, 0 }, SDL._psFont, 0, 0);
 }

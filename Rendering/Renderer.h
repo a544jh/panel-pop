@@ -17,8 +17,8 @@ public:
 	virtual ~Renderer();
 	//Inherit to get access to the SDL renderer.
 	SDLContext& _SDLContext;
-	SDL_Renderer* _SDLRenderer;
 	SDL_Texture* _texture;
+	SDL_Renderer* _SDLRenderer;
 	SDL_Texture* _spriteSheet;
 };
 
