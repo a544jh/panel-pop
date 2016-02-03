@@ -76,11 +76,18 @@ SDL_Texture* GameRenderer::renderGame() {
 		SDL_SetTextureColorMod(_texture, 0xFF, 0xFF, 0xFF);
 	}
 
+	//TODO: make this state more fancy
+	if (_game.getState() == Game::State::ENDED
+			&& SDL_GetTicks() % 1000 >= 500) {
+		_SDLContext.renderText("PUSH START", { 255, 255, 255 },
+				_SDLContext._squareFont, 134, 342);
+	}
+
 	return _texture;
 }
 
 void GameRenderer::renderStatsText() {
-	//time
+//time
 	std::ostringstream os;
 	uint32_t time;
 	if (_game._board.getState() == Board::COUNTDOWN) {
@@ -92,7 +99,7 @@ void GameRenderer::renderStatsText() {
 			<< ((time / 1000) % 60) << "\u201d";
 	_SDLContext.renderText(os.str(), { 255, 255, 255 }, _SDLContext._psFont,
 			280, 218);
-	//points
+//points
 	os.str("");
 	os.clear();
 	os << "\u25c0" << std::setw(2) << std::setfill('0') << _game.getP1Points()
@@ -103,7 +110,7 @@ void GameRenderer::renderStatsText() {
 }
 
 void GameRenderer::renderMatchPoints() {
-	//p1
+//p1
 	SDL_Rect sprite = { 0, 361, 21, 21 };
 	SDL_Rect pos = { 259, 35, 21, 21 };
 	for (int i = 0; i < Game::MATCH_POINTS; ++i) {
@@ -115,7 +122,7 @@ void GameRenderer::renderMatchPoints() {
 		SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
 		pos.y += 23;
 	}
-	//p2
+//p2
 	pos = {359,35,21,21};
 	for (int i = 0; i < Game::MATCH_POINTS; ++i) {
 		if (_game.getP2MatchPoints() >= Game::MATCH_POINTS - i) {

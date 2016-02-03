@@ -12,7 +12,12 @@
 #include "KeyboardController.h"
 
 class Game {
+
 public:
+
+	enum class State {
+		RUNNING, PAUSED, ENDED
+	};
 	Game();
 	Board _board;
 	Board _board2;
@@ -36,11 +41,10 @@ public:
 	int getP1Points() const;
 	int getP2MatchPoints() const;
 	int getP2Points() const;
+	State getState() const;
 
 private:
-	enum class State {
-		RUNNING, PAUSED, ENDED
-	} _state;
+	State _state;
 	int _ticksRun;
 	bool _advanceTick; //debug "frame advance" feature
 	uint32_t _startTime;

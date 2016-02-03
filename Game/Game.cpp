@@ -141,3 +141,6 @@ const bool Game::isPaused() const {
 Game::~Game() {
 }
 
+Game::State Game::getState() const {
+	return _state;
+}
