@@ -38,6 +38,5 @@ SDL_Texture* GameState::render() {
 }
 
 GameState::~GameState() {
-	// TODO Auto-generated destructor stub
 }
 

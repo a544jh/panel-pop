@@ -8,8 +8,6 @@
 #include "ChainPopup.h"
 
 ChainPopup::ChainPopup() {
-	// TODO Auto-generated constructor stub
-
 }
 
 ChainPopup::ChainPopup(int x, int y, int value, int lifetime) :

@@ -13,17 +13,29 @@
 #include "Game.h"
 
 Board::Board(Game* game) :
-_game(game),_cursorX(2), _cursorY(5), _stackOffset(0), _stackRaiseTicks(10), _stackRaiseTimer(
-		0), _stackRaiseForced(false), _chainCounter(1), _tickChain(
-		false), _state(COUNTDOWN), _graceTimer(0), _blockOnTopRow(false), _tickChainEnd(
-		false), _lastChain(0), _garbageSpawnPositions( {0} ), _ticksRun(
-		0) {
+				_game(game),
+				_state(COUNTDOWN),
+				_ticksRun(0),
+				_garbageSpawnPositions{ 0 },
+				_cursorX(2),
+				_cursorY(5),
+				_stackOffset(0),
+				_stackRaiseTicks(10),
+				_stackRaiseTimer(0),
+				_stackRaiseForced(false),
+				_graceTimer(0),
+				_chainCounter(1),
+				_tickChain(false),
+				_tickChainEnd(false),
+				_lastChain(0),
+				_blockOnTopRow(false) {
 	fillRandom();
 	fillBufferRow();
 }
 
 Board::Tile::Tile() :
-		type(AIR), g(nullptr) {
+				type(AIR),
+				g(nullptr) {
 }
 
 void Board::fillRandom() {
@@ -158,6 +170,8 @@ void Board::inputMoveCursor(Direction d) {
 		break;
 	case LEFT:
 		_cursorX--;
+		break;
+	default:
 		break;
 	}
 	while (_cursorX > BOARD_WIDTH - 2) {
@@ -366,7 +380,6 @@ void Board::handleTriggeredBlocks() {
 		}
 	}
 	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
-		GarbageBlock& gb = *it;
 		if (it->getState() == GarbageBlockState::TRIGGERED
 				&& it->getTransformationTimer() == 1) {
 			it->_transformationTimer = 0;
@@ -645,7 +658,6 @@ void Board::win() {
 }
 
 Board::~Board() {
-// TODO Auto-generated destructor stub
 }
 
 bool Board::hasActiveBlocks() const {

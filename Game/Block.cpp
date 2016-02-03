@@ -9,15 +9,19 @@
 #include <stdlib.h>
 
 Block::Block() :
-		_state(NORMAL), _falling(false), _explosionTicks(0), _explosionAnimTicks(
-				0), _explosionTimer(0), _color(COUNT), _chain(false), _floatTimer(
-				0), _swapTimer(0) {
-	// TODO Auto-generated constructor stub
+				_state(NORMAL),
+				_color(COUNT),
+				_falling(false),
+				_floatTimer(0),
+				_swapTimer(0),
+				_chain(false),
+				_explosionTicks(0),
+				_explosionAnimTicks(0),
+				_explosionTimer(0){
 
 }
 
 Block::~Block() {
-	// TODO Auto-generated destructor stub
 }
 
 BlockColor Block::getRandomColor(std::list<int> colors) {

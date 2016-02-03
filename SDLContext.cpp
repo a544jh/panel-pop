@@ -12,8 +12,13 @@
 #include <iostream>
 
 SDLContext::SDLContext() :
-		_window(nullptr), _renderer(nullptr), _spriteSheet(nullptr), WINDOW_WIDTH(
-				640), WINDOW_HEIGHT(480), _psFont(nullptr), _squareFont(nullptr) {
+				WINDOW_WIDTH(640),
+				WINDOW_HEIGHT(480),
+				_psFont(nullptr),
+				_squareFont(nullptr),
+				_window(nullptr),
+				_renderer(nullptr),
+				_spriteSheet(nullptr) {
 }
 
 SDLContext& SDLContext::getInstance() {

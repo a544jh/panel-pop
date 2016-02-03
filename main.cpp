@@ -17,10 +17,10 @@ int main(int argc, char* args[]) {
 	setlocale(LC_ALL,"");
 	srand(time(NULL));
 	SDLContext& SDL = SDLContext::getInstance();
-	InputManager& input = InputManager::getInstance();
 	SDL.init();
 	StateManager& sm = StateManager::getInstance();
 	sm.run();
 
 	SDL.tearDown();
+	return 0;
 }

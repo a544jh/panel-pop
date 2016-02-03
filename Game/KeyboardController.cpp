@@ -84,6 +84,5 @@ void KeyboardController::tick() {
 }
 
 KeyboardController::~KeyboardController() {
-	// TODO Auto-generated destructor stub
 }
 

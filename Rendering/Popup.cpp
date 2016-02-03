@@ -9,12 +9,21 @@
 #include <sstream>
 
 Popup::Popup() :
-		_alive(true) {
+				_x(0),
+				_y(0),
+				_value(0),
+				_ticksToLive(0),
+				_ticksLived(0),
+				_alive(true) {
 }
 
 Popup::Popup(int x, int y, int value, int lifetime) :
-		_alive(true), _x(x), _y(y), _value(value), _ticksToLive(lifetime), _ticksLived(
-				0) {
+				_x(x),
+				_y(y),
+				_value(value),
+				_ticksToLive(lifetime),
+				_ticksLived(0),
+				_alive(true){
 	initDigits();
 }
 
@@ -35,6 +44,5 @@ void Popup::initDigits() {
 }
 
 Popup::~Popup() {
-	// TODO Auto-generated destructor stub
 }
 

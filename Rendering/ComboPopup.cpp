@@ -8,7 +8,6 @@
 #include "ComboPopup.h"
 
 ComboPopup::ComboPopup() {
-	// TODO Auto-generated constructor stub
 
 }
 

@@ -11,6 +11,5 @@ BoardController::BoardController(Board& b) : _board(b) {
 }
 
 BoardController::~BoardController() {
-	// TODO Auto-generated destructor stub
 }
 

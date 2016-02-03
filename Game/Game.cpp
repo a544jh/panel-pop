@@ -12,8 +12,17 @@
 #include "GarbageBlock.h"
 
 Game::Game() :
-		_paused(false), _ticksRun(0), _advanceTick(false), _startTime(
-				SDL_GetTicks()), _pausedTime(0), _board(this), _board2(this) {
+				_board(this),
+				_board2(this),
+				_paused(false),
+				_ticksRun(0),
+				_advanceTick(false),
+				_startTime(SDL_GetTicks()),
+				_pausedTime(0),
+				_p1MatchPoints(0),
+				_p2MatchPoints(0),
+				_p1Points(0),
+				_p2Points(0) {
 }
 
 void Game::tick() {
@@ -129,6 +138,5 @@ const bool Game::isPaused() const {
 }
 
 Game::~Game() {
-// TODO Auto-generated destructor stub
 }
 

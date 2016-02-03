@@ -14,7 +14,6 @@ TitleScreen::TitleScreen() : _tr(){
 }
 
 TitleScreen::~TitleScreen() {
-	// TODO Auto-generated destructor stub
 }
 
 SDL_Texture* TitleScreen::render() {

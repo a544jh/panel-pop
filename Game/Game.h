@@ -41,7 +41,6 @@ public:
 private:
 	bool _paused;
 	int _ticksRun;
-	void handleGarbageSpawning(Board&, Board&);
 	bool _advanceTick; //debug "frame advance" feature
 	uint32_t _startTime;
 	uint32_t _pausedTime;
@@ -49,6 +48,8 @@ private:
 	int _p2MatchPoints;
 	int _p1Points;
 	int _p2Points;
+
+	void handleGarbageSpawning(Board&, Board&);
 };
 
 #endif /* GAME_H_ */

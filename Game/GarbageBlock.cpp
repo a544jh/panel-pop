@@ -14,7 +14,6 @@ GarbageBlock::GarbageBlock(int x, int y, int w, int h, GarbageBlockType t) :
 }
 
 GarbageBlock::~GarbageBlock() {
-	// TODO Auto-generated destructor stub
 }
 
 void GarbageBlock::fillBufferRow() {

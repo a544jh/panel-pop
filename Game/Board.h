@@ -94,12 +94,12 @@ public:
 	uint32_t getTime() const;
 
 private:
-
 	Tile _tiles[BOARD_HEIGHT][BOARD_WIDTH];
 	Tile _bufferRow[BOARD_WIDTH];
 	std::list<GarbageBlock> _garbageBlocks;
 	std::list<GarbageSpawn> _garbageQueue;
 
+	Game* _game;
 	BoardState _state;
 	unsigned int _ticksRun;
 	int _garbageSpawnPositions[3];
@@ -108,8 +108,8 @@ private:
 	int _stackOffset;
 	int _stackRaiseTicks; //ticks to raise stack one step
 	int _stackRaiseTimer;
-	int _graceTimer;
 	bool _stackRaiseForced;
+	int _graceTimer;
 	bool _activeBlocks;
 	int _chainCounter;
 	bool _tickChain; //true if a chain has occurred during the tick
@@ -143,7 +143,6 @@ private:
 	bool garbageBlockCanFall(GarbageBlock&);
 	bool swappable(int, int);
 	bool spawnGarbage(int,int,int,int, GarbageBlockType);
-	Game* _game;
 };
 
 #endif /* BOARD_H_ */

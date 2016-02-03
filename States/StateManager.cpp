@@ -20,10 +20,16 @@
 #include "TitleScreen.h"
 
 StateManager::StateManager() :
-		_currentState(nullptr), _lastTick(0), _running(true), SDL(
-				SDLContext::getInstance()), input(InputManager::getInstance()), _frameTime(
-				16), _framesRun(0), _avgFps(0), _startTime(SDL_GetTicks()), _lastFrame(
-				0) {
+				_currentState(nullptr),
+				SDL(SDLContext::getInstance()),
+				input(InputManager::getInstance()),
+				_lastTick(0),
+				_frameTime(16),
+				_running(true),
+				_framesRun(0),
+				_startTime(SDL_GetTicks()),
+				_lastFrame(0),
+				_avgFps(0) {
 	_currentState = new TitleScreen();
 }
 
