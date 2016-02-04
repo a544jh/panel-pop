@@ -19,6 +19,7 @@ Board::Board(Game* game) :
 				_garbageSpawnPositions{ 0 },
 				_cursorX(2),
 				_cursorY(5),
+				_tickMatched(0),
 				_stackOffset(0),
 				_stackRaiseTicks(10),
 				_stackRaiseTimer(0),
@@ -368,12 +369,13 @@ void Board::handleMatchedBlocks() {
 
 void Board::handleTriggeredBlocks() {
 	int animStart = BASE_TRANSFORMATION_TICKS;
+	//lowest blocks starts transforming first
 	for (int row = 0; row < BOARD_HEIGHT; ++row) {
 		for (int col = BOARD_WIDTH - 1; col >= 0; --col) {
 			Tile& t = _tiles[row][col];
 			if (t.type == GARBAGE && t.g->_state == GarbageBlockState::TRIGGERED
 					&& t.g->_transformationTimer != 1) {
-				t.g->_transformationTimer = 1; //this is ugly! :P
+				t.g->_transformationTimer = 1; //this is ugly! :P but we need to mark which blocks to transform
 				t.g->_animationStart = animStart;
 				animStart += t.g->_w * t.g->_h * GARBAGE_TRANSFORM_STEP_TICKS;
 			}
