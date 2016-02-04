@@ -82,9 +82,13 @@ int Game::getP2Points() const {
 void Game::handleGarbageSpawning(Board& b1, Board& b2) {
 
 	int combo = b1.getTickMatched();
+	int chain = b1.getLastChain() - 1;
+	if(chain > 12){
+		chain = 12;
+	}
 
 	if (b1.isTickChainEnd()) {
-		b2.queueGarbage(true, b1.getLastChain() - 1, GarbageBlockType::NORMAL);
+		b2.queueGarbage(true, chain, GarbageBlockType::NORMAL);
 	}
 
 	if (combo >= 4 && combo <= 7) {
