@@ -8,9 +8,10 @@
 #ifndef STATES_GAMESTATE_H_
 #define STATES_GAMESTATE_H_
 
-#include "State.h"
 #include "../Game/Game.h"
+#include "../Game/KeyboardController.h"
 #include "../Rendering/GameRenderer.h"
+#include "State.h"
 
 class GameState : public State {
 public:
@@ -23,6 +24,8 @@ private:
 	GameRenderer _renderer;
 	KeyboardController _kbc;
 	KeyboardController _kbc2;
+	KeyboardControllerConfig _p1keys;
+	KeyboardControllerConfig _p2keys;
 };
 
 #endif /* STATES_GAMESTATE_H_ */

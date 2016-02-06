@@ -47,7 +47,7 @@ bool InputManager::keyPressed(int key) {
 
 bool InputManager::anyKeyDown(){
 	for(int i = 0; i < KEYBOARD_SIZE; ++i){
-		if(_keys[i]){
+		if(!_prevKeys[i] &&_keys[i]){
 			return true;
 		}
 	}

@@ -12,9 +12,12 @@
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
-#include <sstream>
+#include <SDL2/SDL_timer.h>
+#include <cstdint>
 #include <iomanip>
+#include <sstream>
 
+#include "../Game/Board.h"
 #include "../SDLContext.h"
 
 GameRenderer::GameRenderer(Game& game) :
@@ -72,6 +75,9 @@ SDL_Texture* GameRenderer::renderGame() {
 
 	if (_game.isPaused()) {
 		SDL_SetTextureColorMod(_texture, 0x50, 0x50, 0x50);
+		SDL_RenderCopy(_SDLRenderer,_texture,NULL,NULL);
+		SDL_SetTextureColorMod(_texture, 0xFF, 0xFF, 0xFF);
+		_game.getPauseMenu().render();
 	} else {
 		SDL_SetTextureColorMod(_texture, 0xFF, 0xFF, 0xFF);
 	}
@@ -112,7 +118,7 @@ void GameRenderer::renderStatsText() {
 void GameRenderer::renderMatchPoints() {
 //p1
 	SDL_Rect sprite = { 0, 361, 21, 21 };
-	SDL_Rect pos = { 259, 35, 21, 21 };
+	SDL_Rect pos = { 260, 35, 21, 21 };
 	for (int i = 0; i < Game::MATCH_POINTS; ++i) {
 		if (_game.getP1MatchPoints() >= Game::MATCH_POINTS - i) {
 			sprite.x = 21;

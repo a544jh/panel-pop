@@ -8,8 +8,11 @@
 #ifndef GAME_H_
 #define GAME_H_
 
+#include <cstdint>
+
+#include "../Menus/PauseMenu.h"
 #include "Board.h"
-#include "KeyboardController.h"
+
 
 class Game {
 
@@ -42,6 +45,7 @@ public:
 	int getP2MatchPoints() const;
 	int getP2Points() const;
 	State getState() const;
+	PauseMenu& getPauseMenu();
 
 private:
 	State _state;
@@ -53,6 +57,8 @@ private:
 	int _p2MatchPoints;
 	int _p1Points;
 	int _p2Points;
+
+	PauseMenu _pauseMenu;
 
 	void handleGarbageSpawning(Board&, Board&);
 };

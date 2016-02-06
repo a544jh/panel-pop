@@ -18,6 +18,7 @@ public:
 	void run();
 	void switchToState(State*);
 	void startGame();
+	void returnToTile();
 	float getAvgFps() const;
 
 private:

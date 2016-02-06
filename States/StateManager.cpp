@@ -103,6 +103,10 @@ float StateManager::getAvgFps() const {
 	return _avgFps;
 }
 
+void StateManager::returnToTile() {
+	switchToState(new TitleScreen);
+}
+
 void StateManager::showFps() {
 	std::ostringstream ss;
 	_avgFps = _framesRun / ((SDL_GetTicks() - _startTime) / 1000.f);

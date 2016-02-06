@@ -22,7 +22,8 @@ Game::Game() :
 				_p1MatchPoints(0),
 				_p2MatchPoints(0),
 				_p1Points(0),
-				_p2Points(0) {
+				_p2Points(0),
+				_pauseMenu(*this) {
 }
 
 void Game::tick() {
@@ -79,11 +80,15 @@ int Game::getP2Points() const {
 	return _p2Points;
 }
 
+PauseMenu& Game::getPauseMenu() {
+	return _pauseMenu;
+}
+
 void Game::handleGarbageSpawning(Board& b1, Board& b2) {
 
 	int combo = b1.getTickMatched();
 	int chain = b1.getLastChain() - 1;
-	if(chain > 12){
+	if (chain > 12) {
 		chain = 12;
 	}
 
@@ -119,6 +124,7 @@ void Game::inputTogglePause() {
 	if (_state == State::RUNNING) {
 		_pausedTime = SDL_GetTicks() - _startTime;
 		_startTime = 0;
+		_pauseMenu.resetCursor();
 		_state = State::PAUSED;
 	} else {
 		_startTime = SDL_GetTicks() - _pausedTime;
