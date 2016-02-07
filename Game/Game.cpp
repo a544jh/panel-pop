@@ -126,7 +126,7 @@ void Game::inputTogglePause() {
 		_startTime = 0;
 		_pauseMenu.resetCursor();
 		_state = State::PAUSED;
-	} else {
+	} else if (_state == State::PAUSED) {
 		_startTime = SDL_GetTicks() - _pausedTime;
 		_pausedTime = 0;
 		_state = State::RUNNING;

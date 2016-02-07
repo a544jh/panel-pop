@@ -8,6 +8,7 @@
 #include "GameState.h"
 
 #include <SDL2/SDL_scancode.h>
+#include <iostream>
 
 #include "../InputManager.h"
 #include "../Menus/PauseMenu.h"
@@ -32,10 +33,10 @@ void GameState::tick() {
 	if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
 		_game.reset();
 	}
-	if (!_game.isPaused()) {
+	if (_game.getState() == Game::State::RUNNING) {
 		_kbc.tick();
 		_kbc2.tick();
-	} else {
+	} else if (_game.getState() == Game::State::PAUSED) {
 		//send input to pause menu instead
 		PauseMenu& menu = _game.getPauseMenu();
 		if (input.keyDown(_p1keys.down) || input.keyDown(_p2keys.down)) {
@@ -47,8 +48,14 @@ void GameState::tick() {
 		if (input.keyDown(_p1keys.swap) || input.keyDown(_p2keys.swap)) {
 			menu.inputEnter();
 		}
-		if (input.keyDown(_p1keys.raiseStack) || input.keyDown(_p2keys.raiseStack)) {
+		if (input.keyDown(_p1keys.raiseStack)
+				|| input.keyDown(_p2keys.raiseStack)) {
 			menu.inputCancel();
+		}
+	} else if (_game.getState() == Game::State::ENDED) {
+		//TODO: change to any key and add timeout..?
+		if (input.keyDown(SDL_SCANCODE_5)) {
+			_game.reset();
 		}
 	}
 	_game.tick();
