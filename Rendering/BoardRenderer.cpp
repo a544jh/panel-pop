@@ -26,7 +26,7 @@ const int BoardRenderer::TILE_SIZE = 32;
 const int BoardRenderer::CURSOR_ANIM_MS = 500;
 
 BoardRenderer::BoardRenderer(Board& board) :
-		_board(board) {
+				_board(board) {
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, BOARD_WIDTH, BOARD_HEIGHT);
 	SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
@@ -159,7 +159,7 @@ void BoardRenderer::drawBlocks() {
 					pos.x -= xOffset;
 				}
 				//SDL_RenderFillRect(_SDLRenderer, &pos);
-				if (block._explosionTimer > 45
+				if (block._explosionTimer > BLINK_TIME
 						&& block._explosionTimer >= block._explosionAnimTicks) {
 					continue;
 				}
@@ -212,7 +212,7 @@ SDL_Rect BoardRenderer::getBlockSprite(const Block& block) {
 		sprite.x = 0;
 	}
 	if (block._state == EXPLODING) {
-		if (block._explosionTimer <= 45) {
+		if (block._explosionTimer <= BLINK_TIME) {
 			if (block._explosionTimer % 2 == 0) {
 				sprite.y = 0;
 			} else {
@@ -241,12 +241,12 @@ SDL_Rect BoardRenderer::getGarbageBlockSprite(int rx, int ry,
 	int h = b.getH();
 	//handle transforming block as one smaller (after blinking)
 	if (b.getState() == GarbageBlockState::TRANSFORMING
-			&& b.getTransformationTimer() > Board::BASE_TRANSFORMATION_TICKS) {
+			&& b.getTransformationTimer() > BLINK_TIME) {
 		--h;
 		--ry;
 	}
-	bool blink = b.getTransformationTimer() % 2 != 0
-			&& b.getTransformationTimer() <= Board::BASE_TRANSFORMATION_TICKS;
+	bool blink = b.getTransformationTimer() % 2 != 0 &&
+			b.getTransformationTimer() <= BLINK_TIME;
 	int t = 0;
 	if (rx == 0) {
 		t = 2; //right
@@ -316,11 +316,10 @@ void BoardRenderer::drawGarbageBlocks() {
 
 				double time = it->getTransformationTimer()
 						- it->getAnimationStart();
-				int ticks = it->getW() * it->getH()
-						* Board::GARBAGE_TRANSFORM_STEP_TICKS;
+				int ticks = it->getW() * it->getH() * Board::ADD_EXPL_TICKS;
 				double block = it->getW() * ry + rx;
 				if (it->getTransformationTimer()
-						<= Board::BASE_TRANSFORMATION_TICKS) {
+						<= BLINK_TIME) {
 					//normal
 					SDL_Rect sprite = getGarbageBlockSprite(rx, ry, *it);
 					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);

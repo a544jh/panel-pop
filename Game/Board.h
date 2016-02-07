@@ -58,14 +58,12 @@ public:
 	void queueGarbage(bool, int, GarbageBlockType);
 
 	static const int BASE_EXPLOSION_TICKS = 61;
-	static const int BASE_TRANSFORMATION_TICKS = 45;
 	static const int ADD_EXPL_TICKS = 9; //the total explosion time for a combo is 61 + 9 * n, where n is the  number of blocks
 	static const int SWAP_DELAY = 3;
 	static const int BOARD_HEIGHT = 24;
 	static const int BOARD_WIDTH = 6;
 	static const int FLOAT_TICKS = 12;
 	static const int STACK_RAISE_STEPS = 32;
-	static const int GARBAGE_TRANSFORM_STEP_TICKS = 8;
 	static const int COUNTDOWN_MS = 3000;
 
 	bool hasActiveBlocks() const;

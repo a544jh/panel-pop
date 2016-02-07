@@ -16,7 +16,7 @@ Board::Board(Game* game) :
 				_game(game),
 				_state(COUNTDOWN),
 				_ticksRun(0),
-				_garbageSpawnPositions{ 0 },
+				_garbageSpawnPositions { 0 },
 				_cursorX(2),
 				_cursorY(5),
 				_tickMatched(0),
@@ -368,9 +368,8 @@ void Board::handleMatchedBlocks() {
 }
 
 void Board::handleTriggeredBlocks() {
-	int animStart = BASE_EXPLOSION_TICKS
-			+ _tickMatched * ADD_EXPL_TICKS;
-			//BASE_TRANSFORMATION_TICKS;
+	//transformation starts after matched blocks clear
+	int animStart = BASE_EXPLOSION_TICKS + (_tickMatched + 1) * ADD_EXPL_TICKS;
 	//lowest blocks starts transforming first
 	for (int row = 0; row < BOARD_HEIGHT; ++row) {
 		for (int col = BOARD_WIDTH - 1; col >= 0; --col) {
@@ -379,7 +378,7 @@ void Board::handleTriggeredBlocks() {
 					&& t.g->_transformationTimer != 1) {
 				t.g->_transformationTimer = 1; //this is ugly! :P but we need to mark which blocks to transform
 				t.g->_animationStart = animStart;
-				animStart += t.g->_w * t.g->_h * GARBAGE_TRANSFORM_STEP_TICKS;
+				animStart += t.g->_w * t.g->_h * ADD_EXPL_TICKS;
 			}
 		}
 	}
