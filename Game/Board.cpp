@@ -368,7 +368,9 @@ void Board::handleMatchedBlocks() {
 }
 
 void Board::handleTriggeredBlocks() {
-	int animStart = BASE_TRANSFORMATION_TICKS;
+	int animStart = BASE_EXPLOSION_TICKS
+			+ _tickMatched * ADD_EXPL_TICKS;
+			//BASE_TRANSFORMATION_TICKS;
 	//lowest blocks starts transforming first
 	for (int row = 0; row < BOARD_HEIGHT; ++row) {
 		for (int col = BOARD_WIDTH - 1; col >= 0; --col) {
