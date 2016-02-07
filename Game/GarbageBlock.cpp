@@ -8,8 +8,17 @@
 #include "GarbageBlock.h"
 
 GarbageBlock::GarbageBlock(int x, int y, int w, int h, GarbageBlockType t) :
-		_x(x), _y(y), _w(w), _h(h), _type(t), _state(GarbageBlockState::NORMAL), _transformationTicks(
-				0), _transformationTimer(0),_animationStart(0), _falling(false) {
+				_x(x),
+				_y(y),
+				_w(w),
+				_h(h),
+				_type(t),
+				_state(GarbageBlockState::NORMAL),
+				_transformationTicks(0),
+				_transformationTimer(0),
+				_animationStart(0),
+				_falling(false),
+				_explOrder(0) {
 	fillBufferRow();
 }
 
@@ -31,7 +40,6 @@ void GarbageBlock::fillBufferRow() {
 void GarbageBlock::trigger() {
 	_state = GarbageBlockState::TRIGGERED;
 }
-
 
 const Block& GarbageBlock::getBufferRow(int x) const {
 	return _bufferRow[x];

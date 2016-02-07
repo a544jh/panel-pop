@@ -49,6 +49,7 @@ private:
 	int _transformationTimer;
 	int _animationStart;
 	bool _falling;
+	int _explOrder;
 
 	void fillBufferRow();
 	void trigger();

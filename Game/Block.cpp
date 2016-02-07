@@ -17,7 +17,8 @@ Block::Block() :
 				_chain(false),
 				_explosionTicks(0),
 				_explosionAnimTicks(0),
-				_explosionTimer(0){
+				_explosionTimer(0),
+				_explOrder(0) {
 
 }
 

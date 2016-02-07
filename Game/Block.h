@@ -33,6 +33,7 @@ public:
 	int _floatTimer;//the blocks floats for a while after getting swapped
 	int _swapTimer;//for swap delay and animation
 	bool _chain;
+	int _explOrder; //to determine sound effect
 
 	int _explosionTicks; //ticks it takes for block to explode
 	int _explosionAnimTicks; //ticks it takes for the explosion animation to complete

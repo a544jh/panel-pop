@@ -15,7 +15,7 @@ public:
 	BoardEventHandler(GameRenderer&, int, int);
 	virtual ~BoardEventHandler();
 
-	void blockExplode(int x, int y, int stackOffset, int combo, int chain);
+	void blockExplode(int x, int y, int stackOffset, int order, int chain);
 
 private:
 	GameRenderer& _gr;

@@ -340,6 +340,7 @@ void Board::handleMatchedBlocks() {
 			Tile& tile = _tiles[row][col];
 
 			if (tile.type == BLOCK && tile.b._state == MATCHED) {
+				tile.b._explOrder = matches - 1;
 				if (tile.b._chain && !chain) {
 					chain = true;
 				}
@@ -371,6 +372,7 @@ void Board::handleMatchedBlocks() {
 void Board::handleTriggeredBlocks() {
 	//transformation starts after matched blocks clear
 	int animStart = BASE_EXPLOSION_TICKS + (_tickMatched + 1) * ADD_EXPL_TICKS;
+	int order = _tickMatched + 1;
 	//lowest blocks starts transforming first
 	for (int row = 0; row < BOARD_HEIGHT; ++row) {
 		for (int col = BOARD_WIDTH - 1; col >= 0; --col) {
@@ -379,7 +381,10 @@ void Board::handleTriggeredBlocks() {
 					&& t.g->_transformationTimer != 1) {
 				t.g->_transformationTimer = 1; //this is ugly! :P but we need to mark which blocks to transform
 				t.g->_animationStart = animStart;
+				t.g->_explOrder = order;
+
 				animStart += t.g->_w * t.g->_h * ADD_EXPL_TICKS;
+				order += t.g->_w * t.g->_h;
 			}
 		}
 	}
@@ -405,7 +410,7 @@ void Board::handleBlockTimers() {
 				++tile.b._explosionTimer;
 
 				if (tile.b._explosionTimer == tile.b._explosionAnimTicks) {
-					_eventHandler->blockExplode(col, row, _stackOffset, 0, 0);
+					_eventHandler->blockExplode(col, row, _stackOffset, tile.b._explOrder, _chainCounter);
 				}
 
 				if (tile.b._explosionTicks == tile.b._explosionTimer) {
@@ -439,12 +444,14 @@ void Board::handleBlockTimers() {
 				//int totalTime = it->_w * it->_h * ADD_EXPL_TICKS;
 				int block = animTime / ADD_EXPL_TICKS;
 				if (block < it->_w * it->_h) {
+
+
 					int rx = block % it->_w;
 					int ry = block / it->_w;
 					int x = it->_x + (it->_w - 1) - rx; //block position in grid
 					int y = it->_y - (it->_h - 1) + ry;
 
-					_eventHandler->blockExplode(x, y, _stackOffset, 0, 0);
+					_eventHandler->blockExplode(x, y, _stackOffset, it->_explOrder + block, _chainCounter);
 				}
 			}
 
