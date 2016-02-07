@@ -8,18 +8,26 @@
 #ifndef GAMERENDERER_H_
 #define GAMERENDERER_H_
 
-#include "../Game/Game.h"
-#include "Renderer.h"
-#include "BoardRenderer.h"
-#include <SDL2/SDL.h>
+#include <list>
 
+#include "BoardRenderer.h"
 #include "GbQueueRenderer.h"
+#include "Popup.h"
+
 class GameRenderer: public Renderer {
 public:
 	GameRenderer(Game&);
 	virtual ~GameRenderer();
 	void tick();
 	SDL_Texture* renderGame();
+
+	static const int BOARD1_X = 58;
+	static const int BOARD1_Y = 43;
+	static const int BOARD2_X = 390;
+	static const int BOARD2_Y = 43;
+
+	void addPopup(Popup*);
+
 private:
 	Game& _game;
 	BoardRenderer _boardRenderer;
@@ -28,8 +36,12 @@ private:
 	GbQueueRenderer _gbqr2;
 	SDL_Texture* _bg;
 	SDL_Texture* _2pbg;
+
+	std::list<Popup*> _popups;
+
 	void renderStatsText();
 	void renderMatchPoints();
+	void renderPopups();
 };
 
 #endif /* GAMERENDERER_H_ */

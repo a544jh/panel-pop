@@ -20,8 +20,8 @@ public:
 	SDL_Texture* render();
 	virtual ~GameState();
 private:
-	Game _game;
 	GameRenderer _renderer;
+	Game _game;
 	KeyboardController _kbc;
 	KeyboardController _kbc2;
 	KeyboardControllerConfig _p1keys;

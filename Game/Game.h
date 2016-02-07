@@ -21,7 +21,11 @@ public:
 	enum class State {
 		RUNNING, PAUSED, ENDED
 	};
-	Game();
+	Game(BoardEventHandler*, BoardEventHandler*);
+
+	BoardEventHandler* _beh1;
+	BoardEventHandler* _beh2;
+
 	Board _board;
 	Board _board2;
 
@@ -61,6 +65,7 @@ private:
 	PauseMenu _pauseMenu;
 
 	void handleGarbageSpawning(Board&, Board&);
+	void handleEnd();
 };
 
 #endif /* GAME_H_ */

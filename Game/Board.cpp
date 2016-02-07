@@ -7,14 +7,15 @@
 
 #include "Board.h"
 
-#include <SDL2/SDL_timer.h>
 #include <iostream>
 
+#include "BoardEventHandler.h"
 #include "Game.h"
 
-Board::Board(Game* game) :
+Board::Board(Game* game, BoardEventHandler* eh) :
 				_game(game),
 				_state(COUNTDOWN),
+				_eventHandler(eh),
 				_ticksRun(0),
 				_garbageSpawnPositions { 0 },
 				_cursorX(2),
@@ -402,6 +403,11 @@ void Board::handleBlockTimers() {
 			Tile& tile = _tiles[row][col];
 			if (tile.type == BLOCK && tile.b._state == EXPLODING) {
 				++tile.b._explosionTimer;
+
+				if (tile.b._explosionTimer == tile.b._explosionAnimTicks) {
+					_eventHandler->blockExplode(col, row, _stackOffset, 0, 0);
+				}
+
 				if (tile.b._explosionTicks == tile.b._explosionTimer) {
 					clearTile(tile);
 					// we need to set the chain flag for the blocks above, and set it on the others above when it's about to fall
@@ -425,7 +431,24 @@ void Board::handleBlockTimers() {
 
 	for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
 		if (it->getState() == GarbageBlockState::TRANSFORMING) {
-			if (++it->_transformationTimer == it->_transformationTicks) {
+
+			++it->_transformationTimer;
+
+			int animTime = it->_transformationTimer - it->_animationStart;
+			if (animTime >= 0 && animTime % ADD_EXPL_TICKS == 0) {
+				//int totalTime = it->_w * it->_h * ADD_EXPL_TICKS;
+				int block = animTime / ADD_EXPL_TICKS;
+				if (block < it->_w * it->_h) {
+					int rx = block % it->_w;
+					int ry = block / it->_w;
+					int x = it->_x + (it->_w - 1) - rx; //block position in grid
+					int y = it->_y - (it->_h - 1) + ry;
+
+					_eventHandler->blockExplode(x, y, _stackOffset, 0, 0);
+				}
+			}
+
+			if (it->_transformationTimer == it->_transformationTicks) {
 				//transform & shrink the block
 				it->_transformationTicks = 0;
 				it->_transformationTimer = 0;

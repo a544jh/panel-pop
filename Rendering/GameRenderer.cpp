@@ -18,6 +18,7 @@
 #include <sstream>
 
 #include "../Game/Board.h"
+#include "../Game/Game.h"
 #include "../SDLContext.h"
 
 GameRenderer::GameRenderer(Game& game) :
@@ -55,8 +56,8 @@ SDL_Texture* GameRenderer::renderGame() {
 	SDL_RenderCopy(_SDLRenderer, _2pbg, NULL, NULL);
 
 	SDL_Rect rekt;
-	rekt.x = 58;
-	rekt.y = 43;
+	rekt.x = BOARD1_X;
+	rekt.y = BOARD1_Y;
 	rekt.w = _boardRenderer.BOARD_WIDTH;
 	rekt.h = _boardRenderer.BOARD_HEIGHT;
 	if (!_game.isPaused()) {
@@ -64,18 +65,21 @@ SDL_Texture* GameRenderer::renderGame() {
 		SDL_Rect gbqp = { 258, 307, 38, 120 };
 		SDL_RenderCopy(_SDLRenderer, gbq, NULL, &gbqp);
 
-		rekt.x = 390;
+		rekt.x = BOARD2_X;
 		gbqp.x = 344;
 
 		SDL_RenderCopy(_SDLRenderer, boardTexture2, NULL, &rekt);
 		SDL_RenderCopy(_SDLRenderer, gbq2, NULL, &gbqp);
+
+		renderPopups();
+
 	}
 	renderStatsText();
 	renderMatchPoints();
 
 	if (_game.isPaused()) {
 		SDL_SetTextureColorMod(_texture, 0x50, 0x50, 0x50);
-		SDL_RenderCopy(_SDLRenderer,_texture,NULL,NULL);
+		SDL_RenderCopy(_SDLRenderer, _texture, NULL, NULL);
 		SDL_SetTextureColorMod(_texture, 0xFF, 0xFF, 0xFF);
 		_game.getPauseMenu().render();
 	} else {
@@ -146,3 +150,20 @@ GameRenderer::~GameRenderer() {
 	SDL_DestroyTexture(_2pbg);
 }
 
+void GameRenderer::addPopup(Popup* p) {
+	_popups.push_back(p);
+}
+
+void GameRenderer::renderPopups() {
+	auto it = _popups.begin();
+	while (it != _popups.end()) {
+		if ((*it)->_alive) {
+			(*it)->renderToBoard();
+			(*it)->tick();
+			++it;
+		} else {
+			delete *it;
+			it = _popups.erase(it);
+		}
+	}
+}

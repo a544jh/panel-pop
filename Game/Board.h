@@ -14,6 +14,8 @@
 #include "Block.h"
 #include "GarbageBlock.h"
 
+class BoardEventHandler;
+
 class Game;
 
 enum Direction {
@@ -47,7 +49,7 @@ public:
 		RUNNING, COUNTDOWN, WON, GAME_OVER
 	};
 
-	Board(Game*);
+	Board(Game*, BoardEventHandler*);
 
 	virtual ~Board();
 
@@ -99,6 +101,7 @@ private:
 
 	Game* _game;
 	BoardState _state;
+	BoardEventHandler* _eventHandler;
 	unsigned int _ticksRun;
 	int _garbageSpawnPositions[3];
 	int _cursorX, _cursorY;

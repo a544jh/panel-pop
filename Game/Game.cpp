@@ -9,11 +9,14 @@
 
 #include <SDL2/SDL_timer.h>
 
+#include "BoardEventHandler.h"
 #include "GarbageBlock.h"
 
-Game::Game() :
-				_board(this),
-				_board2(this),
+Game::Game(BoardEventHandler* beh1, BoardEventHandler* beh2) :
+				_beh1(beh1),
+				_beh2(beh2),
+				_board(this, beh1),
+				_board2(this, beh2),
 				_state(State::RUNNING),
 				_ticksRun(0),
 				_advanceTick(false),
@@ -26,6 +29,32 @@ Game::Game() :
 				_pauseMenu(*this) {
 }
 
+void Game::handleEnd() {
+	if (_board.getState() == Board::GAME_OVER
+			|| _board2.getState() == Board::GAME_OVER) {
+		if (_board.getState() == Board::RUNNING) {
+			_board.win();
+			++_p1MatchPoints;
+		} else if (_board2.getState() == Board::RUNNING) {
+			_board2.win();
+			++_p2MatchPoints;
+		}
+
+		if (_p1MatchPoints >= MATCH_POINTS) {
+			_p1MatchPoints = 0;
+			_p2MatchPoints = 0;
+			++_p1Points;
+		}
+		if (_p2MatchPoints >= MATCH_POINTS) {
+			_p1MatchPoints = 0;
+			_p2MatchPoints = 0;
+			++_p2Points;
+		}
+		_pausedTime = SDL_GetTicks() - _startTime;
+		_state = State::ENDED;
+	}
+}
+
 void Game::tick() {
 	if (_state == State::RUNNING || _advanceTick) {
 		_advanceTick = false;
@@ -35,28 +64,7 @@ void Game::tick() {
 		_board.tick();
 		_board2.tick();
 
-		if (_board.getState() == Board::GAME_OVER
-				|| _board2.getState() == Board::GAME_OVER) {
-			if (_board.getState() == Board::RUNNING) {
-				_board.win();
-				++_p1MatchPoints;
-			} else if (_board2.getState() == Board::RUNNING) {
-				_board2.win();
-				++_p2MatchPoints;
-			}
-			if (_p1MatchPoints >= MATCH_POINTS) {
-				_p1MatchPoints = 0;
-				_p2MatchPoints = 0;
-				++_p1Points;
-			}
-			if (_p2MatchPoints >= MATCH_POINTS) {
-				_p1MatchPoints = 0;
-				_p2MatchPoints = 0;
-				++_p2Points;
-			}
-			_pausedTime = SDL_GetTicks() - _startTime;
-			_state = State::ENDED;
-		}
+		//handleEnd();
 	}
 }
 
@@ -116,8 +124,8 @@ void Game::handleGarbageSpawning(Board& b1, Board& b2) {
 void Game::reset() {
 	_state = State::RUNNING;
 	_startTime = SDL_GetTicks();
-	_board = Board(this); //fix this :P
-	_board2 = Board(this);
+	_board = Board(this, _beh1); //fix this :P
+	_board2 = Board(this, _beh2);
 }
 
 void Game::inputTogglePause() {
@@ -149,6 +157,8 @@ const bool Game::isPaused() const {
 }
 
 Game::~Game() {
+	delete _beh1;
+	delete _beh2;
 }
 
 Game::State Game::getState() const {

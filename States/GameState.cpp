@@ -8,14 +8,18 @@
 #include "GameState.h"
 
 #include <SDL2/SDL_scancode.h>
-#include <iostream>
 
+#include "../Game/BoardEventHandler.h"
 #include "../InputManager.h"
 #include "../Menus/PauseMenu.h"
 
 GameState::GameState(KeyboardControllerConfig& c1, KeyboardControllerConfig& c2) :
-				_game(),
 				_renderer(_game),
+				_game(
+						new BoardEventHandler(_renderer, GameRenderer::BOARD1_X,
+								GameRenderer::BOARD1_Y),
+						new BoardEventHandler(_renderer, GameRenderer::BOARD2_X,
+								GameRenderer::BOARD2_Y)),
 				_kbc(_game._board, c1),
 				_kbc2(_game._board2, c2),
 				_p1keys(c1),
