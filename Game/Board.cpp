@@ -162,31 +162,31 @@ void Board::inputMoveCursor(Direction d) {
 
 	switch (d) {
 	case UP:
-		_cursorY++;
+		if (_cursorY + 1 < 12) {
+			++_cursorY;
+			_eventHandler->cursorMove();
+		}
 		break;
 	case DOWN:
-		_cursorY--;
+		if (_cursorY - 1 >= 0) {
+			--_cursorY;
+			_eventHandler->cursorMove();
+		}
 		break;
 	case RIGHT:
-		_cursorX++;
+		if (_cursorX + 1 < BOARD_WIDTH - 1) {
+			++_cursorX;
+			_eventHandler->cursorMove();
+		}
 		break;
 	case LEFT:
-		_cursorX--;
+		if (_cursorX - 1 >= 0) {
+			--_cursorX;
+			_eventHandler->cursorMove();
+		}
 		break;
 	default:
 		break;
-	}
-	while (_cursorX > BOARD_WIDTH - 2) {
-		--_cursorX;
-	}
-	while (_cursorY > 11) {
-		--_cursorY;
-	}
-	while (_cursorX < 0) {
-		++_cursorX;
-	}
-	while (_cursorY < 0) {
-		++_cursorY;
 	}
 }
 
@@ -245,6 +245,8 @@ void Board::inputSwapBlocks() {
 	}
 	_tiles[_cursorY][_cursorX].b._state = SWAPPING_RIGHT;
 	_tiles[_cursorY][_cursorX + 1].b._state = SWAPPING_LEFT;
+
+	_eventHandler->swap();
 }
 
 void Board::initTick() {
@@ -257,6 +259,7 @@ void Board::initTick() {
 		if (_chainCounter > 1) {
 			_tickChainEnd = true;
 			_lastChain = _chainCounter;
+			_eventHandler->chainEnd(_chainCounter);
 		}
 		_chainCounter = 1;
 	}
@@ -328,6 +331,10 @@ void Board::matchBlocks() {
 			setMatchedVer(matchStartIndex, col, matched);
 		}
 	}
+
+	if(_tickMatched > 3) {
+		_eventHandler->combo();
+	}
 }
 
 //scan the board from top left and set the explosion time for each block, so we get a pretty animation
@@ -366,6 +373,7 @@ void Board::handleMatchedBlocks() {
 	if (chain) {
 		++_chainCounter;
 		_tickChain = true;
+		_eventHandler->chain();
 	}
 }
 
@@ -410,7 +418,8 @@ void Board::handleBlockTimers() {
 				++tile.b._explosionTimer;
 
 				if (tile.b._explosionTimer == tile.b._explosionAnimTicks) {
-					_eventHandler->blockExplode(col, row, _stackOffset, tile.b._explOrder, _chainCounter);
+					_eventHandler->blockExplode(col, row, _stackOffset,
+							tile.b._explOrder, _chainCounter);
 				}
 
 				if (tile.b._explosionTicks == tile.b._explosionTimer) {
@@ -445,13 +454,13 @@ void Board::handleBlockTimers() {
 				int block = animTime / ADD_EXPL_TICKS;
 				if (block < it->_w * it->_h) {
 
-
 					int rx = block % it->_w;
 					int ry = block / it->_w;
 					int x = it->_x + (it->_w - 1) - rx; //block position in grid
 					int y = it->_y - (it->_h - 1) + ry;
 
-					_eventHandler->blockExplode(x, y, _stackOffset, it->_explOrder + block, _chainCounter);
+					_eventHandler->blockExplode(x, y, _stackOffset,
+							it->_explOrder + block, _chainCounter);
 				}
 			}
 
@@ -531,8 +540,9 @@ void Board::handleFalling() {
 					_tiles[row - 1][col] = _tiles[row][col];
 					clearTile(_tiles[row][col]);
 				}
-			} else {
+			} else if (tile.b._falling) {
 				tile.b._falling = false;
+				_eventHandler->blockFall();
 			}
 		}
 	}
@@ -555,8 +565,9 @@ void Board::handleGarbageFalling() {
 				_tiles[row][i].g = &(*it);
 			}
 			--it->_y;
-		} else {
+		} else if (it->_falling) {
 			it->_falling = false;
+			_eventHandler->gbFall();
 		}
 	}
 }
@@ -684,6 +695,7 @@ void Board::tick() {
 		handleMatchedBlocks();
 		handleTriggeredBlocks();
 	}
+	_eventHandler->endTick();
 }
 
 void Board::win() {

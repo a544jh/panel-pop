@@ -24,9 +24,18 @@
 SDLContext::SDLContext() :
 				WINDOW_WIDTH(640),
 				WINDOW_HEIGHT(480),
-				_psFont(nullptr),
-				_squareFont(nullptr),
-				_bgSong(nullptr),
+				_fontPs(nullptr),
+				_fontSquare(nullptr),
+				_musicBg(nullptr),
+				_sfxCursor(nullptr),
+				_sfxSwap(nullptr),
+				_sfxThump(nullptr),
+				_sfxBigThump(nullptr),
+				_sfxCombo(nullptr),
+				_sfxChain(nullptr),
+				_sfxFanfare1(nullptr),
+				_sfxFanfare2(nullptr),
+				_sfxFanfare3(nullptr),
 				_window(nullptr),
 				_renderer(nullptr),
 				_spriteSheet(nullptr) {
@@ -69,12 +78,13 @@ bool SDLContext::init() {
 		success = false;
 	}
 
-	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024) < 0) {
 		std::cout << Mix_GetError();
 		success = false;
 	}
 
-	Mix_VolumeMusic(MIX_MAX_VOLUME);
+	//Mix_VolumeMusic(64);
+	//Mix_Volume(-1,MIX_MAX_VOLUME);
 
 	success = loadSpriteSheet();
 	success = loadFonts();
@@ -99,9 +109,9 @@ bool SDLContext::loadSpriteSheet() {
 }
 
 bool SDLContext::loadFonts() {
-	_psFont = TTF_OpenFont("assets/fonts/PressStart2P.ttf", 16);
-	_squareFont = TTF_OpenFont("assets/fonts/square_sans_serif_7.ttf", 48);
-	if (_psFont == NULL || _squareFont == NULL) {
+	_fontPs = TTF_OpenFont("assets/fonts/PressStart2P.ttf", 16);
+	_fontSquare = TTF_OpenFont("assets/fonts/square_sans_serif_7.ttf", 48);
+	if (_fontPs == NULL || _fontSquare == NULL) {
 		std::cout << TTF_GetError();
 		return false;
 	}
@@ -164,17 +174,27 @@ void SDLContext::tearDown() {
 }
 
 bool SDLContext::loadAudio() {
-	_bgSong = Mix_LoadMUS("assets/music/battle1_loop.ogg");
+	_musicBg = Mix_LoadMUS("assets/music/battle1_loop.ogg");
 	std::cout << Mix_GetError();
 	//_popSfx = Mix_LoadWAV("assets/sfx/1x1.wav");
 
 	for (int i = 0; i < 40; ++i) {
 		std::ostringstream os;
 		os << "assets/sfx/" << (i / 10) + 1 << "x" << ((i % 10) + 1) << ".wav";
-		std::cout << os.str();
-		_popSfx[i] = Mix_LoadWAV(os.str().c_str());
+		//std::cout << os.str() << std::endl;
+		_sfxPop[i] = Mix_LoadWAV(os.str().c_str());
 	}
 
+	_sfxCursor = Mix_LoadWAV("assets/sfx/cursor.wav");
+	_sfxSwap = Mix_LoadWAV("assets/sfx/swap.wav");
+	_sfxThump = Mix_LoadWAV("assets/sfx/thump.wav");
+	_sfxBigThump = Mix_LoadWAV("assets/sfx/bigthump.wav");
+	_sfxChain = Mix_LoadWAV("assets/sfx/chain.wav");
+	_sfxCombo = Mix_LoadWAV("assets/sfx/combo.wav");
+	_sfxFanfare1 = Mix_LoadWAV("assets/sfx/fanfare1.wav");
+	_sfxFanfare2 = Mix_LoadWAV("assets/sfx/fanfare2.wav");
+	_sfxFanfare3 = Mix_LoadWAV("assets/sfx/fanfare3.wav");
+
 	std::cout << Mix_GetError();
-	return _bgSong != NULL;
+	return _musicBg != NULL;
 }

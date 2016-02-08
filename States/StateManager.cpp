@@ -98,7 +98,7 @@ void StateManager::startGame() {
 	//passed as reference but the KeyboardController copies it :P
 
 	switchToState(new GameState(c, c2));
-	//Mix_PlayMusic(SDL._bgSong,-1);
+	Mix_PlayMusic(SDL._musicBg,-1);
 }
 
 float StateManager::getAvgFps() const {
@@ -116,5 +116,5 @@ void StateManager::showFps() {
 		_avgFps = 0;
 	}
 	ss << std::setprecision(5) << _avgFps;
-	SDL.renderText(ss.str(), { 0, 0, 0 }, SDL._psFont, 0, 0);
+	SDL.renderText(ss.str(), { 0, 0, 0 }, SDL._fontPs, 0, 0);
 }

@@ -28,11 +28,21 @@ public:
 	SDL_Texture* makeTextureFromFont(std::string, SDL_Color, TTF_Font*);
 	void renderText(std::string, SDL_Color, TTF_Font*, int, int);
 
-	TTF_Font* _psFont;
-	TTF_Font* _squareFont;
+	TTF_Font* _fontPs;
+	TTF_Font* _fontSquare;
 
-	Mix_Music* _bgSong;
-	Mix_Chunk* _popSfx[40];
+	Mix_Music* _musicBg;
+	Mix_Chunk* _sfxPop[40];
+	Mix_Chunk* _sfxCursor;
+	Mix_Chunk* _sfxSwap;
+	Mix_Chunk* _sfxThump;
+	Mix_Chunk* _sfxBigThump;
+	Mix_Chunk* _sfxCombo;
+	Mix_Chunk* _sfxChain;
+	Mix_Chunk* _sfxFanfare1;
+	Mix_Chunk* _sfxFanfare2;
+	Mix_Chunk* _sfxFanfare3;
+
 
 private:
 	SDLContext();

@@ -31,19 +31,19 @@ BoardRenderer::BoardRenderer(Board& board) :
 			SDL_TEXTUREACCESS_TARGET, BOARD_WIDTH, BOARD_HEIGHT);
 	SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
 	_readyText = _SDLContext.makeTextureFromFont("READY", { 255, 255, 255 },
-			_SDLContext._squareFont);
+			_SDLContext._fontSquare);
 	_3Text = _SDLContext.makeTextureFromFont("3", { 255, 255, 255 },
-			_SDLContext._squareFont);
+			_SDLContext._fontSquare);
 	_2Text = _SDLContext.makeTextureFromFont("2", { 255, 255, 255 },
-			_SDLContext._squareFont);
+			_SDLContext._fontSquare);
 	_1Text = _SDLContext.makeTextureFromFont("1", { 255, 255, 255 },
-			_SDLContext._squareFont);
+			_SDLContext._fontSquare);
 	_goText = _SDLContext.makeTextureFromFont("GO!", { 255, 255, 255 },
-			_SDLContext._squareFont);
+			_SDLContext._fontSquare);
 	_winText = _SDLContext.makeTextureFromFont("WIN!", { 255, 255, 255 },
-			_SDLContext._squareFont);
+			_SDLContext._fontSquare);
 	_loseText = _SDLContext.makeTextureFromFont("LOSE!", { 255, 255, 255 },
-			_SDLContext._squareFont);
+			_SDLContext._fontSquare);
 }
 
 void BoardRenderer::tick() {

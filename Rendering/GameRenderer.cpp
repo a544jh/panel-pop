@@ -90,7 +90,7 @@ SDL_Texture* GameRenderer::renderGame() {
 	if (_game.getState() == Game::State::ENDED
 			&& SDL_GetTicks() % 1000 >= 500) {
 		_SDLContext.renderText("PUSH START", { 255, 255, 255 },
-				_SDLContext._squareFont, 134, 342);
+				_SDLContext._fontSquare, 134, 342);
 	}
 
 	return _texture;
@@ -107,7 +107,7 @@ void GameRenderer::renderStatsText() {
 	}
 	os << (time / 1000 / 60) << "\u2019" << std::setw(2) << std::setfill('0')
 			<< ((time / 1000) % 60) << "\u201d";
-	_SDLContext.renderText(os.str(), { 255, 255, 255 }, _SDLContext._psFont,
+	_SDLContext.renderText(os.str(), { 255, 255, 255 }, _SDLContext._fontPs,
 			280, 218);
 //points
 	os.str("");
@@ -115,7 +115,7 @@ void GameRenderer::renderStatsText() {
 	os << "\u25c0" << std::setw(2) << std::setfill('0') << _game.getP1Points()
 			<< ' ' << std::setw(2) << std::setfill('0') << _game.getP2Points()
 			<< "\u25b6";
-	_SDLContext.renderText(os.str(), { 255, 255, 255 }, _SDLContext._psFont,
+	_SDLContext.renderText(os.str(), { 255, 255, 255 }, _SDLContext._fontPs,
 			264, 180);
 }
 
