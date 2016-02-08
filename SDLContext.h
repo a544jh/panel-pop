@@ -42,6 +42,9 @@ public:
 	Mix_Chunk* _sfxFanfare1;
 	Mix_Chunk* _sfxFanfare2;
 	Mix_Chunk* _sfxFanfare3;
+	Mix_Chunk* _sfxCountdown;
+	Mix_Chunk* _sfxGo;
+	Mix_Chunk* _sfxPause;
 
 
 private:

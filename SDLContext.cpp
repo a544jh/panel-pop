@@ -36,6 +36,9 @@ SDLContext::SDLContext() :
 				_sfxFanfare1(nullptr),
 				_sfxFanfare2(nullptr),
 				_sfxFanfare3(nullptr),
+				_sfxCountdown(nullptr),
+				_sfxGo(nullptr),
+				_sfxPause(nullptr),
 				_window(nullptr),
 				_renderer(nullptr),
 				_spriteSheet(nullptr) {
@@ -194,6 +197,9 @@ bool SDLContext::loadAudio() {
 	_sfxFanfare1 = Mix_LoadWAV("assets/sfx/fanfare1.wav");
 	_sfxFanfare2 = Mix_LoadWAV("assets/sfx/fanfare2.wav");
 	_sfxFanfare3 = Mix_LoadWAV("assets/sfx/fanfare3.wav");
+	_sfxCountdown = Mix_LoadWAV("assets/sfx/countdown.wav");
+	_sfxGo = Mix_LoadWAV("assets/sfx/go.wav");
+	_sfxPause = Mix_LoadWAV("assets/sfx/pause.wav");
 
 	std::cout << Mix_GetError();
 	return _musicBg != NULL;

@@ -10,9 +10,12 @@
 #include <SDL2/SDL_timer.h>
 
 #include "BoardEventHandler.h"
+#include "GameEventHandler.h"
 #include "GarbageBlock.h"
 
-Game::Game(BoardEventHandler* beh1, BoardEventHandler* beh2) :
+Game::Game(GameEventHandler* geh, BoardEventHandler* beh1,
+		BoardEventHandler* beh2) :
+				_eventHandler(geh),
 				_beh1(beh1),
 				_beh2(beh2),
 				_board(this, beh1),
@@ -27,6 +30,7 @@ Game::Game(BoardEventHandler* beh1, BoardEventHandler* beh2) :
 				_p1Points(0),
 				_p2Points(0),
 				_pauseMenu(*this) {
+	_eventHandler->gameReset();
 }
 
 void Game::handleEnd() {
@@ -56,6 +60,11 @@ void Game::handleEnd() {
 }
 
 void Game::tick() {
+
+	if (_board.getState() == Board::COUNTDOWN) {
+		_eventHandler->countdown(getTime());
+	}
+
 	if (_state == State::RUNNING || _advanceTick) {
 		_advanceTick = false;
 		++_ticksRun;
@@ -122,6 +131,7 @@ void Game::handleGarbageSpawning(Board& b1, Board& b2) {
 }
 
 void Game::reset() {
+	_eventHandler->gameReset();
 	_state = State::RUNNING;
 	_startTime = SDL_GetTicks();
 	_board = Board(this, _beh1); //fix this :P
@@ -133,10 +143,12 @@ void Game::inputTogglePause() {
 		_pausedTime = SDL_GetTicks() - _startTime;
 		_startTime = 0;
 		_pauseMenu.resetCursor();
+		_eventHandler->gamePause();
 		_state = State::PAUSED;
 	} else if (_state == State::PAUSED) {
 		_startTime = SDL_GetTicks() - _pausedTime;
 		_pausedTime = 0;
+		_eventHandler->gameResume();
 		_state = State::RUNNING;
 	}
 }
@@ -157,6 +169,7 @@ const bool Game::isPaused() const {
 }
 
 Game::~Game() {
+	delete _eventHandler;
 	delete _beh1;
 	delete _beh2;
 }

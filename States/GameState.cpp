@@ -10,12 +10,13 @@
 #include <SDL2/SDL_scancode.h>
 
 #include "../Game/BoardEventHandler.h"
+#include "../Game/GameEventHandler.h"
 #include "../InputManager.h"
 #include "../Menus/PauseMenu.h"
 
 GameState::GameState(KeyboardControllerConfig& c1, KeyboardControllerConfig& c2) :
 				_renderer(_game),
-				_game(
+				_game(new GameEventHandler(),
 						new BoardEventHandler(_renderer, GameRenderer::BOARD1_X,
 								GameRenderer::BOARD1_Y),
 						new BoardEventHandler(_renderer, GameRenderer::BOARD2_X,

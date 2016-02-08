@@ -240,7 +240,9 @@ void Board::inputSwapBlocks() {
 	if (_state != RUNNING) {
 		return;
 	}
-	if (!(swappable(_cursorY, _cursorX) && swappable(_cursorY, _cursorX + 1))) {
+	if (!(swappable(_cursorY, _cursorX) && swappable(_cursorY, _cursorX + 1))
+			|| !(_tiles[_cursorY][_cursorX].type == BLOCK
+					|| _tiles[_cursorY][_cursorX + 1].type == BLOCK)) {
 		return;
 	}
 	_tiles[_cursorY][_cursorX].b._state = SWAPPING_RIGHT;
@@ -332,7 +334,7 @@ void Board::matchBlocks() {
 		}
 	}
 
-	if(_tickMatched > 3) {
+	if (_tickMatched > 3) {
 		_eventHandler->combo();
 	}
 }

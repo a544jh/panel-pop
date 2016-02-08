@@ -13,6 +13,8 @@
 #include "../Menus/PauseMenu.h"
 #include "Board.h"
 
+class GameEventHandler;
+
 
 class Game {
 
@@ -21,8 +23,9 @@ public:
 	enum class State {
 		RUNNING, PAUSED, ENDED
 	};
-	Game(BoardEventHandler*, BoardEventHandler*);
+	Game(GameEventHandler*, BoardEventHandler*, BoardEventHandler*);
 
+	GameEventHandler* _eventHandler;
 	BoardEventHandler* _beh1;
 	BoardEventHandler* _beh2;
 
