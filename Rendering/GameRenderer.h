@@ -12,6 +12,7 @@
 
 #include "BoardRenderer.h"
 #include "GbQueueRenderer.h"
+#include "Particle.h"
 #include "Popup.h"
 
 class GameRenderer: public Renderer {
@@ -27,6 +28,7 @@ public:
 	static const int BOARD2_Y = 43;
 
 	void addPopup(Popup*);
+	void addParticle(Particle*);
 
 private:
 	Game& _game;
@@ -38,10 +40,13 @@ private:
 	SDL_Texture* _2pbg;
 
 	std::list<Popup*> _popups;
+	std::list<Particle*> _particles;
 
 	void renderStatsText();
 	void renderMatchPoints();
 	void renderPopups();
+	void handleParticles();
+	void renderParticles();
 };
 
 #endif /* GAMERENDERER_H_ */

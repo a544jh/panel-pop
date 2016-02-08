@@ -36,6 +36,7 @@ GameRenderer::GameRenderer(Game& game) :
 
 void GameRenderer::tick() {
 	if (!_game.isPaused()) {
+		handleParticles();
 		_boardRenderer.tick();
 		_boardRenderer2.tick();
 	}
@@ -72,6 +73,7 @@ SDL_Texture* GameRenderer::renderGame() {
 		SDL_RenderCopy(_SDLRenderer, gbq2, NULL, &gbqp);
 
 		renderPopups();
+		renderParticles();
 
 	}
 	renderStatsText();
@@ -154,6 +156,10 @@ void GameRenderer::addPopup(Popup* p) {
 	_popups.push_back(p);
 }
 
+void GameRenderer::addParticle(Particle* p) {
+	_particles.push_back(p);
+}
+
 void GameRenderer::renderPopups() {
 	auto it = _popups.begin();
 	while (it != _popups.end()) {
@@ -165,5 +171,24 @@ void GameRenderer::renderPopups() {
 			delete *it;
 			it = _popups.erase(it);
 		}
+	}
+}
+
+void GameRenderer::handleParticles() {
+	auto it = _particles.begin();
+	while (it != _particles.end()) {
+		if ((*it)->_alive) {
+			(*it)->tick();
+			++it;
+		} else {
+			delete *it;
+			it = _particles.erase(it);
+		}
+	}
+}
+
+void GameRenderer::renderParticles() {
+	for (auto it = _particles.begin(); it != _particles.end(); ++it) {
+		(*it)->render();
 	}
 }

@@ -8,11 +8,9 @@
 #include "BoardEventHandler.h"
 
 #include <SDL2/SDL_mixer.h>
-#include <iostream>
 
 #include "../Rendering/BoardRenderer.h"
-#include "../Rendering/ChainPopup.h"
-#include "../Rendering/ComboPopup.h"
+#include "../Rendering/Particle.h"
 #include "../SDLContext.h"
 
 BoardEventHandler::BoardEventHandler(GameRenderer& gr, int x, int y) :
@@ -44,7 +42,6 @@ void BoardEventHandler::endTick() {
 		_combo = false;
 	}
 
-
 	//prevent multiple
 	if (_blockFall) {
 		Mix_PlayChannel(-1, _SDLContext._sfxThump, 0);
@@ -55,11 +52,21 @@ void BoardEventHandler::endTick() {
 
 void BoardEventHandler::blockExplode(int x, int y, int stackOffset, int order,
 		int chain) {
-	int posx = x * BoardRenderer::TILE_SIZE + 5 + _boardXPos;
+	int posx = x * BoardRenderer::TILE_SIZE + _boardXPos + 14;
 	int posy = BoardRenderer::BOARD_HEIGHT - (y + 1) * BoardRenderer::TILE_SIZE
-			- stackOffset + _boardYPos;
-	_gr.addPopup(new ComboPopup(posx, posy, order, 100)); // TODO: change to particle
-	_gr.addPopup(new ChainPopup(posx + 20, posy, chain, 100));
+			- stackOffset + _boardYPos + 14;
+	int lifetime = 15;
+	//_gr.addPopup(new ComboPopup(posx, posy, order, 100)); // TODO: change to particle
+	//_gr.addPopup(new ChainPopup(posx + 20, posy, chain, 100));
+
+	_gr.addParticle(new Particle(posx, posy, -2, -2, lifetime));
+	_gr.addParticle(new Particle(posx, posy, -2, 0, lifetime));
+	_gr.addParticle(new Particle(posx, posy, -2, 2, lifetime));
+	_gr.addParticle(new Particle(posx, posy, 0, -2, lifetime));
+	_gr.addParticle(new Particle(posx, posy, 0, 2, lifetime));
+	_gr.addParticle(new Particle(posx, posy, 2, -2, lifetime));
+	_gr.addParticle(new Particle(posx, posy, 2, 0, lifetime));
+	_gr.addParticle(new Particle(posx, posy, 2, 2, lifetime));
 
 	int soundOrder = order;
 	if (soundOrder > 9) {
