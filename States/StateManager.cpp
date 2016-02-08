@@ -7,6 +7,7 @@
 
 #include "StateManager.h"
 
+#include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_scancode.h>
@@ -97,6 +98,7 @@ void StateManager::startGame() {
 	//passed as reference but the KeyboardController copies it :P
 
 	switchToState(new GameState(c, c2));
+	//Mix_PlayMusic(SDL._bgSong,-1);
 }
 
 float StateManager::getAvgFps() const {

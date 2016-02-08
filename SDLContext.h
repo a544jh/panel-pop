@@ -8,6 +8,7 @@
 #ifndef SDLCONTEXT_H_
 #define SDLCONTEXT_H_
 
+#include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
 
@@ -29,6 +30,10 @@ public:
 
 	TTF_Font* _psFont;
 	TTF_Font* _squareFont;
+
+	Mix_Music* _bgSong;
+	Mix_Chunk* _popSfx[40];
+
 private:
 	SDLContext();
 	SDLContext(SDLContext const&) = delete;
@@ -40,6 +45,7 @@ private:
 
 	bool loadSpriteSheet();
 	bool loadFonts();
+	bool loadAudio();
 };
 
 #endif /* SDLCONTEXT_H_ */

@@ -15,10 +15,10 @@ Block::Block() :
 				_floatTimer(0),
 				_swapTimer(0),
 				_chain(false),
+				_explOrder(0),
 				_explosionTicks(0),
 				_explosionAnimTicks(0),
-				_explosionTimer(0),
-				_explOrder(0) {
+				_explosionTimer(0) {
 
 }
 

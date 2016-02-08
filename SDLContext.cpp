@@ -6,16 +6,27 @@
  */
 
 #include "SDLContext.h"
+
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_error.h>
+#include <SDL2/SDL_events.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mouse.h>
+#include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
+#include <SDL2/SDL_video.h>
+#include <cstdint>
 #include <iostream>
+#include <sstream>
 
 SDLContext::SDLContext() :
 				WINDOW_WIDTH(640),
 				WINDOW_HEIGHT(480),
 				_psFont(nullptr),
 				_squareFont(nullptr),
+				_bgSong(nullptr),
 				_window(nullptr),
 				_renderer(nullptr),
 				_spriteSheet(nullptr) {
@@ -58,8 +69,19 @@ bool SDLContext::init() {
 		success = false;
 	}
 
+	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+		std::cout << Mix_GetError();
+		success = false;
+	}
+
+	Mix_VolumeMusic(MIX_MAX_VOLUME);
+
 	success = loadSpriteSheet();
 	success = loadFonts();
+	success = loadAudio();
+
+	//Mix_PlayMusic(_bgSong, -1);
+
 	return success;
 }
 
@@ -139,4 +161,20 @@ void SDLContext::tearDown() {
 	SDL_DestroyRenderer(_renderer);
 	SDL_DestroyWindow(_window);
 	SDL_Quit();
+}
+
+bool SDLContext::loadAudio() {
+	_bgSong = Mix_LoadMUS("assets/music/battle1_loop.ogg");
+	std::cout << Mix_GetError();
+	//_popSfx = Mix_LoadWAV("assets/sfx/1x1.wav");
+
+	for (int i = 0; i < 40; ++i) {
+		std::ostringstream os;
+		os << "assets/sfx/" << (i / 10) + 1 << "x" << ((i % 10) + 1) << ".wav";
+		std::cout << os.str();
+		_popSfx[i] = Mix_LoadWAV(os.str().c_str());
+	}
+
+	std::cout << Mix_GetError();
+	return _bgSong != NULL;
 }
