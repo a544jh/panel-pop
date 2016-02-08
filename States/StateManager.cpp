@@ -21,6 +21,8 @@
 
 StateManager::StateManager() :
 				_currentState(nullptr),
+				_newState(nullptr),
+				_switchState(false),
 				SDL(SDLContext::getInstance()),
 				input(InputManager::getInstance()),
 				_lastTick(0),
@@ -78,13 +80,18 @@ void StateManager::run() {
 		if (tick) {
 			_lastTick = SDL_GetTicks();
 		}
+		if (_switchState) {
+			delete _currentState;
+			_currentState = _newState;
+			_switchState = false;
+		}
 
 	}
 }
 
 void StateManager::switchToState(State* state) {
-	delete _currentState;
-	_currentState = state;
+	_newState = state;
+	_switchState = true;
 }
 
 void StateManager::startGame() {

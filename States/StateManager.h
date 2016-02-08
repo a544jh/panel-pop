@@ -26,6 +26,8 @@ private:
 	StateManager(StateManager const&) = delete;
 	void operator=(StateManager const&) = delete;
 	State* _currentState;
+	State* _newState;
+	bool _switchState;
 	SDLContext& SDL;
 	InputManager& input;
 	uint32_t _lastTick;
