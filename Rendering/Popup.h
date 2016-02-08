@@ -8,20 +8,20 @@
 #ifndef POPUP_H_
 #define POPUP_H_
 
-#include "Renderer.h"
 #include <string>
 
-class Popup : public Renderer {
+#include "Particle.h"
+
+class Popup : public Particle {
 public:
 	Popup();
 	Popup(int x, int y, int value, int lifetime);
 
-	int _x, _y, _value, _ticksToLive, _ticksLived;
-	bool _alive;
+	int _value;
 	std::string _digits;
 
 	virtual void tick();
-	virtual void renderToBoard() =0;
+	virtual void render() =0;
 	virtual ~Popup();
 private:
 	void initDigits();

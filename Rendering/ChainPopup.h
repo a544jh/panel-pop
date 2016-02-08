@@ -15,7 +15,7 @@ public:
 	ChainPopup();
 	virtual ~ChainPopup();
 	ChainPopup(int x, int y, int value, int lifetime);
-	void renderToBoard();
+	void render();
 };
 
 #endif /* CHAINPOPUP_H_ */

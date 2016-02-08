@@ -333,10 +333,6 @@ void Board::matchBlocks() {
 			setMatchedVer(matchStartIndex, col, matched);
 		}
 	}
-
-	if (_tickMatched > 3) {
-		_eventHandler->combo();
-	}
 }
 
 //scan the board from top left and set the explosion time for each block, so we get a pretty animation
@@ -375,7 +371,6 @@ void Board::handleMatchedBlocks() {
 	if (chain) {
 		++_chainCounter;
 		_tickChain = true;
-		_eventHandler->chain();
 	}
 }
 
@@ -696,6 +691,8 @@ void Board::tick() {
 		matchBlocks();
 		handleMatchedBlocks();
 		handleTriggeredBlocks();
+
+		sendEvents();
 	}
 	_eventHandler->endTick();
 }
@@ -797,4 +794,13 @@ Game& Board::getGame() const {
 
 uint32_t Board::getTime() const {
 	return _game->getTime();
+}
+
+void Board::sendEvents() {
+	if(_tickChain){
+		_eventHandler->chain(_chainCounter,_tickMatchCol,_tickMatchRow,_stackOffset);
+	}
+	if(_tickMatched > 3) {
+		_eventHandler->combo(_tickMatched,_tickMatchCol,_tickMatchRow,_stackOffset);
+	}
 }

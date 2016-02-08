@@ -47,9 +47,6 @@ BoardRenderer::BoardRenderer(Board& board) :
 }
 
 void BoardRenderer::tick() {
-	handleChain();
-	handleCombo();
-	handlePopups();
 }
 
 void BoardRenderer::drawCountdown() {
@@ -110,7 +107,7 @@ SDL_Texture* BoardRenderer::renderBoard() {
 			|| _board.getState() == Board::RUNNING) {
 		drawCursor();
 	}
-	drawPopups();
+	//drawPopups();
 	drawCountdown();
 	if (_board.getState() == Board::WON
 			|| _board.getState() == Board::GAME_OVER) {
@@ -361,27 +358,7 @@ void BoardRenderer::drawCursor() {
 	SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
 }
 
-void BoardRenderer::handleChain() {
-	if (_board.isTickChain()) {
-		_popups.push_back(
-				new ChainPopup(_board.getTickMatchCol() * TILE_SIZE + 5,
-						(BOARD_HEIGHT
-								- (_board.getTickMatchRow() + 1) * TILE_SIZE
-								- _board.getStackOffset()),
-						_board.getChainCounter(), 60));
-	}
-}
 
-void BoardRenderer::handleCombo() {
-	if (_board.getTickMatched() > 3) {
-		_popups.push_back(
-				new ComboPopup(_board.getTickMatchCol() * TILE_SIZE + 5,
-						(BOARD_HEIGHT
-								- (_board.getTickMatchRow() + 1) * TILE_SIZE
-								- _board.getStackOffset()) + 30,
-						_board.getTickMatched(), 60));
-	}
-}
 
 BoardRenderer::~BoardRenderer() {
 	SDL_DestroyTexture(_readyText);
@@ -393,21 +370,4 @@ BoardRenderer::~BoardRenderer() {
 	SDL_DestroyTexture(_winText);
 }
 
-void BoardRenderer::drawPopups() {
-	for (auto it = _popups.begin(); it != _popups.end(); ++it) {
-		(*it)->renderToBoard();
-	}
-}
 
-void BoardRenderer::handlePopups() {
-	auto it = _popups.begin();
-	while (it != _popups.end()) {
-		if ((*it)->_alive) {
-			(*it)->tick();
-			++it;
-		} else {
-			delete *it;
-			it = _popups.erase(it);
-		}
-	}
-}

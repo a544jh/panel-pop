@@ -39,7 +39,6 @@ private:
 	SDL_Texture* _bg;
 	SDL_Texture* _2pbg;
 
-	std::list<Popup*> _popups;
 	std::list<Particle*> _particles;
 
 	void renderStatsText();

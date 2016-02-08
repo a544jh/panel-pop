@@ -144,6 +144,7 @@ private:
 	bool garbageBlockCanFall(GarbageBlock&);
 	bool swappable(int, int);
 	bool spawnGarbage(int,int,int,int, GarbageBlockType);
+	void sendEvents();
 };
 
 #endif /* BOARD_H_ */

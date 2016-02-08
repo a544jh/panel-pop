@@ -22,8 +22,8 @@ public:
 	void swap();
 	void blockFall();
 	void gbFall();
-	void combo();
-	void chain();
+	void combo(int value, int col, int row, int stackOffset);
+	void chain(int value, int col, int row, int stackOffset);
 	void chainEnd(int chain);
 
 private:

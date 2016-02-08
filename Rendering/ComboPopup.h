@@ -15,7 +15,7 @@ public:
 	ComboPopup();
 	ComboPopup(int x, int y, int value, int lifetime);
 	virtual ~ComboPopup();
-	void renderToBoard();
+	void render();
 };
 
 #endif /* COMBOPOPUP_H_ */

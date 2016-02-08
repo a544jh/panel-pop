@@ -10,7 +10,8 @@
 #include <SDL2/SDL_mixer.h>
 
 #include "../Rendering/BoardRenderer.h"
-#include "../Rendering/Particle.h"
+#include "../Rendering/ChainPopup.h"
+#include "../Rendering/ComboPopup.h"
 #include "../SDLContext.h"
 
 BoardEventHandler::BoardEventHandler(GameRenderer& gr, int x, int y) :
@@ -101,12 +102,22 @@ void BoardEventHandler::gbFall() {
 	Mix_PlayChannel(-1, _SDLContext._sfxBigThump, 0);
 }
 
-void BoardEventHandler::combo() {
+void BoardEventHandler::combo(int value, int col, int row, int stackOffset) {
 	_combo = true;
+	_gr.addParticle(
+			new ComboPopup((col * BoardRenderer::TILE_SIZE + 5) + _boardXPos,
+					((BoardRenderer::BOARD_HEIGHT
+							- (row + 1) * BoardRenderer::TILE_SIZE - stackOffset)
+							+ 30) + _boardYPos, value, 60));
 }
 
-void BoardEventHandler::chain() {
+void BoardEventHandler::chain(int value, int col, int row, int stackOffset) {
 	_chain = true;
+	_gr.addParticle(
+			new ChainPopup(col * BoardRenderer::TILE_SIZE + 5 + _boardXPos,
+					(BoardRenderer::BOARD_HEIGHT
+							- (row + 1) * BoardRenderer::TILE_SIZE - stackOffset
+							+ _boardYPos), value, 60));
 }
 
 void BoardEventHandler::chainEnd(int chain) {

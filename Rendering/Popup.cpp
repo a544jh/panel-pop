@@ -6,30 +6,23 @@
  */
 
 #include "Popup.h"
+
 #include <sstream>
 
 Popup::Popup() :
-				_x(0),
-				_y(0),
-				_value(0),
-				_ticksToLive(0),
-				_ticksLived(0),
-				_alive(true) {
+				_value(0) {
 }
 
 Popup::Popup(int x, int y, int value, int lifetime) :
-				_x(x),
-				_y(y),
-				_value(value),
-				_ticksToLive(lifetime),
-				_ticksLived(0),
-				_alive(true){
+				Particle(x, y, 0, -1, lifetime),
+				_value(value) {
 	initDigits();
 }
 
 void Popup::tick() {
 	if (_ticksLived <= 5) {
-		--_y;
+		_x += _vx;
+		_y += _vy;
 	}
 	++_ticksLived;
 	if (_ticksLived >= _ticksToLive) {

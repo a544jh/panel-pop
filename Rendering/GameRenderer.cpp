@@ -72,7 +72,6 @@ SDL_Texture* GameRenderer::renderGame() {
 		SDL_RenderCopy(_SDLRenderer, boardTexture2, NULL, &rekt);
 		SDL_RenderCopy(_SDLRenderer, gbq2, NULL, &gbqp);
 
-		renderPopups();
 		renderParticles();
 
 	}
@@ -152,27 +151,11 @@ GameRenderer::~GameRenderer() {
 	SDL_DestroyTexture(_2pbg);
 }
 
-void GameRenderer::addPopup(Popup* p) {
-	_popups.push_back(p);
-}
 
 void GameRenderer::addParticle(Particle* p) {
 	_particles.push_back(p);
 }
 
-void GameRenderer::renderPopups() {
-	auto it = _popups.begin();
-	while (it != _popups.end()) {
-		if ((*it)->_alive) {
-			(*it)->renderToBoard();
-			(*it)->tick();
-			++it;
-		} else {
-			delete *it;
-			it = _popups.erase(it);
-		}
-	}
-}
 
 void GameRenderer::handleParticles() {
 	auto it = _particles.begin();

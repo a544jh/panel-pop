@@ -30,16 +30,11 @@ private:
 	void drawGarbageBlocks();
 	void drawCursor();
 	void drawBufferRow();
-	void handleChain();
-	void handleCombo();
-	void handlePopups();
-	void drawPopups();
 	SDL_Rect getBlockSprite(const Block&);
 	SDL_Rect getGarbageBlockSprite(int, int, const GarbageBlock&);
 	void drawCountdown();
 	void drawGameOver();
 
-	std::list<Popup*> _popups;
 
 	SDL_Texture* _readyText;
 	SDL_Texture* _3Text;
