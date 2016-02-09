@@ -37,11 +37,11 @@ void BoardEventHandler::endTick() {
 	//chain sound overrides combo...
 	if (_chain) {
 		Mix_PlayChannel(-1, _SDLContext._sfxChain, 0);
-		_chain = false;
 	} else if (_combo) {
 		Mix_PlayChannel(-1, _SDLContext._sfxCombo, 0);
-		_combo = false;
 	}
+	_chain = false;
+	_combo = false;
 
 	//prevent multiple
 	if (_blockFall) {
