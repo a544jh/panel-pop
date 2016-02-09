@@ -18,6 +18,7 @@ Board::Board(Game* game, BoardEventHandler* eh) :
 				_eventHandler(eh),
 				_ticksRun(0),
 				_garbageSpawnPositions { 0 },
+				_warnColumns { 0 },
 				_cursorX(2),
 				_cursorY(5),
 				_tickMatched(0),
@@ -269,11 +270,22 @@ void Board::initTick() {
 	//check top row for blocks
 	_blockOnTopRow = blockOnRow(TOP_ROW);
 	//check panic
-	if (blockOnRow (PANIC_HEIGHT)) {
+	if (blockOnRow(PANIC_HEIGHT)) {
 		_panic = true;
 	} else {
 		_panic = false;
 	}
+	//set warn columns
+	for (int row = TOP_ROW; row >= WARN_HEIGHT; --row) {
+		for (int col = 0; col < BOARD_WIDTH; ++col) {
+			if (_tiles[row][col].type != AIR) {
+				_warnColumns[col] = true;
+			} else {
+				_warnColumns[col] = false;
+			}
+		}
+	}
+
 	//speed up stack raising (within 2 mins)
 	if (_ticksRun % 1440 == 1439 && _stackRaiseTicks > 0) {
 		--_stackRaiseTicks;
@@ -799,11 +811,16 @@ uint32_t Board::getTime() const {
 
 bool Board::blockOnRow(int row) {
 	for (int col = 0; col < BOARD_WIDTH; ++col) {
-		if (_tiles[row][col].type != AIR) {
+		Tile& t = _tiles[row][col];
+		if (t.type != AIR && !(t.type == GARBAGE && t.g->_falling)) {
 			return true;
 		}
 	}
 	return false;
+}
+
+bool Board::getWarnColumn(int col) {
+	return _warnColumns[col];
 }
 
 void Board::sendEvents() {

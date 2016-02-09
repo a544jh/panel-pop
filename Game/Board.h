@@ -73,6 +73,7 @@ public:
 
 	bool hasActiveBlocks() const;
 	const Tile& getBufferRow(int) const;
+	bool getWarnColumn(int);
 	int getChainCounter() const;
 	int getCursorX() const;
 	int getCursorY() const;
@@ -108,6 +109,7 @@ private:
 	BoardEventHandler* _eventHandler;
 	unsigned int _ticksRun;
 	int _garbageSpawnPositions[3];
+	bool _warnColumns[BOARD_WIDTH];
 	int _cursorX, _cursorY;
 	int _tickMatched; //how many blocks got matched this tick
 	int _stackOffset;

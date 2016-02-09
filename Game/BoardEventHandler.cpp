@@ -107,10 +107,10 @@ void BoardEventHandler::blockFall() {
 void BoardEventHandler::gbFall(bool big) {
 	if (big) {
 		Mix_PlayChannel(-1, _SDLContext._sfxBigThump, 0);
-		_gameRenderer.shakeBoard(_boardId, 50);
+		_gameRenderer.shakeBoard(_boardId, 30);
 	} else {
 		Mix_PlayChannel(-1, _SDLContext._sfxThump, 0);
-		_gameRenderer.shakeBoard(_boardId, 30);
+		_gameRenderer.shakeBoard(_boardId, 15);
 	}
 }
 

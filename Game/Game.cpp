@@ -72,7 +72,7 @@ void Game::tick() {
 		handleGarbageSpawning(_board0, _board1);
 		handleGarbageSpawning(_board1, _board0);
 		_board0.tick();
-		_board1.tick();
+		//_board1.tick();
 
 		if(!_panic && (_board0.isPanic() || _board1.isPanic())){
 			_panic = true;

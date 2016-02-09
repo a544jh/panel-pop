@@ -7,6 +7,7 @@
 
 #include "BoardRenderer.h"
 
+#include <math.h>
 #include <stddef.h>
 #include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_pixels.h>
@@ -17,8 +18,6 @@
 #include "../Game/Block.h"
 #include "../Game/GarbageBlock.h"
 #include "../SDLContext.h"
-#include "ChainPopup.h"
-#include "ComboPopup.h"
 
 const int BoardRenderer::BOARD_WIDTH = 192;
 const int BoardRenderer::BOARD_HEIGHT = 384;
@@ -181,6 +180,10 @@ void BoardRenderer::drawBlocks() {
 					pos.y += top.h;
 					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &bottom, &pos);
 					SDL_SetTextureColorMod(_spriteSheet, 0xFF, 0xFF, 0xFF);
+				} else if (_board.getWarnColumn(j)
+						&& !_board.hasActiveBlocks()) {
+					pos.y += sin(_board.getTicksRun());
+					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sheet, &pos);
 				} else {
 					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sheet, &pos);
 				}
@@ -293,6 +296,11 @@ void BoardRenderer::drawBufferRow() {
 		pos.w = TILE_SIZE;
 		pos.x = i * TILE_SIZE;
 		pos.y = (BOARD_HEIGHT) - _board.getStackOffset();
+
+		if (_board.getWarnColumn(i) && !_board.hasActiveBlocks()) {
+			pos.y += sin(_board.getTicksRun());
+		}
+
 		SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sheet, &pos);
 
 	}
@@ -302,6 +310,16 @@ void BoardRenderer::drawBufferRow() {
 void BoardRenderer::drawGarbageBlocks() {
 	auto garbageBlocks = _board.getGarbageBlocks();
 	for (auto it = garbageBlocks.begin(); it != garbageBlocks.end(); ++it) {
+
+		double warnOffset = 0;
+		for (int i = it->getX(); i < it->getX() + it->getW(); ++i){
+			if(_board.getWarnColumn(i) && !_board.hasActiveBlocks()
+					&& _board.getGraceTimer() == 0){
+				warnOffset = sin(_board.getTicksRun());
+				break;
+			}
+		}
+
 		//draw normal block
 		for (int y = it->getY() - (it->getH() - 1); y <= it->getY(); ++y) {
 			for (int x = it->getX() + (it->getW() - 1); x >= it->getX(); --x) {
@@ -309,8 +327,8 @@ void BoardRenderer::drawGarbageBlocks() {
 				pos.h = TILE_SIZE;
 				pos.w = TILE_SIZE;
 				pos.x = x * TILE_SIZE;
-				pos.y = (BOARD_HEIGHT - (y + 1) * TILE_SIZE)
-						- _board.getStackOffset();
+				pos.y = ((BOARD_HEIGHT - (y + 1) * TILE_SIZE)
+						- _board.getStackOffset()) + warnOffset;
 
 				//lower right corner is 0,0
 				int rx = (it->getX() + (it->getW() - 1)) - x;
@@ -326,8 +344,8 @@ void BoardRenderer::drawGarbageBlocks() {
 		//draw face
 		SDL_Rect pos;
 		pos.x = it->getX() * TILE_SIZE;
-		pos.y = (BOARD_HEIGHT - (it->getY() + 1) * TILE_SIZE)
-				- _board.getStackOffset();
+		pos.y = ((BOARD_HEIGHT - (it->getY() + 1) * TILE_SIZE)
+				- _board.getStackOffset()) + warnOffset;
 		pos.w = 64;
 		pos.h = 24;
 		SDL_Rect sprite;
@@ -361,8 +379,8 @@ void BoardRenderer::drawGarbageBlocks() {
 				pos.h = TILE_SIZE;
 				pos.w = TILE_SIZE;
 				pos.x = x * TILE_SIZE;
-				pos.y = (BOARD_HEIGHT - (y + 1) * TILE_SIZE)
-						- _board.getStackOffset();
+				pos.y = ((BOARD_HEIGHT - (y + 1) * TILE_SIZE)
+						- _board.getStackOffset()) + warnOffset;
 
 				//lower right corner is 0,0
 				int rx = (it->getX() + (it->getW() - 1)) - x;
