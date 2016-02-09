@@ -84,6 +84,7 @@ void Game::tick() {
 		}
 
 		handleEnd();
+		_eventHandler->tickEnd();
 	}
 }
 

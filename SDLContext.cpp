@@ -26,7 +26,8 @@ SDLContext::SDLContext() :
 				WINDOW_HEIGHT(480),
 				_fontPs(nullptr),
 				_fontSquare(nullptr),
-				_musicBg(nullptr),
+				_musicBgIntro(nullptr),
+				_musicBgLoop(nullptr),
 				_musicPanic(nullptr),
 				_sfxCursor(nullptr),
 				_sfxSwap(nullptr),
@@ -176,7 +177,8 @@ void SDLContext::tearDown() {
 }
 
 bool SDLContext::loadAudio() {
-	_musicBg = Mix_LoadMUS("assets/music/battle1_loop.ogg");
+	_musicBgIntro = Mix_LoadMUS("assets/music/panelpop_intro.ogg");
+	_musicBgLoop = Mix_LoadMUS("assets/music/panelpop_loop.ogg");
 	_musicPanic = Mix_LoadMUS("assets/music/battle1_panic.ogg");
 	std::cout << Mix_GetError();
 
@@ -201,5 +203,5 @@ bool SDLContext::loadAudio() {
 	_sfxPause = Mix_LoadWAV("assets/sfx/pause.wav");
 
 	std::cout << Mix_GetError();
-	return _musicBg != NULL;
+	return _musicBgLoop != NULL;
 }

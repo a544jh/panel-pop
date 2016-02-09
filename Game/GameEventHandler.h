@@ -23,10 +23,12 @@ public:
 	void gameResume();
 	void panicBegin();
 	void panicEnd();
+	void tickEnd();
 
 private:
 	SDLContext& _SDLContext;
 	int _countdownState;
+	bool _songIntro;
 
 };
 

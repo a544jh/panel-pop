@@ -13,7 +13,8 @@
 
 GameEventHandler::GameEventHandler() :
 				_SDLContext(SDLContext::getInstance()),
-				_countdownState(-1) {
+				_countdownState(-1),
+				_songIntro(true) {
 
 }
 
@@ -27,7 +28,7 @@ void GameEventHandler::countdown(uint32_t time) {
 			Mix_PlayChannel(-1, _SDLContext._sfxCountdown, 0);
 		} else {
 			Mix_PlayChannel(-1, _SDLContext._sfxGo, 0);
-			Mix_PlayMusic(_SDLContext._musicBg, -1);
+			Mix_PlayMusic(_SDLContext._musicBgIntro, 1);
 		}
 		_countdownState = sec;
 	}
@@ -36,6 +37,7 @@ void GameEventHandler::countdown(uint32_t time) {
 
 void GameEventHandler::gameReset() {
 	_countdownState = -1;
+	_songIntro = true;
 	Mix_HaltMusic();
 }
 
@@ -49,9 +51,17 @@ void GameEventHandler::gameResume() {
 }
 
 void GameEventHandler::panicBegin() {
+	_songIntro = false;
 	Mix_PlayMusic(_SDLContext._musicPanic, -1);
 }
 
 void GameEventHandler::panicEnd() {
-	Mix_PlayMusic(_SDLContext._musicBg, -1);
+	Mix_PlayMusic(_SDLContext._musicBgLoop, -1);
+}
+
+void GameEventHandler::tickEnd() {
+	if(_songIntro && !Mix_PlayingMusic() && _countdownState >= 3){
+		_songIntro = false;
+		Mix_PlayMusic(_SDLContext._musicBgLoop,-1);
+	}
 }
