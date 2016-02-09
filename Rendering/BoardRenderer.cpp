@@ -167,7 +167,7 @@ void BoardRenderer::drawBlocks() {
 					int px = _board.getGraceTimer() * TILE_SIZE
 							/ ((TILE_SIZE * _board.getStackRaiseTicks()) / 2);
 
-					if(px > TILE_SIZE){
+					if (px > TILE_SIZE) {
 						px = TILE_SIZE;
 					}
 
@@ -247,8 +247,8 @@ SDL_Rect BoardRenderer::getGarbageBlockSprite(int rx, int ry,
 		--h;
 		--ry;
 	}
-	bool blink = b.getTransformationTimer() % 2 != 0 &&
-			b.getTransformationTimer() <= BLINK_TIME;
+	bool blink = b.getTransformationTimer() % 2 != 0
+			&& b.getTransformationTimer() <= BLINK_TIME;
 	int t = 0;
 	if (rx == 0) {
 		t = 2; //right
@@ -302,6 +302,59 @@ void BoardRenderer::drawBufferRow() {
 void BoardRenderer::drawGarbageBlocks() {
 	auto garbageBlocks = _board.getGarbageBlocks();
 	for (auto it = garbageBlocks.begin(); it != garbageBlocks.end(); ++it) {
+		//draw normal block
+		for (int y = it->getY() - (it->getH() - 1); y <= it->getY(); ++y) {
+			for (int x = it->getX() + (it->getW() - 1); x >= it->getX(); --x) {
+				SDL_Rect pos;
+				pos.h = TILE_SIZE;
+				pos.w = TILE_SIZE;
+				pos.x = x * TILE_SIZE;
+				pos.y = (BOARD_HEIGHT - (y + 1) * TILE_SIZE)
+						- _board.getStackOffset();
+
+				//lower right corner is 0,0
+				int rx = (it->getX() + (it->getW() - 1)) - x;
+				int ry = y - (it->getY() - (it->getH() - 1));
+
+				//normal
+				SDL_Rect sprite = getGarbageBlockSprite(rx, ry, *it);
+				SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
+
+			}
+		}
+
+		//draw face
+		SDL_Rect pos;
+		pos.x = it->getX() * TILE_SIZE;
+		pos.y = (BOARD_HEIGHT - (it->getY() + 1) * TILE_SIZE)
+				- _board.getStackOffset();
+		pos.w = 64;
+		pos.h = 24;
+		SDL_Rect sprite;
+		sprite.x = 416;
+		sprite.w = 64;
+		sprite.h = 24;
+		bool blink = it->getTransformationTimer() % 2 != 0
+				&& it->getTransformationTimer() <= BLINK_TIME;
+		if (it->getState() == GarbageBlockState::NORMAL
+				|| it->getTransformationTimer() > BLINK_TIME) {
+			sprite.y = 4; //normal face
+		} else if (!blink) {
+			sprite.y = 32;
+		} else {
+			sprite.y = 64;
+		}
+
+		int h = it->getH();
+		if (it->getTransformationTimer() > BLINK_TIME && h > 1) {
+			--h;
+		}
+		pos.x += it->getW() * TILE_SIZE / 2 - sprite.w / 2;
+		pos.y += h * TILE_SIZE / 2 - sprite.h / 2;
+
+		SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
+
+		//draw animation blocks...
 		for (int y = it->getY() - (it->getH() - 1); y <= it->getY(); ++y) {
 			for (int x = it->getX() + (it->getW() - 1); x >= it->getX(); --x) {
 				SDL_Rect pos;
@@ -320,12 +373,8 @@ void BoardRenderer::drawGarbageBlocks() {
 						- it->getAnimationStart();
 				int ticks = it->getW() * it->getH() * Board::ADD_EXPL_TICKS;
 				double block = it->getW() * ry + rx;
-				if (it->getTransformationTimer()
-						<= BLINK_TIME) {
-					//normal
-					SDL_Rect sprite = getGarbageBlockSprite(rx, ry, *it);
-					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
-				} else if (time / ticks >= block / size) { //block has been revealed
+				if (it->getTransformationTimer() > BLINK_TIME
+						&& time / ticks >= block / size) { //block has been revealed
 					if (ry == 0) {
 						//draw revealed block
 						SDL_Rect sprite = getBlockSprite(
@@ -335,13 +384,8 @@ void BoardRenderer::drawGarbageBlocks() {
 								&pos);
 						SDL_SetTextureColorMod(_spriteSheet, 0xFF, 0xFF, 0xFF);
 						continue;
-					} else {
-						//normal
-						SDL_Rect sprite = getGarbageBlockSprite(rx, ry, *it);
-						SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite,
-								&pos);
 					}
-				} else {
+				} else if (it->getTransformationTimer() > BLINK_TIME) {
 					//transforming block
 					SDL_Rect sprite = { 480, 0, TILE_SIZE, TILE_SIZE };
 					SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
@@ -363,8 +407,6 @@ void BoardRenderer::drawCursor() {
 	SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sprite, &pos);
 }
 
-
-
 BoardRenderer::~BoardRenderer() {
 	SDL_DestroyTexture(_readyText);
 	SDL_DestroyTexture(_3Text);
@@ -374,5 +416,4 @@ BoardRenderer::~BoardRenderer() {
 	SDL_DestroyTexture(_loseText);
 	SDL_DestroyTexture(_winText);
 }
-
 

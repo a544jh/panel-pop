@@ -76,10 +76,10 @@ void KeyboardController::tick() {
 		_board.queueGarbage(false, 6, GarbageBlockType::NORMAL);
 	}
 	if (input.keyDown(SDL_SCANCODE_6)) {
-		_board.queueGarbage(true, 3, GarbageBlockType::NORMAL);
+		_board.queueGarbage(true, 2, GarbageBlockType::NORMAL);
 	}
 	if (input.keyDown(SDL_SCANCODE_7)) {
-		_board.queueGarbage(true, 12, GarbageBlockType::NORMAL);
+		_board.queueGarbage(true, 3, GarbageBlockType::NORMAL);
 	}
 }
 
