@@ -14,16 +14,22 @@
 #include "../Rendering/ComboPopup.h"
 #include "../SDLContext.h"
 
-BoardEventHandler::BoardEventHandler(GameRenderer& gr, int x, int y) :
-				_gr(gr),
-				_boardXPos(x),
-				_boardYPos(y),
+BoardEventHandler::BoardEventHandler(GameRenderer& gr, int boardId) :
+				_gameRenderer(gr),
+				_boardId(boardId),
 				_SDLContext(SDLContext::getInstance()),
 				_lastFrameCursorMove(false),
 				_thisFrameCursorMove(false),
 				_combo(false),
 				_chain(false),
 				_blockFall(false) {
+	if (boardId == 0) {
+		_boardXPos = GameRenderer::BOARD0_X;
+		_boardYPos = GameRenderer::BOARD0_Y;
+	} else if (boardId == 1) {
+		_boardXPos = GameRenderer::BOARD1_X;
+		_boardYPos = GameRenderer::BOARD1_Y;
+	}
 
 }
 
@@ -60,14 +66,14 @@ void BoardEventHandler::blockExplode(int x, int y, int stackOffset, int order,
 	//_gr.addPopup(new ComboPopup(posx, posy, order, 100)); // TODO: change to particle
 	//_gr.addPopup(new ChainPopup(posx + 20, posy, chain, 100));
 
-	_gr.addParticle(new Particle(posx, posy, -2, -2, lifetime));
-	_gr.addParticle(new Particle(posx, posy, -2, 0, lifetime));
-	_gr.addParticle(new Particle(posx, posy, -2, 2, lifetime));
-	_gr.addParticle(new Particle(posx, posy, 0, -2, lifetime));
-	_gr.addParticle(new Particle(posx, posy, 0, 2, lifetime));
-	_gr.addParticle(new Particle(posx, posy, 2, -2, lifetime));
-	_gr.addParticle(new Particle(posx, posy, 2, 0, lifetime));
-	_gr.addParticle(new Particle(posx, posy, 2, 2, lifetime));
+	_gameRenderer.addParticle(new Particle(posx, posy, -2, -2, lifetime));
+	_gameRenderer.addParticle(new Particle(posx, posy, -2, 0, lifetime));
+	_gameRenderer.addParticle(new Particle(posx, posy, -2, 2, lifetime));
+	_gameRenderer.addParticle(new Particle(posx, posy, 0, -2, lifetime));
+	_gameRenderer.addParticle(new Particle(posx, posy, 0, 2, lifetime));
+	_gameRenderer.addParticle(new Particle(posx, posy, 2, -2, lifetime));
+	_gameRenderer.addParticle(new Particle(posx, posy, 2, 0, lifetime));
+	_gameRenderer.addParticle(new Particle(posx, posy, 2, 2, lifetime));
 
 	int soundOrder = order;
 	if (soundOrder > 9) {
@@ -98,13 +104,19 @@ void BoardEventHandler::blockFall() {
 
 }
 
-void BoardEventHandler::gbFall() {
-	Mix_PlayChannel(-1, _SDLContext._sfxBigThump, 0);
+void BoardEventHandler::gbFall(bool big) {
+	if (big) {
+		Mix_PlayChannel(-1, _SDLContext._sfxBigThump, 0);
+		_gameRenderer.shakeBoard(_boardId, 50);
+	} else {
+		Mix_PlayChannel(-1, _SDLContext._sfxThump, 0);
+		_gameRenderer.shakeBoard(_boardId, 30);
+	}
 }
 
 void BoardEventHandler::combo(int value, int col, int row, int stackOffset) {
 	_combo = true;
-	_gr.addParticle(
+	_gameRenderer.addParticle(
 			new ComboPopup((col * BoardRenderer::TILE_SIZE + 5) + _boardXPos,
 					((BoardRenderer::BOARD_HEIGHT
 							- (row + 1) * BoardRenderer::TILE_SIZE - stackOffset)
@@ -113,7 +125,7 @@ void BoardEventHandler::combo(int value, int col, int row, int stackOffset) {
 
 void BoardEventHandler::chain(int value, int col, int row, int stackOffset) {
 	_chain = true;
-	_gr.addParticle(
+	_gameRenderer.addParticle(
 			new ChainPopup(col * BoardRenderer::TILE_SIZE + 5 + _boardXPos,
 					(BoardRenderer::BOARD_HEIGHT
 							- (row + 1) * BoardRenderer::TILE_SIZE - stackOffset

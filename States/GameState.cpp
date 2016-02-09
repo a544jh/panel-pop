@@ -17,12 +17,10 @@
 GameState::GameState(KeyboardControllerConfig& c1, KeyboardControllerConfig& c2) :
 				_renderer(_game),
 				_game(new GameEventHandler(),
-						new BoardEventHandler(_renderer, GameRenderer::BOARD1_X,
-								GameRenderer::BOARD1_Y),
-						new BoardEventHandler(_renderer, GameRenderer::BOARD2_X,
-								GameRenderer::BOARD2_Y)),
-				_kbc(_game._board, c1),
-				_kbc2(_game._board2, c2),
+						new BoardEventHandler(_renderer, 0),
+						new BoardEventHandler(_renderer, 1)),
+				_kbc(_game._board0, c1),
+				_kbc2(_game._board1, c2),
 				_p1keys(c1),
 				_p2keys(c2) {
 }

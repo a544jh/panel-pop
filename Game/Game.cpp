@@ -16,10 +16,10 @@
 Game::Game(GameEventHandler* geh, BoardEventHandler* beh1,
 		BoardEventHandler* beh2) :
 				_eventHandler(geh),
-				_beh1(beh1),
-				_beh2(beh2),
-				_board(this, beh1),
-				_board2(this, beh2),
+				_beh0(beh1),
+				_beh1(beh2),
+				_board0(this, beh1),
+				_board1(this, beh2),
 				_state(State::RUNNING),
 				_ticksRun(0),
 				_advanceTick(false),
@@ -34,13 +34,13 @@ Game::Game(GameEventHandler* geh, BoardEventHandler* beh1,
 }
 
 void Game::handleEnd() {
-	if (_board.getState() == Board::GAME_OVER
-			|| _board2.getState() == Board::GAME_OVER) {
-		if (_board.getState() == Board::RUNNING) {
-			_board.win();
+	if (_board0.getState() == Board::GAME_OVER
+			|| _board1.getState() == Board::GAME_OVER) {
+		if (_board0.getState() == Board::RUNNING) {
+			_board0.win();
 			++_p1MatchPoints;
-		} else if (_board2.getState() == Board::RUNNING) {
-			_board2.win();
+		} else if (_board1.getState() == Board::RUNNING) {
+			_board1.win();
 			++_p2MatchPoints;
 		}
 
@@ -61,17 +61,17 @@ void Game::handleEnd() {
 
 void Game::tick() {
 
-	if (_board.getState() == Board::COUNTDOWN) {
+	if (_board0.getState() == Board::COUNTDOWN) {
 		_eventHandler->countdown(getTime());
 	}
 
 	if (_state == State::RUNNING || _advanceTick) {
 		_advanceTick = false;
 		++_ticksRun;
-		handleGarbageSpawning(_board, _board2);
-		handleGarbageSpawning(_board2, _board);
-		_board.tick();
-		_board2.tick();
+		handleGarbageSpawning(_board0, _board1);
+		handleGarbageSpawning(_board1, _board0);
+		_board0.tick();
+		_board1.tick();
 
 		//handleEnd();
 	}
@@ -134,8 +134,8 @@ void Game::reset() {
 	_eventHandler->gameReset();
 	_state = State::RUNNING;
 	_startTime = SDL_GetTicks();
-	_board = Board(this, _beh1); //fix this :P
-	_board2 = Board(this, _beh2);
+	_board0 = Board(this, _beh0); //fix this :P
+	_board1 = Board(this, _beh1);
 }
 
 void Game::inputTogglePause() {
@@ -170,8 +170,8 @@ const bool Game::isPaused() const {
 
 Game::~Game() {
 	delete _eventHandler;
+	delete _beh0;
 	delete _beh1;
-	delete _beh2;
 }
 
 Game::State Game::getState() const {

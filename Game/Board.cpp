@@ -564,7 +564,7 @@ void Board::handleGarbageFalling() {
 			--it->_y;
 		} else if (it->_falling) {
 			it->_falling = false;
-			_eventHandler->gbFall();
+			_eventHandler->gbFall(it->_h > 1);
 		}
 	}
 }

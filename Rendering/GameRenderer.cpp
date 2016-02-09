@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <iomanip>
 #include <sstream>
+#include <math.h>
 
 #include "../Game/Board.h"
 #include "../Game/Game.h"
@@ -23,10 +24,12 @@
 
 GameRenderer::GameRenderer(Game& game) :
 				_game(game),
-				_boardRenderer(_game._board),
-				_boardRenderer2(_game._board2),
-				_gbqr(_game._board),
-				_gbqr2(_game._board2) {
+				_boardRenderer0(_game._board0),
+				_boardRenderer1(_game._board1),
+				_gbqr0(_game._board0),
+				_gbqr1(_game._board1),
+				_b0Shake(0),
+				_b1Shake(0) {
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, 640, 480);
 	_bg = _SDLContext.makeTextureFromImage("assets/bg1.png");
@@ -36,18 +39,17 @@ GameRenderer::GameRenderer(Game& game) :
 
 void GameRenderer::tick() {
 	if (!_game.isPaused()) {
+		_boardRenderer0.tick();
+		_boardRenderer1.tick();
 		handleParticles();
-		_boardRenderer.tick();
-		_boardRenderer2.tick();
+		handleShake();
 	}
 }
 
 SDL_Texture* GameRenderer::renderGame() {
 
-	SDL_Texture* boardTexture = _boardRenderer.renderBoard();
-	SDL_Texture* boardTexture2 = _boardRenderer2.renderBoard();
-	SDL_Texture* gbq = _gbqr.renderQueue();
-	SDL_Texture* gbq2 = _gbqr2.renderQueue();
+	SDL_Texture* gbq = _gbqr0.renderQueue();
+	SDL_Texture* gbq2 = _gbqr1.renderQueue();
 
 	SDL_SetRenderTarget(_SDLRenderer, _texture);
 	SDL_SetRenderDrawColor(_SDLRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -56,22 +58,14 @@ SDL_Texture* GameRenderer::renderGame() {
 	SDL_RenderCopy(_SDLRenderer, _bg, NULL, NULL);
 	SDL_RenderCopy(_SDLRenderer, _2pbg, NULL, NULL);
 
-	SDL_Rect rekt;
-	rekt.x = BOARD1_X;
-	rekt.y = BOARD1_Y;
-	rekt.w = _boardRenderer.BOARD_WIDTH;
-	rekt.h = _boardRenderer.BOARD_HEIGHT;
 	if (!_game.isPaused()) {
-		SDL_RenderCopy(_SDLRenderer, boardTexture, NULL, &rekt);
+
+		renderBoard(0);
+		renderBoard(1);
 		SDL_Rect gbqp = { 258, 307, 38, 120 };
 		SDL_RenderCopy(_SDLRenderer, gbq, NULL, &gbqp);
-
-		rekt.x = BOARD2_X;
 		gbqp.x = 344;
-
-		SDL_RenderCopy(_SDLRenderer, boardTexture2, NULL, &rekt);
 		SDL_RenderCopy(_SDLRenderer, gbq2, NULL, &gbqp);
-
 		renderParticles();
 
 	}
@@ -101,7 +95,7 @@ void GameRenderer::renderStatsText() {
 //time
 	std::ostringstream os;
 	uint32_t time;
-	if (_game._board.getState() == Board::COUNTDOWN) {
+	if (_game._board0.getState() == Board::COUNTDOWN) {
 		time = 0;
 	} else {
 		time = _game.getTime() - Board::COUNTDOWN_MS;
@@ -151,11 +145,9 @@ GameRenderer::~GameRenderer() {
 	SDL_DestroyTexture(_2pbg);
 }
 
-
 void GameRenderer::addParticle(Particle* p) {
 	_particles.push_back(p);
 }
-
 
 void GameRenderer::handleParticles() {
 	auto it = _particles.begin();
@@ -174,4 +166,56 @@ void GameRenderer::renderParticles() {
 	for (auto it = _particles.begin(); it != _particles.end(); ++it) {
 		(*it)->render();
 	}
+}
+
+void GameRenderer::shakeBoard(int id, int duration) {
+	if (id == 0) {
+		_b0Shake = duration;
+	} else if (id == 1) {
+		_b1Shake = duration;
+	}
+}
+
+void GameRenderer::handleShake() {
+	if (_b0Shake > 0) {
+		--_b0Shake;
+	}
+	if (_b1Shake > 0) {
+		--_b1Shake;
+	}
+}
+
+void GameRenderer::renderBoard(int id) {
+	SDL_Rect pos;
+	double shake;
+	SDL_Texture* boardTexture;
+	pos.h = BoardRenderer::BOARD_HEIGHT;
+	pos.w = BoardRenderer::BOARD_WIDTH;
+	if (id == 0) {
+		pos.x = BOARD0_X;
+		pos.y = BOARD0_Y;
+		shake = _b0Shake;
+		boardTexture = _boardRenderer0.renderBoard();
+	} else if (id == 1) {
+		pos.x = BOARD1_X;
+		pos.y = BOARD1_Y;
+		shake = _b1Shake;
+		boardTexture = _boardRenderer1.renderBoard();
+	}
+
+	int shakeOffset = .5 * shake * sin(shake);
+	SDL_Rect src = {0,0,BoardRenderer::BOARD_WIDTH,BoardRenderer::BOARD_HEIGHT};
+
+	if (shakeOffset >= 0) {
+		pos.y += shakeOffset;
+		pos.h -= shakeOffset;
+		src.h -= shakeOffset;
+	} else {
+		pos.h += shakeOffset;
+		src.y -= shakeOffset;
+		src.h += shakeOffset;
+	}
+
+	SDL_SetRenderTarget(_SDLRenderer, _texture);
+	SDL_RenderCopy(_SDLRenderer, boardTexture, &src, &pos);
 }

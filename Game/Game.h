@@ -26,11 +26,11 @@ public:
 	Game(GameEventHandler*, BoardEventHandler*, BoardEventHandler*);
 
 	GameEventHandler* _eventHandler;
+	BoardEventHandler* _beh0;
 	BoardEventHandler* _beh1;
-	BoardEventHandler* _beh2;
 
-	Board _board;
-	Board _board2;
+	Board _board0;
+	Board _board1;
 
 	static const int MATCH_POINTS = 2;
 

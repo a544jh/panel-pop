@@ -12,7 +12,7 @@
 
 class BoardEventHandler {
 public:
-	BoardEventHandler(GameRenderer&, int, int);
+	BoardEventHandler(GameRenderer&, int boardId);
 	virtual ~BoardEventHandler();
 
 	void endTick();
@@ -21,13 +21,14 @@ public:
 	void cursorMove();
 	void swap();
 	void blockFall();
-	void gbFall();
+	void gbFall(bool big);
 	void combo(int value, int col, int row, int stackOffset);
 	void chain(int value, int col, int row, int stackOffset);
 	void chainEnd(int chain);
 
 private:
-	GameRenderer& _gr;
+	GameRenderer& _gameRenderer;
+	int _boardId;
 	int _boardXPos, _boardYPos; //board position in window
 	SDLContext& _SDLContext;
 
