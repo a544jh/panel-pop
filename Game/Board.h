@@ -63,7 +63,10 @@ public:
 	static const int ADD_EXPL_TICKS = 9; //the total explosion time for a combo is 61 + 9 * n, where n is the  number of blocks
 	static const int SWAP_DELAY = 3;
 	static const int BOARD_HEIGHT = 24;
+	static const int TOP_ROW = 11;
 	static const int BOARD_WIDTH = 6;
+	static const int PANIC_HEIGHT = 9;
+	static const int WARN_HEIGHT = 10;
 	static const int FLOAT_TICKS = 12;
 	static const int STACK_RAISE_STEPS = 32;
 	static const int COUNTDOWN_MS = 3000;
@@ -85,6 +88,7 @@ public:
 	int getTickMatchRow() const;
 	int getGraceTimer() const;
 	int getLastChain() const;
+	bool isPanic() const;
 	unsigned int getTicksRun() const;
 	const Tile& getTile(int, int) const;
 	const std::list<GarbageBlock>& getGarbageBlocks() const;
@@ -119,9 +123,9 @@ private:
 	int _tickMatchRow; //location of the match
 	int _tickMatchCol;
 	bool _blockOnTopRow;
+	bool _panic;
 
 	void initTick();
-	void initializeTiles();
 	void fillRandom();
 	void fillBufferRow();
 	bool activeBlocks();
@@ -141,6 +145,7 @@ private:
 	void raiseStack();
 	bool matchTiles(int, int, int, int);
 	bool blockCanFall(int, int);
+	bool blockOnRow(int);
 	bool garbageBlockCanFall(GarbageBlock&);
 	bool swappable(int, int);
 	bool spawnGarbage(int,int,int,int, GarbageBlockType);

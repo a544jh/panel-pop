@@ -30,7 +30,8 @@ Board::Board(Game* game, BoardEventHandler* eh) :
 				_tickChain(false),
 				_tickChainEnd(false),
 				_lastChain(0),
-				_blockOnTopRow(false) {
+				_blockOnTopRow(false),
+				_panic(false) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -81,7 +82,7 @@ void Board::queueGarbage(bool fullWidth, int size, GarbageBlockType type) {
 }
 
 void Board::handleGarbageQueue() {
-	int y = 11;
+	int y = TOP_ROW;
 
 	//find lowest insertion point
 	for (int row = BOARD_HEIGHT - 1; row >= y; --row) {
@@ -266,12 +267,12 @@ void Board::initTick() {
 		_chainCounter = 1;
 	}
 	//check top row for blocks
-	_blockOnTopRow = false;
-	for (int col = 0; col < BOARD_WIDTH; ++col) {
-		if (_tiles[11][col].type != AIR) {
-			_blockOnTopRow = true;
-			break;
-		}
+	_blockOnTopRow = blockOnRow(TOP_ROW);
+	//check panic
+	if (blockOnRow (PANIC_HEIGHT)) {
+		_panic = true;
+	} else {
+		_panic = false;
 	}
 	//speed up stack raising (within 2 mins)
 	if (_ticksRun % 1440 == 1439 && _stackRaiseTicks > 0) {
@@ -796,11 +797,26 @@ uint32_t Board::getTime() const {
 	return _game->getTime();
 }
 
+bool Board::blockOnRow(int row) {
+	for (int col = 0; col < BOARD_WIDTH; ++col) {
+		if (_tiles[row][col].type != AIR) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Board::sendEvents() {
-	if(_tickChain){
-		_eventHandler->chain(_chainCounter,_tickMatchCol,_tickMatchRow,_stackOffset);
+	if (_tickChain) {
+		_eventHandler->chain(_chainCounter, _tickMatchCol, _tickMatchRow,
+				_stackOffset);
 	}
-	if(_tickMatched > 3) {
-		_eventHandler->combo(_tickMatched,_tickMatchCol,_tickMatchRow,_stackOffset);
+	if (_tickMatched > 3) {
+		_eventHandler->combo(_tickMatched, _tickMatchCol, _tickMatchRow,
+				_stackOffset);
 	}
+}
+
+bool Board::isPanic() const {
+	return _panic;
 }

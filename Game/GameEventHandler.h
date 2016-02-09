@@ -21,6 +21,8 @@ public:
 	void gameReset();
 	void gamePause();
 	void gameResume();
+	void panicBegin();
+	void panicEnd();
 
 private:
 	SDLContext& _SDLContext;

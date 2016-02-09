@@ -27,7 +27,7 @@ void GameEventHandler::countdown(uint32_t time) {
 			Mix_PlayChannel(-1, _SDLContext._sfxCountdown, 0);
 		} else {
 			Mix_PlayChannel(-1, _SDLContext._sfxGo, 0);
-			Mix_PlayMusic(_SDLContext._musicBg,-1);
+			Mix_PlayMusic(_SDLContext._musicBg, -1);
 		}
 		_countdownState = sec;
 	}
@@ -35,6 +35,7 @@ void GameEventHandler::countdown(uint32_t time) {
 }
 
 void GameEventHandler::gameReset() {
+	_countdownState = -1;
 	Mix_HaltMusic();
 }
 
@@ -45,4 +46,12 @@ void GameEventHandler::gamePause() {
 
 void GameEventHandler::gameResume() {
 	Mix_ResumeMusic();
+}
+
+void GameEventHandler::panicBegin() {
+	Mix_PlayMusic(_SDLContext._musicPanic, -1);
+}
+
+void GameEventHandler::panicEnd() {
+	Mix_PlayMusic(_SDLContext._musicBg, -1);
 }

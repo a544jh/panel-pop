@@ -58,6 +58,7 @@ private:
 	State _state;
 	int _ticksRun;
 	bool _advanceTick; //debug "frame advance" feature
+	bool _panic;
 	uint32_t _startTime;
 	uint32_t _pausedTime;
 	int _p1MatchPoints;

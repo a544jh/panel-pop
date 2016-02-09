@@ -32,6 +32,7 @@ public:
 	TTF_Font* _fontSquare;
 
 	Mix_Music* _musicBg;
+	Mix_Music* _musicPanic;
 	Mix_Chunk* _sfxPop[40];
 	Mix_Chunk* _sfxCursor;
 	Mix_Chunk* _sfxSwap;

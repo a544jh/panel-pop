@@ -23,6 +23,7 @@ Game::Game(GameEventHandler* geh, BoardEventHandler* beh1,
 				_state(State::RUNNING),
 				_ticksRun(0),
 				_advanceTick(false),
+				_panic(false),
 				_startTime(SDL_GetTicks()),
 				_pausedTime(0),
 				_p1MatchPoints(0),
@@ -73,7 +74,16 @@ void Game::tick() {
 		_board0.tick();
 		_board1.tick();
 
-		//handleEnd();
+		if(!_panic && (_board0.isPanic() || _board1.isPanic())){
+			_panic = true;
+			_eventHandler->panicBegin();
+		}
+		if(_panic && ((!_board0.isPanic() && !_board1.isPanic()))){
+			_panic = false;
+			_eventHandler->panicEnd();
+		}
+
+		handleEnd();
 	}
 }
 
@@ -131,11 +141,12 @@ void Game::handleGarbageSpawning(Board& b1, Board& b2) {
 }
 
 void Game::reset() {
-	_eventHandler->gameReset();
 	_state = State::RUNNING;
 	_startTime = SDL_GetTicks();
 	_board0 = Board(this, _beh0); //fix this :P
 	_board1 = Board(this, _beh1);
+	_panic = false;
+	_eventHandler->gameReset();
 }
 
 void Game::inputTogglePause() {

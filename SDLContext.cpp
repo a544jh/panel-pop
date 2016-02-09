@@ -27,6 +27,7 @@ SDLContext::SDLContext() :
 				_fontPs(nullptr),
 				_fontSquare(nullptr),
 				_musicBg(nullptr),
+				_musicPanic(nullptr),
 				_sfxCursor(nullptr),
 				_sfxSwap(nullptr),
 				_sfxThump(nullptr),
@@ -92,8 +93,6 @@ bool SDLContext::init() {
 	success = loadSpriteSheet();
 	success = loadFonts();
 	success = loadAudio();
-
-	//Mix_PlayMusic(_bgSong, -1);
 
 	return success;
 }
@@ -178,8 +177,8 @@ void SDLContext::tearDown() {
 
 bool SDLContext::loadAudio() {
 	_musicBg = Mix_LoadMUS("assets/music/battle1_loop.ogg");
+	_musicPanic = Mix_LoadMUS("assets/music/battle1_panic.ogg");
 	std::cout << Mix_GetError();
-	//_popSfx = Mix_LoadWAV("assets/sfx/1x1.wav");
 
 	for (int i = 0; i < 40; ++i) {
 		std::ostringstream os;
