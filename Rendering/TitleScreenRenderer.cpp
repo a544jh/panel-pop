@@ -26,6 +26,7 @@ TitleScreenRenderer::TitleScreenRenderer() {
 
 TitleScreenRenderer::~TitleScreenRenderer() {
 	SDL_DestroyTexture(_titleImg);
+	SDL_DestroyTexture(_versionText);
 }
 
 SDL_Texture* TitleScreenRenderer::render() {
