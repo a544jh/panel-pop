@@ -165,7 +165,12 @@ void BoardRenderer::drawBlocks() {
 
 				if (_board.getGraceTimer() > 0) {
 					int px = _board.getGraceTimer() * TILE_SIZE
-							/ ((32 * _board.getStackRaiseTicks()) / 2);
+							/ ((TILE_SIZE * _board.getStackRaiseTicks()) / 2);
+
+					if(px > TILE_SIZE){
+						px = TILE_SIZE;
+					}
+
 					SDL_Rect top = { sheet.x, sheet.y, sheet.w, TILE_SIZE - px };
 					SDL_Rect bottom = { sheet.x, sheet.y + (TILE_SIZE - px),
 							sheet.w, px };
