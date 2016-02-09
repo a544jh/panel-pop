@@ -59,21 +59,24 @@ void BoardEventHandler::endTick() {
 
 void BoardEventHandler::blockExplode(int x, int y, int stackOffset, int order,
 		int chain) {
-	int posx = x * BoardRenderer::TILE_SIZE + _boardXPos + 14;
-	int posy = BoardRenderer::BOARD_HEIGHT - (y + 1) * BoardRenderer::TILE_SIZE
-			- stackOffset + _boardYPos + 14;
-	int lifetime = 15;
-	//_gr.addPopup(new ComboPopup(posx, posy, order, 100)); // TODO: change to particle
-	//_gr.addPopup(new ChainPopup(posx + 20, posy, chain, 100));
 
-	_gameRenderer.addParticle(new Particle(posx, posy, -2, -2, lifetime));
-	_gameRenderer.addParticle(new Particle(posx, posy, -2, 0, lifetime));
-	_gameRenderer.addParticle(new Particle(posx, posy, -2, 2, lifetime));
-	_gameRenderer.addParticle(new Particle(posx, posy, 0, -2, lifetime));
-	_gameRenderer.addParticle(new Particle(posx, posy, 0, 2, lifetime));
-	_gameRenderer.addParticle(new Particle(posx, posy, 2, -2, lifetime));
-	_gameRenderer.addParticle(new Particle(posx, posy, 2, 0, lifetime));
-	_gameRenderer.addParticle(new Particle(posx, posy, 2, 2, lifetime));
+	if (y <= Board::TOP_ROW) {
+
+		int posx = x * BoardRenderer::TILE_SIZE + _boardXPos + 14;
+		int posy = BoardRenderer::BOARD_HEIGHT
+				- (y + 1) * BoardRenderer::TILE_SIZE - stackOffset + _boardYPos
+				+ 14;
+		int lifetime = 15;
+
+		_gameRenderer.addParticle(new Particle(posx, posy, -2, -2, lifetime));
+		_gameRenderer.addParticle(new Particle(posx, posy, -2, 0, lifetime));
+		_gameRenderer.addParticle(new Particle(posx, posy, -2, 2, lifetime));
+		_gameRenderer.addParticle(new Particle(posx, posy, 0, -2, lifetime));
+		_gameRenderer.addParticle(new Particle(posx, posy, 0, 2, lifetime));
+		_gameRenderer.addParticle(new Particle(posx, posy, 2, -2, lifetime));
+		_gameRenderer.addParticle(new Particle(posx, posy, 2, 0, lifetime));
+		_gameRenderer.addParticle(new Particle(posx, posy, 2, 2, lifetime));
+	}
 
 	int soundOrder = order;
 	if (soundOrder > 9) {

@@ -12,7 +12,10 @@
 #include "Board.h"
 
 KeyboardController::KeyboardController(Board& b, KeyboardControllerConfig& c) :
-		BoardController(b), _config(c), _directionHeld(NONE), _holdBegin(0) {
+				BoardController(b),
+				_config(c),
+				_directionHeld(NONE),
+				_holdBegin(0) {
 }
 
 int KeyboardController::getDirectionKey(Direction d) {
@@ -80,6 +83,9 @@ void KeyboardController::tick() {
 	}
 	if (input.keyDown(SDL_SCANCODE_7)) {
 		_board.queueGarbage(true, 3, GarbageBlockType::NORMAL);
+	}
+	if (input.keyDown(SDL_SCANCODE_8)) {
+		_board.queueGarbage(true, 12, GarbageBlockType::NORMAL);
 	}
 }
 
