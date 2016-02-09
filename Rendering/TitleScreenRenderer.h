@@ -18,6 +18,7 @@ public:
 	SDL_Texture* render();
 private:
 	SDL_Texture* _titleImg;
+	SDL_Texture* _versionText;
 };
 
 #endif /* RENDERING_TITLESCREENRENDERER_H_ */

@@ -196,7 +196,7 @@ void GameRenderer::renderBoard(int id) {
 		pos.y = BOARD0_Y;
 		shake = _b0Shake;
 		boardTexture = _boardRenderer0.renderBoard();
-	} else if (id == 1) {
+	} else {
 		pos.x = BOARD1_X;
 		pos.y = BOARD1_Y;
 		shake = _b1Shake;
