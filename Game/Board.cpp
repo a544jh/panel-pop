@@ -270,10 +270,12 @@ void Board::initTick() {
 	//check top row for blocks
 	_blockOnTopRow = blockOnRow(TOP_ROW);
 	//check panic
-	if (blockOnRow(PANIC_HEIGHT)) {
-		_panic = true;
-	} else {
-		_panic = false;
+	for (int row = TOP_ROW; row >= PANIC_HEIGHT; --row) {
+		if (blockOnRow(row)) {
+			_panic = true;
+		} else {
+			_panic = false;
+		}
 	}
 	//set warn columns
 	for (int row = TOP_ROW; row >= WARN_HEIGHT; --row) {
@@ -576,8 +578,12 @@ void Board::handleGarbageFalling() {
 			}
 			--it->_y;
 		} else if (it->_falling) {
+			bool big = it->_h > 1;
+			if (big || it->_initialFall) {
+				_eventHandler->gbFall(big);
+			}
+			it->_initialFall = false;
 			it->_falling = false;
-			_eventHandler->gbFall(it->_h > 1);
 		}
 	}
 }
@@ -812,7 +818,7 @@ uint32_t Board::getTime() const {
 bool Board::blockOnRow(int row) {
 	for (int col = 0; col < BOARD_WIDTH; ++col) {
 		Tile& t = _tiles[row][col];
-		if (t.type != AIR && !(t.type == GARBAGE && t.g->_falling)) {
+		if (t.type != AIR && !(t.type == GARBAGE && t.g->_initialFall)) {
 			return true;
 		}
 	}

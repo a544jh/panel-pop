@@ -26,7 +26,7 @@ StateManager::StateManager() :
 				SDL(SDLContext::getInstance()),
 				input(InputManager::getInstance()),
 				_lastTick(0),
-				_frameTime(16),
+				_frameTime(25),
 				_running(true),
 				_framesRun(0),
 				_startTime(SDL_GetTicks()),

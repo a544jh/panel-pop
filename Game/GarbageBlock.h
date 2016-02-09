@@ -39,6 +39,10 @@ public:
 	int getX() const;
 	int getY() const;
 
+	bool isInitialFall() const {
+		return _initialFall;
+	}
+
 private:
 	int _x, _y; //coordinates of upper-right corner;
 	int _w, _h;
@@ -49,6 +53,7 @@ private:
 	int _transformationTimer;
 	int _animationStart;
 	bool _falling;
+	bool _initialFall;
 	int _explOrder;
 
 	void fillBufferRow();

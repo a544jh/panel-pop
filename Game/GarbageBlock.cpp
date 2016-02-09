@@ -18,6 +18,7 @@ GarbageBlock::GarbageBlock(int x, int y, int w, int h, GarbageBlockType t) :
 				_transformationTimer(0),
 				_animationStart(0),
 				_falling(false),
+				_initialFall(true),
 				_explOrder(0) {
 	fillBufferRow();
 }
