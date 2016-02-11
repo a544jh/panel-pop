@@ -7,12 +7,11 @@
 
 #include "BoardEventHandler.h"
 
-#include <SDL2/SDL_mixer.h>
-
 #include "../Rendering/BoardRenderer.h"
 #include "../Rendering/ChainPopup.h"
 #include "../Rendering/ComboPopup.h"
 #include "../SDLContext.h"
+#include "Board.h"
 
 BoardEventHandler::BoardEventHandler(GameRenderer& gr, int boardId) :
 				_gameRenderer(gr),

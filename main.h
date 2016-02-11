@@ -9,7 +9,7 @@
 #define MAIN_H_
 
 
-extern const std::string PANELPOP_VERSION = "0.0.1-alpha7";
+extern const std::string PANELPOP_VERSION = "0.0.1-alpha7.1";
 
 
 #endif /* MAIN_H_ */
