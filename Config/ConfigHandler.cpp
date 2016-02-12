@@ -23,11 +23,8 @@ ConfigHandler& ConfigHandler::getInstance() {
 
 bool ConfigHandler::loadConfig() {
 	std::cout << "trying to load...";
-	try {
-		boost::property_tree::read_ini(CONFIG_FILENAME, _settingsTree);
-	} catch (...) {
-		std::cout << "error";
-	}
+	boost::property_tree::read_ini(CONFIG_FILENAME, _settingsTree);
+
 	return false;
 }
 

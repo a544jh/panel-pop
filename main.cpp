@@ -5,15 +5,11 @@
  *      Author: axel
  */
 
-#include <stdlib.h>
-#include <SDL2/SDL_main.h>
-#include <time.h>
-#include <exception>
+#include "Config/ConfigHandler.h"
+#include <boost/exception/exception.hpp>
+#include <boost/exception/diagnostic_information.hpp>
 #include <iostream>
 
-#include "Config/ConfigHandler.h"
-#include "SDLContext.h"
-#include "States/StateManager.h"
 
 int main(int argc, char* args[]) {
 	//srand(time(NULL));
@@ -22,8 +18,8 @@ int main(int argc, char* args[]) {
 
 	try {
 		configHandler.loadConfig();
-	} catch(...) {
-		std::cout << "error";
+	} catch(boost::exception& ex) {
+		std::cout << boost::diagnostic_information(ex);
 	}
 
 	//SDL.init();
