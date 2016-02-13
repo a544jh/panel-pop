@@ -8,7 +8,8 @@
 #ifndef CONFIG_CONFIGHANDLER_H_
 #define CONFIG_CONFIGHANDLER_H_
 
-#include<boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include "KeyboardControllerConfig.h"
 
 class ConfigHandler {
 public:
@@ -19,6 +20,9 @@ public:
 
 	bool loadConfig();
 	bool saveConfig();
+
+	KeyboardControllerConfig getKeyConfig(int player);
+	void setKeyConfig(KeyboardControllerConfig ,int player);
 
 private:
 	ConfigHandler();

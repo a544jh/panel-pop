@@ -5,30 +5,34 @@
  *      Author: axel
  */
 
-#include "Config/ConfigHandler.h"
-#include <boost/exception/exception.hpp>
-#include <boost/exception/diagnostic_information.hpp>
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_main.h>
+#include <SDL2/SDL_scancode.h>
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 
+#include "Config/ConfigHandler.h"
+#include "Config/KeyboardControllerConfig.h"
+#include "SDLContext.h"
+#include "States/StateManager.h"
 
 int main(int argc, char* args[]) {
-	//srand(time(NULL));
-	//SDLContext& SDL = SDLContext::getInstance();
+	srand(time(NULL));
+	SDLContext& SDL = SDLContext::getInstance();
 	ConfigHandler& configHandler = ConfigHandler::getInstance();
 
-	try {
-		configHandler.loadConfig();
-	} catch(boost::exception& ex) {
-		std::cout << boost::diagnostic_information(ex);
-	}
+	configHandler.loadConfig();
+	KeyboardControllerConfig conf = configHandler.getKeyConfig(1);
+	std::cout << SDL_GetScancodeName((SDL_Scancode) conf.up);
 
-	//SDL.init();
-	//StateManager& sm = StateManager::getInstance();
-	//sm.run();
+	SDL.init();
+	StateManager& sm = StateManager::getInstance();
+	sm.run();
 
-	//SDL.tearDown();
+	configHandler.saveConfig();
 
-//configHandler.saveConfig();
+	SDL.tearDown();
 
 	return 0;
 }
