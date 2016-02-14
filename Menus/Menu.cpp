@@ -35,6 +35,18 @@ void Menu::inputDown() {
 	_time = SDL_GetTicks();
 }
 
+void Menu::inputLeft() {
+	if (_items.at(_selection).isChangable()) {
+		_items.at(_selection).decrease();
+	}
+}
+
+void Menu::inputRight() {
+	if (_items.at(_selection).isChangable()) {
+		_items.at(_selection).increase();
+	}
+}
+
 void Menu::inputEnter() {
 	_items.at(_selection).getFn()();
 }

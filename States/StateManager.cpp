@@ -14,9 +14,8 @@
 #include <iomanip>
 #include <sstream>
 
-#include "../Config/ConfigHandler.h"
-#include "../Config/KeyboardControllerConfig.h"
 #include "GameState.h"
+#include "OptionsMenuState.h"
 #include "TitleScreen.h"
 
 StateManager::StateManager() :
@@ -33,7 +32,7 @@ StateManager::StateManager() :
 				_lastFrame(0),
 				_avgFps(0),
 				_showFps(false) {
-	_currentState = new TitleScreen();
+	_currentState = new OptionsMenuState();
 }
 
 StateManager& StateManager::getInstance() {

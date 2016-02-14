@@ -23,6 +23,8 @@ public:
 	 bool anyKeyDown();
 	 bool keyUp(int);
 	 bool keyPressed(int); // key is down now
+	 int getKeyDown();
+
 private:
 	InputManager();
 	InputManager(InputManager const&) = delete;
