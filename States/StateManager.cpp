@@ -7,7 +7,6 @@
 
 #include "StateManager.h"
 
-#include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_scancode.h>
@@ -15,6 +14,7 @@
 #include <iomanip>
 #include <sstream>
 
+#include "../Config/ConfigHandler.h"
 #include "../Config/KeyboardControllerConfig.h"
 #include "GameState.h"
 #include "TitleScreen.h"
@@ -96,15 +96,7 @@ void StateManager::switchToState(State* state) {
 
 void StateManager::startGame() {
 	//TODO:different game configurations
-	KeyboardControllerConfig c = { SDL_SCANCODE_UP, SDL_SCANCODE_DOWN,
-			SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT, SDL_SCANCODE_Z,
-			SDL_SCANCODE_X };
-	//KeyboardControllerConfig c = {SDL_SCANCODE_UP,SDL_SCANCODE_DOWN,SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT,SDL_SCANCODE_X,SDL_SCANCODE_Z};
-	KeyboardControllerConfig c2 = { SDL_SCANCODE_R, SDL_SCANCODE_F,
-			SDL_SCANCODE_D, SDL_SCANCODE_G, SDL_SCANCODE_T, SDL_SCANCODE_Y };
-	//passed as reference but the KeyboardController copies it :P
-
-	switchToState(new GameState(c, c2));
+	switchToState(new GameState());
 }
 
 float StateManager::getAvgFps() const {

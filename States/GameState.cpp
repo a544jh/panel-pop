@@ -9,20 +9,21 @@
 
 #include <SDL2/SDL_scancode.h>
 
+#include "../Config/ConfigHandler.h"
 #include "../Game/BoardEventHandler.h"
 #include "../Game/GameEventHandler.h"
 #include "../InputManager.h"
 #include "../Menus/PauseMenu.h"
 
-GameState::GameState(KeyboardControllerConfig& c1, KeyboardControllerConfig& c2) :
+GameState::GameState() :
 				_renderer(_game),
 				_game(new GameEventHandler(),
 						new BoardEventHandler(_renderer, 0),
 						new BoardEventHandler(_renderer, 1)),
-				_kbc(_game._board0, c1),
-				_kbc2(_game._board1, c2),
-				_p1keys(c1),
-				_p2keys(c2) {
+				_p1keys(ConfigHandler::getInstance().getKeyConfig(1)),
+				_p2keys(ConfigHandler::getInstance().getKeyConfig(2)),
+				_kbc(_game._board0, _p1keys),
+				_kbc2(_game._board1, _p2keys) {
 }
 
 void GameState::tick() {

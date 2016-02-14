@@ -15,17 +15,17 @@
 
 class GameState : public State {
 public:
-	GameState(KeyboardControllerConfig&, KeyboardControllerConfig&);
+	GameState();
 	void tick();
 	SDL_Texture* render();
 	virtual ~GameState();
 private:
 	GameRenderer _renderer;
 	Game _game;
-	KeyboardController _kbc;
-	KeyboardController _kbc2;
 	KeyboardControllerConfig _p1keys;
 	KeyboardControllerConfig _p2keys;
+	KeyboardController _kbc;
+	KeyboardController _kbc2;
 };
 
 #endif /* STATES_GAMESTATE_H_ */

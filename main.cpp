@@ -23,14 +23,10 @@ int main(int argc, char* args[]) {
 	ConfigHandler& configHandler = ConfigHandler::getInstance();
 
 	configHandler.loadConfig();
-	KeyboardControllerConfig conf = configHandler.getKeyConfig(1);
 
 	SDL.init();
 	StateManager& sm = StateManager::getInstance();
 	sm.run();
-
-	configHandler.setKeyConfig(conf, 1);
-	configHandler.saveConfig();
 
 	SDL.tearDown();
 
