@@ -14,6 +14,9 @@
 #include <iomanip>
 #include <sstream>
 
+#include "../Config/ConfigHandler.h"
+#include "../InputManager.h"
+#include "../SDLContext.h"
 #include "GameState.h"
 #include "OptionsMenuState.h"
 #include "TitleScreen.h"
@@ -32,6 +35,8 @@ StateManager::StateManager() :
 				_lastFrame(0),
 				_avgFps(0),
 				_showFps(false) {
+	_p1keys = ConfigHandler::getInstance().getKeyConfig(1);
+	_p2keys = ConfigHandler::getInstance().getKeyConfig(2);
 	_currentState = new OptionsMenuState();
 }
 
@@ -104,6 +109,22 @@ float StateManager::getAvgFps() const {
 
 void StateManager::returnToTile() {
 	switchToState(new TitleScreen);
+}
+
+const KeyboardControllerConfig& StateManager::getP1keys() const {
+	return _p1keys;
+}
+
+void StateManager::setP1keys(const KeyboardControllerConfig& p1keys) {
+	_p1keys = p1keys;
+}
+
+const KeyboardControllerConfig& StateManager::getP2keys() const {
+	return _p2keys;
+}
+
+void StateManager::setP2keys(const KeyboardControllerConfig& p2keys) {
+	_p2keys = p2keys;
 }
 
 void StateManager::showFps() {

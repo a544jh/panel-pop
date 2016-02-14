@@ -8,9 +8,13 @@
 #ifndef STATEMANAGER_H_
 #define STATEMANAGER_H_
 
-#include "State.h"
-#include "../InputManager.h"
-#include "../SDLContext.h"
+#include <cstdint>
+
+#include "../Config/KeyboardControllerConfig.h"
+
+class InputManager;
+class SDLContext;
+class State;
 
 class StateManager {
 public:
@@ -20,6 +24,10 @@ public:
 	void startGame();
 	void returnToTile();
 	float getAvgFps() const;
+	const KeyboardControllerConfig& getP1keys() const;
+	void setP1keys(const KeyboardControllerConfig& p1keys);
+	const KeyboardControllerConfig& getP2keys() const;
+	void setP2keys(const KeyboardControllerConfig& p2keys);
 
 private:
 	StateManager();
@@ -39,6 +47,7 @@ private:
 	float _avgFps;
 	bool _showFps;
 	void showFps();
+	KeyboardControllerConfig _p1keys, _p2keys;
 };
 
 #endif /* STATEMANAGER_H_ */

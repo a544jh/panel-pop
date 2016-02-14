@@ -18,13 +18,17 @@ public:
 	KeyConfigMenu(OptionsMenuState&, int player);
 	virtual ~KeyConfigMenu();
 
-	void recieveKey(int);
+	void setActiveKey(int);
 
 	void render() const;
+
+	void handleInput();
+
 private:
 	OptionsMenuState& _state;
 	int _player;
 	int* _activeKey;
+	bool _waitingForKey;
 
 	KeyboardControllerConfig _newKeyConfig;
 };

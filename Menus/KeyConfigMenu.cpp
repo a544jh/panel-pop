@@ -15,39 +15,42 @@
 #include <vector>
 
 #include "../Config/ConfigHandler.h"
+#include "../InputManager.h"
 #include "../SDLContext.h"
-#include "../States/OptionsMenuState.h"
+#include "../States/StateManager.h"
 #include "MenuItem.h"
 
 KeyConfigMenu::KeyConfigMenu(OptionsMenuState& state, int player) :
 				_state(state),
-				_player(player) {
+				_player(player),
+				_activeKey(nullptr),
+				_waitingForKey(false) {
 
 	_newKeyConfig = ConfigHandler::getInstance().getKeyConfig(1);
 
 	addItem(
 			MenuItem("Up",
-					[&]() {_activeKey = &_newKeyConfig.up; _state.getKey();},
+					[&]() {_activeKey = &_newKeyConfig.up; _waitingForKey = true;},
 					_newKeyConfig.up, 0));
 	addItem(
 			MenuItem("Down",
-					[&]() {_activeKey = &_newKeyConfig.down; _state.getKey();},
+					[&]() {_activeKey = &_newKeyConfig.down; _waitingForKey = true;},
 					_newKeyConfig.down, 0));
 	addItem(
 			MenuItem("Left",
-					[&]() {_activeKey = &_newKeyConfig.left; _state.getKey();},
+					[&]() {_activeKey = &_newKeyConfig.left; _waitingForKey = true;},
 					_newKeyConfig.left, 0));
 	addItem(
 			MenuItem("Right",
-					[&]() {_activeKey = &_newKeyConfig.right; _state.getKey();},
+					[&]() {_activeKey = &_newKeyConfig.right; _waitingForKey = true;},
 					_newKeyConfig.right, 0));
 	addItem(
 			MenuItem("Swap/Accept",
-					[&]() {_activeKey = &_newKeyConfig.swap; _state.getKey();},
+					[&]() {_activeKey = &_newKeyConfig.swap; _waitingForKey = true;},
 					_newKeyConfig.swap, 0));
 	addItem(
 			MenuItem("Raise stack/Cancel",
-					[&]() {_activeKey = &_newKeyConfig.raiseStack; _state.getKey();},
+					[&]() {_activeKey = &_newKeyConfig.raiseStack; _waitingForKey = true;},
 					_newKeyConfig.raiseStack, 0));
 
 	addItem(MenuItem("Apply", [&]() {
@@ -61,7 +64,7 @@ KeyConfigMenu::~KeyConfigMenu() {
 	// TODO Auto-generated destructor stub
 }
 
-void KeyConfigMenu::recieveKey(int scancode) {
+void KeyConfigMenu::setActiveKey(int scancode) {
 	*_activeKey = scancode;
 	_items.at(_selection).setValue(scancode);
 }
@@ -87,5 +90,24 @@ void KeyConfigMenu::render() const {
 
 		_SDLContext.renderText(name, { 255, 255, 255 }, _SDLContext._fontPs,
 				x + 350, y);
+	}
+
+	if (_waitingForKey) {
+		_SDLContext.renderText("--press key--", { 255, 255, 255 },
+				_SDLContext._fontPs, 0, 300);
+	}
+
+}
+
+void KeyConfigMenu::handleInput() {
+	InputManager& input = InputManager::getInstance();
+	if (_waitingForKey) {
+		int pressed = input.getKeyDown();
+		if (pressed != 0) {
+			setActiveKey(pressed);
+			_waitingForKey = false;
+		}
+	} else {
+		Menu::handleInput();
 	}
 }

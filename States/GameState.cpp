@@ -9,19 +9,19 @@
 
 #include <SDL2/SDL_scancode.h>
 
-#include "../Config/ConfigHandler.h"
 #include "../Game/BoardEventHandler.h"
 #include "../Game/GameEventHandler.h"
 #include "../InputManager.h"
 #include "../Menus/PauseMenu.h"
+#include "StateManager.h"
 
 GameState::GameState() :
 				_renderer(_game),
 				_game(new GameEventHandler(),
 						new BoardEventHandler(_renderer, 0),
 						new BoardEventHandler(_renderer, 1)),
-				_p1keys(ConfigHandler::getInstance().getKeyConfig(1)),
-				_p2keys(ConfigHandler::getInstance().getKeyConfig(2)),
+				_p1keys(StateManager::getInstance().getP1keys()),
+				_p2keys(StateManager::getInstance().getP2keys()),
 				_kbc(_game._board0, _p1keys),
 				_kbc2(_game._board1, _p2keys) {
 }
@@ -43,19 +43,7 @@ void GameState::tick() {
 	} else if (_game.getState() == Game::State::PAUSED) {
 		//send input to pause menu instead
 		PauseMenu& menu = _game.getPauseMenu();
-		if (input.keyDown(_p1keys.down) || input.keyDown(_p2keys.down)) {
-			menu.inputDown();
-		}
-		if (input.keyDown(_p1keys.up) || input.keyDown(_p2keys.up)) {
-			menu.inputUp();
-		}
-		if (input.keyDown(_p1keys.swap) || input.keyDown(_p2keys.swap)) {
-			menu.inputEnter();
-		}
-		if (input.keyDown(_p1keys.raiseStack)
-				|| input.keyDown(_p2keys.raiseStack)) {
-			menu.inputCancel();
-		}
+		menu.handleInput();
 	} else if (_game.getState() == Game::State::ENDED) {
 		//TODO: change to any key and add timeout..?
 		if (input.keyDown(SDL_SCANCODE_5)) {

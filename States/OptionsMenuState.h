@@ -20,13 +20,10 @@ public:
 	virtual ~OptionsMenuState();
 	void tick();
 	SDL_Texture* render();
-	void getKey();
-	int getPressedKey() const;
 
 private:
 	KeyboardControllerConfig _p1keys, _p2keys;
 	Menu* _currentMenu;
-	bool _waitingForKey;
 };
 
 #endif /* STATES_OPTIONSMENUSTATE_H_ */

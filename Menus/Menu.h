@@ -26,6 +26,8 @@ public:
 	virtual void inputCancel();
 	void resetCursor();//makes the first item selected again
 
+	virtual void handleInput();
+
 	virtual void render() const =0;
 
 protected:
