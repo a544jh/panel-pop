@@ -8,8 +8,18 @@
 #ifndef CONFIG_KEYBOARDCONTROLLERCONFIG_H_
 #define CONFIG_KEYBOARDCONTROLLERCONFIG_H_
 
+#define KEYS \
+	X(up)\
+	X(down)\
+	X(left)\
+	X(right)\
+	X(swap)\
+	X(raiseStack)
+
 struct KeyboardControllerConfig {
-	int up, down, left, right, swap, raiseStack;
+#define X(key) int key;
+	KEYS
+#undef X
 };
 
 #endif /* CONFIG_KEYBOARDCONTROLLERCONFIG_H_ */

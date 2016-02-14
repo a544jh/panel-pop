@@ -36,25 +36,46 @@ bool ConfigHandler::loadConfig() {
 }
 
 bool ConfigHandler::saveConfig() {
-	std::string string = SDL_GetScancodeName(SDL_SCANCODE_UP);
-	_settingsTree.put("keys.p1_up", string);
 	boost::property_tree::write_ini(CONFIG_FILENAME, _settingsTree);
 	return true;
 }
 
 KeyboardControllerConfig ConfigHandler::getKeyConfig(int player) {
 	KeyboardControllerConfig conf;
-	std::ostringstream key;
-	key << "keys.p" << player << "_up";
-	std::string name = _settingsTree.get<std::string>(key.str(),
-			SDL_GetScancodeName(SDL_SCANCODE_A));
-	conf.up = SDL_GetScancodeFromName(name.c_str());
+	std::ostringstream confKey;
+	std::string name;
+
+	try{
+
+#define X(key) confKey.clear();\
+	confKey.str("");\
+	confKey << "keys.p" << player << "_" << #key;\
+	name = _settingsTree.get<std::string>(confKey.str());\
+	conf.key = SDL_GetScancodeFromName(name.c_str());
+
+	KEYS
+
+#undef X
+
+	} catch(std::exception& e) {
+		std::cerr << e.what() << std::endl;
+		std::cerr << "not all keys defined for player " << player << ", using defaults\n";
+		return DEFAULT_KEYS;
+	}
 
 	return conf;
 }
 
 void ConfigHandler::setKeyConfig(KeyboardControllerConfig config, int player) {
-	std::ostringstream key;
-	key << "keys.p" << player << "_up";
-	_settingsTree.put(key.str(), SDL_GetScancodeName((SDL_Scancode) config.up));
+	std::ostringstream confKey;
+
+#define X(key) confKey.clear();\
+		confKey.str("");\
+		confKey << "keys.p" << player << "_" << #key;\
+		_settingsTree.put(confKey.str(), SDL_GetScancodeName((SDL_Scancode) config.key));
+
+	KEYS
+
+#undef X
+
 }

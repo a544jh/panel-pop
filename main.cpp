@@ -24,12 +24,12 @@ int main(int argc, char* args[]) {
 
 	configHandler.loadConfig();
 	KeyboardControllerConfig conf = configHandler.getKeyConfig(1);
-	std::cout << SDL_GetScancodeName((SDL_Scancode) conf.up);
 
 	SDL.init();
 	StateManager& sm = StateManager::getInstance();
 	sm.run();
 
+	configHandler.setKeyConfig(conf, 1);
 	configHandler.saveConfig();
 
 	SDL.tearDown();
