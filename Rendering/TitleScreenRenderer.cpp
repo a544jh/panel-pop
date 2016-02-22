@@ -15,8 +15,10 @@
 
 #include "../main.h"
 #include "../SDLContext.h"
+#include "../States/TitleScreen.h"
 
-TitleScreenRenderer::TitleScreenRenderer() {
+TitleScreenRenderer::TitleScreenRenderer(TitleScreen& ts) :
+				_titleScreen(ts) {
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, 640, 480);
 	_titleImg = _SDLContext.makeTextureFromImage("assets/title.png");
@@ -41,6 +43,8 @@ SDL_Texture* TitleScreenRenderer::render() {
 		SDL_Rect box = { 311, 262, 190, 14 };
 		SDL_RenderFillRect(_SDLRenderer, &box);
 	}
+
+	_titleScreen.getMenu().render();
 
 //	SDL_Color color = {0,0,0};
 //	SDL_Texture* testfont = _SDLContext.makeTextureFromFont("PANEL POP",color,_SDLContext._squareFont);

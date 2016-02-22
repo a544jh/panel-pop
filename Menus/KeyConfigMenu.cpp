@@ -61,7 +61,6 @@ KeyConfigMenu::KeyConfigMenu(OptionsMenuState& state, int player) :
 }
 
 KeyConfigMenu::~KeyConfigMenu() {
-	// TODO Auto-generated destructor stub
 }
 
 void KeyConfigMenu::setActiveKey(int scancode) {
@@ -82,18 +81,17 @@ void KeyConfigMenu::render() const {
 		} else {
 			text = " " + text;
 		}
-		_SDLContext.renderText(text, { 255, 255, 255 }, _SDLContext._fontPs, x,
-				y);
+		_SDLContext.renderText(text, { 0, 0, 0 }, _SDLContext._fontPs, x, y);
 
 		const char* name = SDL_GetScancodeName(
 				(SDL_Scancode) _items.at(i).getValue());
 
-		_SDLContext.renderText(name, { 255, 255, 255 }, _SDLContext._fontPs,
-				x + 350, y);
+		_SDLContext.renderText(name, { 0, 0, 0 }, _SDLContext._fontPs, x + 350,
+				y);
 	}
 
 	if (_waitingForKey) {
-		_SDLContext.renderText("--press key--", { 255, 255, 255 },
+		_SDLContext.renderText("--press key--", { 0, 0, 0 },
 				_SDLContext._fontPs, 0, 300);
 	}
 

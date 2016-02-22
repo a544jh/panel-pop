@@ -8,6 +8,7 @@
 #ifndef STATES_TITLESCREEN_H_
 #define STATES_TITLESCREEN_H_
 
+#include "../Menus/MainMenu.h"
 #include "../Rendering/TitleScreenRenderer.h"
 #include "State.h"
 
@@ -17,8 +18,11 @@ public:
 	virtual ~TitleScreen();
 	void tick();
 	SDL_Texture* render();
+	const MainMenu& getMenu() const;
+
 private:
 	TitleScreenRenderer _tr;
+	MainMenu _menu;
 };
 
 

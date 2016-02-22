@@ -37,7 +37,7 @@ StateManager::StateManager() :
 				_showFps(false) {
 	_p1keys = ConfigHandler::getInstance().getKeyConfig(1);
 	_p2keys = ConfigHandler::getInstance().getKeyConfig(2);
-	_currentState = new OptionsMenuState();
+	_currentState = new TitleScreen();
 }
 
 StateManager& StateManager::getInstance() {
