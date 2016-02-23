@@ -14,6 +14,7 @@ class OptionsMenu: public Menu {
 public:
 	OptionsMenu();
 	virtual ~OptionsMenu();
+	void render() const;
 };
 
 #endif /* MENUS_OPTIONSMENU_H_ */

@@ -42,13 +42,13 @@ void Menu::inputDown() {
 }
 
 void Menu::inputLeft() {
-	if (_items.at(_selection).isChangable()) {
+	if (_items.at(_selection).getOptionType() != MenuItem::OptionType::NONE) {
 		_items.at(_selection).decrease();
 	}
 }
 
 void Menu::inputRight() {
-	if (_items.at(_selection).isChangable()) {
+	if (_items.at(_selection).getOptionType() != MenuItem::OptionType::NONE) {
 		_items.at(_selection).increase();
 	}
 }
@@ -58,6 +58,7 @@ void Menu::inputEnter() {
 }
 
 void Menu::inputCancel() {
+	StateManager::getInstance().goBack();
 }
 
 void Menu::resetCursor() {

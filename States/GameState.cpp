@@ -61,3 +61,5 @@ SDL_Texture* GameState::render() {
 GameState::~GameState() {
 }
 
+void GameState::goBack() {
+}

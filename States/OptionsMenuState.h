@@ -11,6 +11,7 @@
 #include "../Config/KeyboardControllerConfig.h"
 #include "../Rendering/Renderer.h"
 #include "State.h"
+#include <list>
 
 class Menu;
 
@@ -20,8 +21,10 @@ public:
 	virtual ~OptionsMenuState();
 	void tick();
 	SDL_Texture* render();
+	void goBack();
 
 private:
+	std::list<Menu*> _menuStack;
 	KeyboardControllerConfig _p1keys, _p2keys;
 	Menu* _currentMenu;
 };

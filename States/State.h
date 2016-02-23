@@ -16,6 +16,7 @@ public:
 	virtual ~State();
 	virtual SDL_Texture* render() =0;
 	virtual void tick() =0;
+	virtual void goBack() =0;
 };
 
 #endif /* STATE_H_ */

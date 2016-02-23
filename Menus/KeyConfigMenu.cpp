@@ -17,7 +17,6 @@
 #include "../Config/ConfigHandler.h"
 #include "../InputManager.h"
 #include "../SDLContext.h"
-#include "../States/StateManager.h"
 #include "MenuItem.h"
 
 KeyConfigMenu::KeyConfigMenu(OptionsMenuState& state, int player) :
@@ -31,27 +30,27 @@ KeyConfigMenu::KeyConfigMenu(OptionsMenuState& state, int player) :
 	addItem(
 			MenuItem("Up",
 					[&]() {_activeKey = &_newKeyConfig.up; _waitingForKey = true;},
-					_newKeyConfig.up, 0));
+					_newKeyConfig.up, 0, MenuItem::OptionType::NONE));
 	addItem(
 			MenuItem("Down",
 					[&]() {_activeKey = &_newKeyConfig.down; _waitingForKey = true;},
-					_newKeyConfig.down, 0));
+					_newKeyConfig.down, 0, MenuItem::OptionType::NONE));
 	addItem(
 			MenuItem("Left",
 					[&]() {_activeKey = &_newKeyConfig.left; _waitingForKey = true;},
-					_newKeyConfig.left, 0));
+					_newKeyConfig.left, 0, MenuItem::OptionType::NONE));
 	addItem(
 			MenuItem("Right",
 					[&]() {_activeKey = &_newKeyConfig.right; _waitingForKey = true;},
-					_newKeyConfig.right, 0));
+					_newKeyConfig.right, 0, MenuItem::OptionType::NONE));
 	addItem(
 			MenuItem("Swap/Accept",
 					[&]() {_activeKey = &_newKeyConfig.swap; _waitingForKey = true;},
-					_newKeyConfig.swap, 0));
+					_newKeyConfig.swap, 0, MenuItem::OptionType::NONE));
 	addItem(
 			MenuItem("Raise stack/Cancel",
 					[&]() {_activeKey = &_newKeyConfig.raiseStack; _waitingForKey = true;},
-					_newKeyConfig.raiseStack, 0));
+					_newKeyConfig.raiseStack, 0, MenuItem::OptionType::NONE));
 
 	addItem(MenuItem("Apply", [&]() {
 		ConfigHandler::getInstance().setKeyConfig(_newKeyConfig,_player);

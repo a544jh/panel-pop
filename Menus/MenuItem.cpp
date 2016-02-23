@@ -7,8 +7,13 @@
 
 #include "MenuItem.h"
 
+#include <iostream>
+#include <ostream>
+#include <string>
+#include <sstream>
+
 MenuItem::MenuItem(std::string name, command c) :
-				_changable(false),
+				_optionType(OptionType::NONE),
 				_name(name),
 				_fn(c),
 				_value(0),
@@ -16,8 +21,9 @@ MenuItem::MenuItem(std::string name, command c) :
 
 }
 
-MenuItem::MenuItem(std::string name, command c, int value, int max) :
-				_changable(true),
+MenuItem::MenuItem(std::string name, command c, int value, int max,
+		OptionType type) :
+				_optionType(type),
 				_name(name),
 				_fn(c),
 				_value(value),
@@ -36,8 +42,8 @@ const std::string& MenuItem::getName() const {
 	return _name;
 }
 
-bool MenuItem::isChangable() const {
-	return _changable;
+MenuItem::OptionType MenuItem::getOptionType() const {
+	return _optionType;
 }
 
 int MenuItem::getMax() const {
@@ -49,11 +55,43 @@ int MenuItem::getValue() const {
 }
 
 void MenuItem::increase() {
+	++_value;
+	if (_value > _max) {
+		_value = 0;
+	}
 }
 
 void MenuItem::decrease() {
+	--_value;
+	if (_value < 0) {
+		_value = _max;
+	}
 }
 
 void MenuItem::setValue(int value) {
 	_value = value;
+}
+
+const std::string MenuItem::getOptionString() const{
+	std::ostringstream os;
+	switch (_optionType) {
+	case OptionType::TOGGLE:
+		if (_value != 0) {
+			return "ON";
+		} else {
+			return "OFF";
+		}
+		break;
+	case OptionType::SLIDER:
+		os << _value << '/' << _max;
+		return os.str();
+		break;
+	case OptionType::PLAYER:
+		os << "P" << _value;
+		return os.str();
+		break;
+	default:
+		return "";
+		break;
+	}
 }

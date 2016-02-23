@@ -27,3 +27,6 @@ void TitleScreen::tick(){
 const MainMenu& TitleScreen::getMenu() const {
 	return _menu;
 }
+
+void TitleScreen::goBack() {
+}

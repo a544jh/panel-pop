@@ -6,6 +6,7 @@
  */
 
 #include "SDLContext.h"
+#include "Config/ConfigHandler.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_error.h>
@@ -19,6 +20,7 @@
 #include <SDL2/SDL_video.h>
 #include <cstdint>
 #include <iostream>
+#include <string>
 #include <sstream>
 
 SDLContext::SDLContext() :
@@ -88,8 +90,8 @@ bool SDLContext::init() {
 		success = false;
 	}
 
-	//Mix_VolumeMusic(64);
-	//Mix_Volume(-1,MIX_MAX_VOLUME);
+	Mix_VolumeMusic(ConfigHandler::getInstance().getMusicVolume());
+	Mix_Volume(-1,ConfigHandler::getInstance().getSfxVolume());
 
 	success = loadSpriteSheet();
 	success = loadFonts();

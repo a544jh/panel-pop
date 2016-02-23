@@ -11,9 +11,11 @@
 #include <boost/property_tree/ini_parser.hpp>
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_scancode.h>
+#include <SDL2/SDL_mixer.h>
 #include <exception>
 #include <iostream>
 #include <string>
+
 
 ConfigHandler::ConfigHandler() {
 }
@@ -78,4 +80,30 @@ void ConfigHandler::setKeyConfig(KeyboardControllerConfig config, int player) {
 
 #undef X
 
+}
+
+void ConfigHandler::setFullscreen(bool fs) {
+	_settingsTree.put("video.fullscreen", fs);
+}
+
+void ConfigHandler::setMusicVolume(int vol) {
+	_settingsTree.put("audio.music_volume", vol);
+	Mix_VolumeMusic(vol);
+}
+
+void ConfigHandler::setSfxVolume(int vol) {
+	_settingsTree.put("audio.sfx_volume", vol);
+	Mix_Volume(-1,vol);
+}
+
+bool ConfigHandler::getFullscreen() {
+	return _settingsTree.get("video.fullscreen", false);
+}
+
+int ConfigHandler::getMusicVolume() {
+	return _settingsTree.get("audio.music_volume", MIX_MAX_VOLUME);
+}
+
+int ConfigHandler::getSfxVolume() {
+	return _settingsTree.get("audio.sfx_volume", MIX_MAX_VOLUME);
 }

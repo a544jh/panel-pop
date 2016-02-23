@@ -17,20 +17,27 @@ typedef std::function<void()> command;
 
 class MenuItem {
 public:
+
+	enum class OptionType {
+		NONE, SLIDER, TOGGLE, PLAYER
+	};
+
+
 	MenuItem(std::string, command);
-	MenuItem(std::string, command, int value, int max);
+	MenuItem(std::string, command, int value, int max, OptionType type);
 	virtual ~MenuItem();
 	command getFn() const;
 	const std::string& getName() const;
+	const std::string getOptionString() const;
 	void increase();
 	void decrease();
-	bool isChangable() const;
+	OptionType getOptionType() const;
 	int getMax() const;
 	int getValue() const;
 	void setValue(int value);
 
 private:
-	bool _changable;
+	OptionType _optionType;
 	std::string _name;
 	command _fn;
 	int _value;

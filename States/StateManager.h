@@ -28,6 +28,7 @@ public:
 	void setP1keys(const KeyboardControllerConfig& p1keys);
 	const KeyboardControllerConfig& getP2keys() const;
 	void setP2keys(const KeyboardControllerConfig& p2keys);
+	void goBack();
 
 private:
 	StateManager();

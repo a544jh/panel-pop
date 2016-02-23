@@ -136,3 +136,7 @@ void StateManager::showFps() {
 	ss << std::setprecision(5) << _avgFps;
 	SDL.renderText(ss.str(), { 0, 0, 0 }, SDL._fontPs, 0, 0);
 }
+
+void StateManager::goBack() {
+	_currentState->goBack();
+}

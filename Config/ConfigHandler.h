@@ -27,6 +27,13 @@ public:
 
 	KeyboardControllerConfig getKeyConfig(int player);
 	void setKeyConfig(KeyboardControllerConfig, int player);
+	void setFullscreen(bool);
+	void setMusicVolume(int);
+	void setSfxVolume(int);
+
+	bool getFullscreen();
+	int getMusicVolume();
+	int getSfxVolume();
 
 private:
 	ConfigHandler();

@@ -19,6 +19,7 @@ public:
 	void tick();
 	SDL_Texture* render();
 	virtual ~GameState();
+	void goBack();
 private:
 	GameRenderer _renderer;
 	Game _game;

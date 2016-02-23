@@ -19,6 +19,7 @@ public:
 	void tick();
 	SDL_Texture* render();
 	const MainMenu& getMenu() const;
+	void goBack();
 
 private:
 	TitleScreenRenderer _tr;
