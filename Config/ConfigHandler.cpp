@@ -6,6 +6,7 @@
  */
 
 #include "ConfigHandler.h"
+#include "../SDLContext.h"
 
 #include <boost/property_tree/detail/ptree_implementation.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -15,7 +16,6 @@
 #include <exception>
 #include <iostream>
 #include <string>
-
 
 ConfigHandler::ConfigHandler() {
 }
@@ -47,7 +47,7 @@ KeyboardControllerConfig ConfigHandler::getKeyConfig(int player) {
 	std::ostringstream confKey;
 	std::string name;
 
-	try{
+	try {
 
 #define X(key) confKey.clear();\
 	confKey.str("");\
@@ -55,13 +55,14 @@ KeyboardControllerConfig ConfigHandler::getKeyConfig(int player) {
 	name = _settingsTree.get<std::string>(confKey.str());\
 	conf.key = SDL_GetScancodeFromName(name.c_str());
 
-	KEYS
+		KEYS
 
 #undef X
 
-	} catch(std::exception& e) {
+	} catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
-		std::cerr << "not all keys defined for player " << player << ", using defaults\n";
+		std::cerr << "not all keys defined for player " << player
+				<< ", using defaults\n";
 		return DEFAULT_KEYS;
 	}
 
@@ -84,6 +85,9 @@ void ConfigHandler::setKeyConfig(KeyboardControllerConfig config, int player) {
 
 void ConfigHandler::setFullscreen(bool fs) {
 	_settingsTree.put("video.fullscreen", fs);
+	if (fs != SDLContext::getInstance().isFullscreen()) {
+		SDLContext::getInstance().toggleFullscreen();
+	}
 }
 
 void ConfigHandler::setMusicVolume(int vol) {
@@ -93,7 +97,7 @@ void ConfigHandler::setMusicVolume(int vol) {
 
 void ConfigHandler::setSfxVolume(int vol) {
 	_settingsTree.put("audio.sfx_volume", vol);
-	Mix_Volume(-1,vol);
+	Mix_Volume(-1, vol);
 }
 
 bool ConfigHandler::getFullscreen() {

@@ -93,6 +93,10 @@ bool SDLContext::init() {
 	Mix_VolumeMusic(ConfigHandler::getInstance().getMusicVolume());
 	Mix_Volume(-1,ConfigHandler::getInstance().getSfxVolume());
 
+	if(ConfigHandler::getInstance().getFullscreen()){
+		toggleFullscreen();
+	}
+
 	success = loadSpriteSheet();
 	success = loadFonts();
 	success = loadAudio();
@@ -162,8 +166,7 @@ void SDLContext::renderTextureToWindow(SDL_Texture* texture) {
 }
 
 void SDLContext::toggleFullscreen() {
-	uint32_t flags = SDL_GetWindowFlags(_window);
-	if ((flags & SDL_WINDOW_FULLSCREEN) == SDL_WINDOW_FULLSCREEN) {
+	if (isFullscreen()) {
 		SDL_SetWindowFullscreen(_window, 0);
 		SDL_ShowCursor(SDL_ENABLE);
 	} else {
@@ -176,6 +179,11 @@ void SDLContext::tearDown() {
 	SDL_DestroyRenderer(_renderer);
 	SDL_DestroyWindow(_window);
 	SDL_Quit();
+}
+
+bool SDLContext::isFullscreen() {
+	uint32_t flags = SDL_GetWindowFlags(_window);
+	return (flags & SDL_WINDOW_FULLSCREEN) == SDL_WINDOW_FULLSCREEN;
 }
 
 bool SDLContext::loadAudio() {
