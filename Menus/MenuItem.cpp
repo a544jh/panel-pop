@@ -87,7 +87,7 @@ const std::string MenuItem::getOptionString() const{
 		return os.str();
 		break;
 	case OptionType::PLAYER:
-		os << "P" << _value;
+		os << "P" << _value + 1;
 		return os.str();
 		break;
 	default:

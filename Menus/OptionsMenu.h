@@ -10,11 +10,15 @@
 
 #include "Menu.h"
 
+class OptionsMenuState;
+
 class OptionsMenu: public Menu {
 public:
-	OptionsMenu();
+	OptionsMenu(OptionsMenuState& _state);
 	virtual ~OptionsMenu();
 	void render() const;
+private:
+	OptionsMenuState& _state;
 };
 
 #endif /* MENUS_OPTIONSMENU_H_ */

@@ -18,6 +18,7 @@
 #include "../InputManager.h"
 #include "../SDLContext.h"
 #include "MenuItem.h"
+#include "../States/OptionsMenuState.h"
 
 KeyConfigMenu::KeyConfigMenu(OptionsMenuState& state, int player) :
 				_state(state),
@@ -25,7 +26,7 @@ KeyConfigMenu::KeyConfigMenu(OptionsMenuState& state, int player) :
 				_activeKey(nullptr),
 				_waitingForKey(false) {
 
-	_newKeyConfig = ConfigHandler::getInstance().getKeyConfig(1);
+	_newKeyConfig = ConfigHandler::getInstance().getKeyConfig(player);
 
 	addItem(
 			MenuItem("Up",
@@ -55,6 +56,7 @@ KeyConfigMenu::KeyConfigMenu(OptionsMenuState& state, int player) :
 	addItem(MenuItem("Apply", [&]() {
 		ConfigHandler::getInstance().setKeyConfig(_newKeyConfig,_player);
 		ConfigHandler::getInstance().saveConfig();
+		_state.goBack();
 	}));
 
 }
@@ -82,17 +84,24 @@ void KeyConfigMenu::render() const {
 		}
 		_SDLContext.renderText(text, { 0, 0, 0 }, _SDLContext._fontPs, x, y);
 
-		const char* name = SDL_GetScancodeName(
-				(SDL_Scancode) _items.at(i).getValue());
+		if (i != _items.size() - 1 && !(_waitingForKey && _selection == i)) {
+			const char* name;
+			if (_items.at(i).getValue() != 0) {
+				name = SDL_GetScancodeName(
+						(SDL_Scancode) _items.at(i).getValue());
+			} else {
+				name = "--";
+			}
 
-		_SDLContext.renderText(name, { 0, 0, 0 }, _SDLContext._fontPs, x + 350,
-				y);
+			_SDLContext.renderText(name, { 0, 0, 0 }, _SDLContext._fontPs,
+					x + 350, y);
+		} else if (_selection == i && _waitingForKey && (SDL_GetTicks() - _time) % 1000 < 500) {
+			_SDLContext.renderText("--press key--", { 0, 0, 0 },
+					_SDLContext._fontPs, x + 350, y);
+		}
 	}
 
-	if (_waitingForKey) {
-		_SDLContext.renderText("--press key--", { 0, 0, 0 },
-				_SDLContext._fontPs, 0, 300);
-	}
+
 
 }
 
@@ -100,10 +109,21 @@ void KeyConfigMenu::handleInput() {
 	InputManager& input = InputManager::getInstance();
 	if (_waitingForKey) {
 		int pressed = input.getKeyDown();
-		if (pressed != 0) {
-			setActiveKey(pressed);
+		if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
+			setActiveKey(0);
 			_waitingForKey = false;
+		} else if (pressed != 0) {
+			setActiveKey(pressed);
+//			if (++_selection == _items.size() - 1) {
+//				_waitingForKey = false;
+//			} else {
+//				inputEnter();
+//			}
+			inputDown();
+			inputEnter();
 		}
+	} else if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
+		_state.goBack();
 	} else {
 		Menu::handleInput();
 	}

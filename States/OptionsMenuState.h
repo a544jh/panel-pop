@@ -22,11 +22,13 @@ public:
 	void tick();
 	SDL_Texture* render();
 	void goBack();
+	void configurePlayerKeys(int);
 
 private:
 	std::list<Menu*> _menuStack;
 	KeyboardControllerConfig _p1keys, _p2keys;
 	Menu* _currentMenu;
+	void pushMenu(Menu*);
 };
 
 #endif /* STATES_OPTIONSMENUSTATE_H_ */

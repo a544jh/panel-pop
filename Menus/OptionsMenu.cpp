@@ -16,8 +16,10 @@
 #include "../Config/ConfigHandler.h"
 #include "../SDLContext.h"
 #include "MenuItem.h"
+#include "../States/OptionsMenuState.h"
 
-OptionsMenu::OptionsMenu() {
+OptionsMenu::OptionsMenu(OptionsMenuState& state) :
+				_state(state) {
 
 	ConfigHandler& cf = ConfigHandler::getInstance();
 
@@ -25,20 +27,20 @@ OptionsMenu::OptionsMenu() {
 			MenuItem("Fullscreen", [&]() {}, cf.getFullscreen(), 1,
 					MenuItem::OptionType::TOGGLE));
 	addItem(
-			MenuItem("Music volume", [&]() {}, cf.getMusicVolume(), MIX_MAX_VOLUME,
-					MenuItem::OptionType::SLIDER));
+			MenuItem("Music volume", [&]() {}, cf.getMusicVolume(),
+					MIX_MAX_VOLUME, MenuItem::OptionType::SLIDER));
 	addItem(
 			MenuItem("SFX volume", [&]() {}, cf.getSfxVolume(), MIX_MAX_VOLUME,
 					MenuItem::OptionType::SLIDER));
-	addItem(
-			MenuItem("Configure keys", [&]() {}, 0, 1,
-					MenuItem::OptionType::PLAYER));
-	addItem(MenuItem("Apply", [&](){
+	addItem(MenuItem("Configure keys", [&]() {
+		_state.configurePlayerKeys(_items.at(_selection).getValue() + 1);
+	}, 0, 1, MenuItem::OptionType::PLAYER));
+	addItem(MenuItem("Apply", [&]() {
 		cf.setFullscreen(_items.at(0).getValue());
 		cf.setMusicVolume(_items.at(1).getValue());
 		cf.setSfxVolume(_items.at(2).getValue());
 		cf.saveConfig();
-		inputCancel();
+		_state.goBack();
 	}));
 }
 
@@ -62,8 +64,17 @@ void OptionsMenu::render() const {
 		_SDLContext.renderText(text, { 0, 0, 0 }, _SDLContext._fontPs, x, y);
 
 		std::string option = _items.at(i).getOptionString();
+		std::ostringstream os;
 
-		_SDLContext.renderText(option, { 0, 0, 0 }, _SDLContext._fontPs, x + 350,
-				y);
+		if (i != _items.size() - 1) {
+			if (_selection == i && (SDL_GetTicks() - _time) % 1000 < 500) {
+				os << "\u25c0" << option << "\u25b6";
+			} else {
+				os << " " << option << " ";
+			}
+
+			_SDLContext.renderText(os.str(), { 0, 0, 0 }, _SDLContext._fontPs,
+					x + 300, y);
+		}
 	}
 }
