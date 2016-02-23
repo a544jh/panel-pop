@@ -13,7 +13,7 @@
 #include <iostream>
 
 #include "Config/ConfigHandler.h"
-#include "Config/KeyboardControllerConfig.h"
+#include "Config/KeyConfig.h"
 #include "SDLContext.h"
 #include "States/StateManager.h"
 

@@ -5,8 +5,8 @@
  *      Author: axel
  */
 
-#ifndef CONFIG_KEYBOARDCONTROLLERCONFIG_H_
-#define CONFIG_KEYBOARDCONTROLLERCONFIG_H_
+#ifndef CONFIG_KEYCONFIG_H_
+#define CONFIG_KEYCONFIG_H_
 
 #define KEYS \
 	X(up)\
@@ -16,10 +16,10 @@
 	X(swap)\
 	X(raiseStack)
 
-struct KeyboardControllerConfig {
+struct KeyConfig {
 #define X(key) int key;
 	KEYS
 #undef X
 };
 
-#endif /* CONFIG_KEYBOARDCONTROLLERCONFIG_H_ */
+#endif /* CONFIG_KEYCONFIG_H_ */

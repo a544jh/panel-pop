@@ -9,7 +9,7 @@
 
 #include <SDL2/SDL_timer.h>
 
-#include "../Config/KeyboardControllerConfig.h"
+#include "../Config/KeyConfig.h"
 #include "../InputManager.h"
 #include "../States/StateManager.h"
 
@@ -67,8 +67,8 @@ void Menu::resetCursor() {
 
 void Menu::handleInput() {
 	InputManager& input = InputManager::getInstance();
-	KeyboardControllerConfig p1keys = StateManager::getInstance().getP1keys();
-	KeyboardControllerConfig p2keys = StateManager::getInstance().getP2keys();
+	KeyConfig p1keys = StateManager::getInstance().getP1keys();
+	KeyConfig p2keys = StateManager::getInstance().getP2keys();
 	if (input.keyDown(p1keys.down) || input.keyDown(p2keys.down)) {
 		inputDown();
 	}

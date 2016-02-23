@@ -8,10 +8,10 @@
 #ifndef STATES_OPTIONSMENUSTATE_H_
 #define STATES_OPTIONSMENUSTATE_H_
 
-#include "../Config/KeyboardControllerConfig.h"
 #include "../Rendering/Renderer.h"
 #include "State.h"
 #include <list>
+#include "../Config/KeyConfig.h"
 
 class Menu;
 
@@ -26,7 +26,7 @@ public:
 
 private:
 	std::list<Menu*> _menuStack;
-	KeyboardControllerConfig _p1keys, _p2keys;
+	KeyConfig _p1keys, _p2keys;
 	Menu* _currentMenu;
 	void pushMenu(Menu*);
 };

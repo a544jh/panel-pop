@@ -111,21 +111,26 @@ void StateManager::returnToTile() {
 	switchToState(new TitleScreen);
 }
 
-const KeyboardControllerConfig& StateManager::getP1keys() const {
+const KeyConfig& StateManager::getP1keys() const {
 	return _p1keys;
 }
 
-void StateManager::setP1keys(const KeyboardControllerConfig& p1keys) {
-	_p1keys = p1keys;
+void StateManager::setKeys(KeyConfig keys, int player) {
+	switch (player) {
+		case 1:
+			_p1keys = keys;
+			break;
+		case 2:
+			_p2keys = keys;
+		default:
+			break;
+	}
 }
 
-const KeyboardControllerConfig& StateManager::getP2keys() const {
+const KeyConfig& StateManager::getP2keys() const {
 	return _p2keys;
 }
 
-void StateManager::setP2keys(const KeyboardControllerConfig& p2keys) {
-	_p2keys = p2keys;
-}
 
 void StateManager::showFps() {
 	std::ostringstream ss;

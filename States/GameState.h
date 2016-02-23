@@ -23,8 +23,8 @@ public:
 private:
 	GameRenderer _renderer;
 	Game _game;
-	KeyboardControllerConfig _p1keys;
-	KeyboardControllerConfig _p2keys;
+	KeyConfig _p1keys;
+	KeyConfig _p2keys;
 	KeyboardController _kbc;
 	KeyboardController _kbc2;
 };

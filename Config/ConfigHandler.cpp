@@ -7,6 +7,7 @@
 
 #include "ConfigHandler.h"
 #include "../SDLContext.h"
+#include "../States/StateManager.h"
 
 #include <boost/property_tree/detail/ptree_implementation.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -42,8 +43,8 @@ bool ConfigHandler::saveConfig() {
 	return true;
 }
 
-KeyboardControllerConfig ConfigHandler::getKeyConfig(int player) {
-	KeyboardControllerConfig conf;
+KeyConfig ConfigHandler::getKeyConfig(int player) {
+	KeyConfig conf;
 	std::ostringstream confKey;
 	std::string name;
 
@@ -69,7 +70,7 @@ KeyboardControllerConfig ConfigHandler::getKeyConfig(int player) {
 	return conf;
 }
 
-void ConfigHandler::setKeyConfig(KeyboardControllerConfig config, int player) {
+void ConfigHandler::setKeyConfig(KeyConfig config, int player) {
 	std::ostringstream confKey;
 
 #define X(key) confKey.clear();\
@@ -81,6 +82,7 @@ void ConfigHandler::setKeyConfig(KeyboardControllerConfig config, int player) {
 
 #undef X
 
+	StateManager::getInstance().setKeys(config, player);
 }
 
 void ConfigHandler::setFullscreen(bool fs) {

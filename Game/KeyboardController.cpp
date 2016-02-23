@@ -11,7 +11,7 @@
 
 #include "Board.h"
 
-KeyboardController::KeyboardController(Board& b, KeyboardControllerConfig& c) :
+KeyboardController::KeyboardController(Board& b, KeyConfig& c) :
 				BoardController(b),
 				_config(c),
 				_directionHeld(NONE),

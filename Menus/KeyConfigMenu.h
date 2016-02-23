@@ -8,7 +8,7 @@
 #ifndef MENUS_KEYCONFIGMENU_H_
 #define MENUS_KEYCONFIGMENU_H_
 
-#include "../Config/KeyboardControllerConfig.h"
+#include "../Config/KeyConfig.h"
 #include "Menu.h"
 
 class OptionsMenuState;
@@ -30,7 +30,7 @@ private:
 	int* _activeKey;
 	bool _waitingForKey;
 
-	KeyboardControllerConfig _newKeyConfig;
+	KeyConfig _newKeyConfig;
 };
 
 #endif /* MENUS_KEYCONFIGMENU_H_ */

@@ -10,7 +10,7 @@
 
 #include <cstdint>
 
-#include "../Config/KeyboardControllerConfig.h"
+#include "../Config/KeyConfig.h"
 
 class InputManager;
 class SDLContext;
@@ -24,10 +24,9 @@ public:
 	void startGame();
 	void returnToTile();
 	float getAvgFps() const;
-	const KeyboardControllerConfig& getP1keys() const;
-	void setP1keys(const KeyboardControllerConfig& p1keys);
-	const KeyboardControllerConfig& getP2keys() const;
-	void setP2keys(const KeyboardControllerConfig& p2keys);
+	const KeyConfig& getP1keys() const;
+	void setKeys(KeyConfig,int);
+	const KeyConfig& getP2keys() const;
 	void goBack();
 
 private:
@@ -48,7 +47,7 @@ private:
 	float _avgFps;
 	bool _showFps;
 	void showFps();
-	KeyboardControllerConfig _p1keys, _p2keys;
+	KeyConfig _p1keys, _p2keys;
 };
 
 #endif /* STATEMANAGER_H_ */

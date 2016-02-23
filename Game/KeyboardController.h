@@ -12,13 +12,13 @@
 #include "../InputManager.h"
 #include <array>
 
-#include "../Config/KeyboardControllerConfig.h"
+#include "../Config/KeyConfig.h"
 class KeyboardController: public BoardController {
 public:
-	KeyboardController(Board&, KeyboardControllerConfig&);
+	KeyboardController(Board&, KeyConfig&);
 	void tick();
 	virtual ~KeyboardController();
-	KeyboardControllerConfig _config;
+	KeyConfig _config;
 	const uint32_t REPEAT_MS = 200; //until direction starts repeating
 
 private:
