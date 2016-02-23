@@ -55,6 +55,7 @@ void Menu::inputRight() {
 
 void Menu::inputEnter() {
 	_items.at(_selection).getFn()();
+	_time = SDL_GetTicks();
 }
 
 void Menu::inputCancel() {

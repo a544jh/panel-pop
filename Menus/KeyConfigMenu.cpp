@@ -110,15 +110,9 @@ void KeyConfigMenu::handleInput() {
 	if (_waitingForKey) {
 		int pressed = input.getKeyDown();
 		if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
-			setActiveKey(0);
 			_waitingForKey = false;
 		} else if (pressed != 0) {
 			setActiveKey(pressed);
-//			if (++_selection == _items.size() - 1) {
-//				_waitingForKey = false;
-//			} else {
-//				inputEnter();
-//			}
 			inputDown();
 			inputEnter();
 		}
