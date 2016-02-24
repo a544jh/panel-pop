@@ -13,7 +13,8 @@
 #include "BoardRenderer.h"
 #include "GbQueueRenderer.h"
 #include "Particle.h"
-#include "Popup.h"
+
+class VsGame;
 
 class GameRenderer: public Renderer {
 public:
