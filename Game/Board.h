@@ -16,7 +16,7 @@
 
 class BoardEventHandler;
 
-class Game;
+class VsGame;
 
 enum Direction {
 	UP, RIGHT, DOWN, LEFT, NONE
@@ -49,7 +49,7 @@ public:
 		RUNNING, COUNTDOWN, WON, GAME_OVER
 	};
 
-	Board(Game*, BoardEventHandler*);
+	Board(VsGame*, BoardEventHandler*);
 
 	virtual ~Board();
 
@@ -95,7 +95,7 @@ public:
 	const std::list<GarbageBlock>& getGarbageBlocks() const;
 	const std::list<GarbageSpawn>& getGarbageQueue() const;
 	void win();
-	Game& getGame() const;
+	VsGame& getGame() const;
 	uint32_t getTime() const;
 
 private:
@@ -104,7 +104,7 @@ private:
 	std::list<GarbageBlock> _garbageBlocks;
 	std::list<GarbageSpawn> _garbageQueue;
 
-	Game* _game;
+	VsGame* _game;
 	BoardState _state;
 	BoardEventHandler* _eventHandler;
 	unsigned int _ticksRun;

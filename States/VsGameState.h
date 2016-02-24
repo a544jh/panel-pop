@@ -5,11 +5,11 @@
  *      Author: axelw
  */
 
-#ifndef STATES_GAMESTATE_H_
-#define STATES_GAMESTATE_H_
+#ifndef STATES_VSGAMESTATE_H_
+#define STATES_VSGAMESTATE_H_
 
-#include "../Game/Game.h"
 #include "../Game/KeyboardController.h"
+#include "../Game/VsGame.h"
 #include "../Rendering/GameRenderer.h"
 #include "State.h"
 
@@ -22,11 +22,11 @@ public:
 	void goBack();
 private:
 	GameRenderer _renderer;
-	Game _game;
+	VsGame _game;
 	KeyConfig _p1keys;
 	KeyConfig _p2keys;
 	KeyboardController _kbc;
 	KeyboardController _kbc2;
 };
 
-#endif /* STATES_GAMESTATE_H_ */
+#endif /* STATES_VSGAMESTATE_H_ */

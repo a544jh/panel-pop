@@ -17,9 +17,9 @@
 #include "../Config/ConfigHandler.h"
 #include "../InputManager.h"
 #include "../SDLContext.h"
-#include "GameState.h"
 #include "OptionsMenuState.h"
 #include "TitleScreen.h"
+#include "VsGameState.h"
 
 StateManager::StateManager() :
 				_currentState(nullptr),

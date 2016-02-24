@@ -20,9 +20,10 @@
 
 #include "../Game/Board.h"
 #include "../Game/Game.h"
+#include "../Game/VsGame.h"
 #include "../SDLContext.h"
 
-GameRenderer::GameRenderer(Game& game) :
+GameRenderer::GameRenderer(VsGame& game) :
 				_game(game),
 				_boardRenderer0(_game._board0),
 				_boardRenderer1(_game._board1),
@@ -118,8 +119,8 @@ void GameRenderer::renderMatchPoints() {
 //p1
 	SDL_Rect sprite = { 0, 361, 21, 21 };
 	SDL_Rect pos = { 260, 35, 21, 21 };
-	for (int i = 0; i < Game::MATCH_POINTS; ++i) {
-		if (_game.getP1MatchPoints() >= Game::MATCH_POINTS - i) {
+	for (int i = 0; i < VsGame::MATCH_POINTS; ++i) {
+		if (_game.getP1MatchPoints() >= VsGame::MATCH_POINTS - i) {
 			sprite.x = 21;
 		} else {
 			sprite.x = 0;
@@ -129,8 +130,8 @@ void GameRenderer::renderMatchPoints() {
 	}
 //p2
 	pos = {359,35,21,21};
-	for (int i = 0; i < Game::MATCH_POINTS; ++i) {
-		if (_game.getP2MatchPoints() >= Game::MATCH_POINTS - i) {
+	for (int i = 0; i < VsGame::MATCH_POINTS; ++i) {
+		if (_game.getP2MatchPoints() >= VsGame::MATCH_POINTS - i) {
 			sprite.x = 21;
 		} else {
 			sprite.x = 0;

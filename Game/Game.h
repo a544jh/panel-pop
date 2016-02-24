@@ -1,75 +1,51 @@
 /*
  * Game.h
  *
- *  Created on: Aug 16, 2015
- *      Author: axel
+ *  Created on: 24.2.2016
+ *      Author: axelw
  */
 
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef GAME_GAME_H_
+#define GAME_GAME_H_
 
-#include <cstdint>
+#include <stdint.h>
 
 #include "../Menus/PauseMenu.h"
-#include "Board.h"
 
 class GameEventHandler;
 
-
 class Game {
-
 public:
 
 	enum class State {
 		RUNNING, PAUSED, ENDED
 	};
-	Game(GameEventHandler*, BoardEventHandler*, BoardEventHandler*);
 
-	GameEventHandler* _eventHandler;
-	BoardEventHandler* _beh0;
-	BoardEventHandler* _beh1;
-
-	Board _board0;
-	Board _board1;
-
-	static const int MATCH_POINTS = 2;
-
+	Game(GameEventHandler*);
 	virtual ~Game();
-	void tick();
-	void reset();
+
+	virtual void tick() =0;
+	virtual void reset() =0;
 	void inputTogglePause();
-	void inputAdvanceTick(); //debug "frame advance" feature
 	const bool isPaused() const;
-
-	int getTicksRun() const {
-		return _ticksRun;
-	}
-
-	bool isAdvanceTick() const;
+	int getTicksRun() const;
 	uint32_t getTime();
-	int getP1MatchPoints() const;
-	int getP1Points() const;
-	int getP2MatchPoints() const;
-	int getP2Points() const;
 	State getState() const;
 	PauseMenu& getPauseMenu();
+	bool isPanic() const;
+	uint32_t getPausedTime() const;
+	uint32_t getStartTime() const;
 
-private:
+protected:
+	GameEventHandler* _eventHandler;
 	State _state;
 	int _ticksRun;
-	bool _advanceTick; //debug "frame advance" feature
 	bool _panic;
 	uint32_t _startTime;
 	uint32_t _pausedTime;
-	int _p1MatchPoints;
-	int _p2MatchPoints;
-	int _p1Points;
-	int _p2Points;
-
 	PauseMenu _pauseMenu;
 
-	void handleGarbageSpawning(Board&, Board&);
-	void handleEnd();
+	virtual void handleEnd()=0;
 };
 
-#endif /* GAME_H_ */
+#endif /* GAME_GAME_H_ */

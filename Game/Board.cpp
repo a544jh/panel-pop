@@ -10,9 +10,9 @@
 #include <iostream>
 
 #include "BoardEventHandler.h"
-#include "Game.h"
+#include "VsGame.h"
 
-Board::Board(Game* game, BoardEventHandler* eh) :
+Board::Board(VsGame* game, BoardEventHandler* eh) :
 				_game(game),
 				_state(COUNTDOWN),
 				_eventHandler(eh),
@@ -807,7 +807,7 @@ unsigned int Board::getTicksRun() const {
 	return _ticksRun;
 }
 
-Game& Board::getGame() const {
+VsGame& Board::getGame() const {
 	return *_game;
 }
 

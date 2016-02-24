@@ -17,7 +17,7 @@
 
 class GameRenderer: public Renderer {
 public:
-	GameRenderer(Game&);
+	GameRenderer(VsGame&);
 	virtual ~GameRenderer();
 	void tick();
 	SDL_Texture* renderGame();
@@ -33,7 +33,7 @@ public:
 	void shakeBoard(int id, int duration);
 
 private:
-	Game& _game;
+	VsGame& _game;
 	BoardRenderer _boardRenderer0;
 	BoardRenderer _boardRenderer1;
 	GbQueueRenderer _gbqr0;

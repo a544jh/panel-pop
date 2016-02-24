@@ -5,8 +5,6 @@
  *      Author: axelw
  */
 
-#include "GameState.h"
-
 #include <SDL2/SDL_scancode.h>
 
 #include "../Game/BoardEventHandler.h"
@@ -14,6 +12,7 @@
 #include "../InputManager.h"
 #include "../Menus/PauseMenu.h"
 #include "StateManager.h"
+#include "VsGameState.h"
 
 GameState::GameState() :
 				_renderer(_game),
@@ -31,20 +30,17 @@ void GameState::tick() {
 	if (input.keyDown(SDL_SCANCODE_5)) {
 		_game.inputTogglePause();
 	}
-	if (input.keyPressed(SDL_SCANCODE_K)) {
-		_game.inputAdvanceTick();
-	}
 	if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
 		_game.reset();
 	}
-	if (_game.getState() == Game::State::RUNNING) {
+	if (_game.getState() == VsGame::State::RUNNING) {
 		_kbc.tick();
 		_kbc2.tick();
-	} else if (_game.getState() == Game::State::PAUSED) {
+	} else if (_game.getState() == VsGame::State::PAUSED) {
 		//send input to pause menu instead
 		PauseMenu& menu = _game.getPauseMenu();
 		menu.handleInput();
-	} else if (_game.getState() == Game::State::ENDED) {
+	} else if (_game.getState() == VsGame::State::ENDED) {
 		//TODO: change to any key and add timeout..?
 		if (input.keyDown(SDL_SCANCODE_5)) {
 			_game.reset();
