@@ -23,6 +23,7 @@ public:
 	SDL_Texture* getSpriteSheet();
 	void renderTextureToWindow(SDL_Texture*);
 	void toggleFullscreen();
+	bool isFullscreen();
 
 	SDL_Texture* makeTextureFromImage(std::string);
 	SDL_Texture* makeTextureFromFont(std::string, SDL_Color, TTF_Font*);

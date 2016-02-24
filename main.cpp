@@ -5,22 +5,30 @@
  *      Author: axel
  */
 
-#include <stdlib.h>
+#include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_main.h>
-#include <time.h>
-#include <string>
+#include <SDL2/SDL_scancode.h>
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
 
+#include "Config/ConfigHandler.h"
+#include "Config/KeyConfig.h"
 #include "SDLContext.h"
 #include "States/StateManager.h"
-
 
 int main(int argc, char* args[]) {
 	srand(time(NULL));
 	SDLContext& SDL = SDLContext::getInstance();
+	ConfigHandler& configHandler = ConfigHandler::getInstance();
+
+	configHandler.loadConfig();
+
 	SDL.init();
 	StateManager& sm = StateManager::getInstance();
 	sm.run();
 
 	SDL.tearDown();
+
 	return 0;
 }

@@ -10,13 +10,16 @@
 
 #include "Renderer.h"
 
+class TitleScreen;
+
 class TitleScreenRenderer : public Renderer {
 public:
-	TitleScreenRenderer();
+	TitleScreenRenderer(TitleScreen&);
 	virtual ~TitleScreenRenderer();
 	void tick();
 	SDL_Texture* render();
 private:
+	TitleScreen& _titleScreen;
 	SDL_Texture* _titleImg;
 	SDL_Texture* _versionText;
 };

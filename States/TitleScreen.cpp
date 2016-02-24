@@ -10,7 +10,7 @@
 #include "../InputManager.h"
 #include "StateManager.h"
 
-TitleScreen::TitleScreen() : _tr(){
+TitleScreen::TitleScreen() : _tr(*this){
 }
 
 TitleScreen::~TitleScreen() {
@@ -21,8 +21,12 @@ SDL_Texture* TitleScreen::render() {
 }
 
 void TitleScreen::tick(){
-	InputManager& input = InputManager::getInstance();
-	if(input.anyKeyDown()){
-		StateManager::getInstance().startGame();
-	}
+	_menu.handleInput();
+}
+
+const MainMenu& TitleScreen::getMenu() const {
+	return _menu;
+}
+
+void TitleScreen::goBack() {
 }

@@ -9,21 +9,19 @@
 #include <SDL2/SDL.h>
 
 InputManager::InputManager() :
-_quit(false)
-{}
+				_quit(false) {
+}
 
-InputManager& InputManager::getInstance()
-{
+InputManager& InputManager::getInstance() {
 	static InputManager instance;
 	return instance;
 }
 
-
 void InputManager::poll() {
 	_prevKeys = _keys;
 	SDL_Event e;
-	while(SDL_PollEvent( &e ) != 0) {
-		if(e.type == SDL_QUIT) {
+	while (SDL_PollEvent(&e) != 0) {
+		if (e.type == SDL_QUIT) {
 			_quit = true;
 		} else if (e.type == SDL_KEYDOWN) {
 			_keys[e.key.keysym.scancode] = true;
@@ -45,12 +43,20 @@ bool InputManager::keyPressed(int key) {
 	return _keys[key];
 }
 
-bool InputManager::anyKeyDown(){
-	for(int i = 0; i < KEYBOARD_SIZE; ++i){
-		if(!_prevKeys[i] &&_keys[i]){
+bool InputManager::anyKeyDown() {
+	for (int i = 0; i < KEYBOARD_SIZE; ++i) {
+		if (!_prevKeys[i] && _keys[i]) {
 			return true;
 		}
 	}
 	return false;
 }
 
+int InputManager::getKeyDown() {
+	for (int i = 0; i < KEYBOARD_SIZE; ++i) {
+		if (!_prevKeys[i] && _keys[i]) {
+			return i;
+		}
+	}
+	return 0;
+}

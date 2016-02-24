@@ -20,9 +20,13 @@ public:
 	void addItem(MenuItem);
 	void inputUp();
 	void inputDown();
+	void inputLeft();
+	void inputRight();
 	void inputEnter();
 	virtual void inputCancel();
 	void resetCursor();//makes the first item selected again
+
+	virtual void handleInput();
 
 	virtual void render() const =0;
 
