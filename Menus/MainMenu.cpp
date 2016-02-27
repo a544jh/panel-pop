@@ -10,11 +10,11 @@
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_timer.h>
 #include <string>
+#include <vector>
 
 #include "../SDLContext.h"
 #include "../States/OptionsMenuState.h"
 #include "../States/StateManager.h"
-#include "E:/MinGWDistro/MinGW/include/c++/5.3.0/vector"
 #include "MenuItem.h"
 
 MainMenu::MainMenu() {
