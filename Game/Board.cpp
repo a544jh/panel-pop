@@ -569,15 +569,25 @@ void Board::handleGarbageFalling() {
 			int row = it->getY() - (it->getH());
 			int col = it->getX();
 			int endCol = col + (it->getW() - 1);
+			//clear top row of gb
 			for (int i = col; i <= endCol; ++i) {
-				clearTile(_tiles[it->getY()][i]);
+				int y = it->getY();
+				clearTile(_tiles[y][i]);
+
+				if(y < BOARD_HEIGHT - 1 && _tiles[y+1][i].type == BLOCK){
+					_tiles[y+1][i].b._falling = true;
+				}
+
 			}
+			//set row below to point to gb
 			for (int i = col; i <= endCol; ++i) {
 				_tiles[row][i].type = GARBAGE;
 				_tiles[row][i].g = &(*it);
 			}
+			//decrease gb y position
 			--it->_y;
 		} else if (it->_falling) {
+			//handle event when gb stops falling
 			bool big = it->_h > 1;
 			if (big || it->_initialFall) {
 				_eventHandler->gbFall(big);
