@@ -145,7 +145,6 @@ void VsGame::reset() {
 }
 
 VsGame::~VsGame() {
-	delete _eventHandler;
 	delete _beh0;
 	delete _beh1;
 }

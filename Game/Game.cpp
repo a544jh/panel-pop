@@ -23,6 +23,7 @@ Game::Game(GameEventHandler* geh) :
 }
 
 Game::~Game() {
+	delete _eventHandler;
 }
 
 void Game::inputTogglePause() {
