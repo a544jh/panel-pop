@@ -163,9 +163,20 @@ void BoardRenderer::drawBlocks() {
 				SDL_Rect sheet = getBlockSprite(block);
 
 				if (_board.getGraceTimer() > 0) {
-					int px = _board.getGraceTimer() * TILE_SIZE
-							/ ((TILE_SIZE * _board.getStackRaiseTicks()) / 2);
-
+					int px;
+					if (_board.getStackRaiseTicks() == 0) {
+						if (_board.getState() == Board::GAME_OVER) {
+							px = TILE_SIZE;
+						} else {
+							px = 0;
+						}
+					} else {
+						px =
+								_board.getGraceTimer() * TILE_SIZE
+										/ ((TILE_SIZE
+												* _board.getStackRaiseTicks())
+												/ 2);
+					}
 					if (px > TILE_SIZE) {
 						px = TILE_SIZE;
 					}
@@ -312,9 +323,9 @@ void BoardRenderer::drawGarbageBlocks() {
 	for (auto it = garbageBlocks.begin(); it != garbageBlocks.end(); ++it) {
 
 		double warnOffset = 0;
-		for (int i = it->getX(); i < it->getX() + it->getW(); ++i){
-			if(_board.getWarnColumn(i) && !_board.hasActiveBlocks()
-					&& _board.getGraceTimer() == 0){
+		for (int i = it->getX(); i < it->getX() + it->getW(); ++i) {
+			if (_board.getWarnColumn(i) && !_board.hasActiveBlocks()
+					&& _board.getGraceTimer() == 0) {
 				warnOffset = sin(_board.getTicksRun());
 				break;
 			}

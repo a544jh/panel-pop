@@ -23,7 +23,7 @@ Board::Board(Game* game, BoardEventHandler* eh) :
 				_cursorY(5),
 				_tickMatched(0),
 				_stackOffset(0),
-				_stackRaiseTicks(10),
+				_stackRaiseTicks(1),
 				_stackRaiseTimer(0),
 				_stackRaiseForced(false),
 				_graceTimer(0),
