@@ -10,7 +10,8 @@
 
 #include <list>
 
-#include "../Rendering/Particle.h"
+#include "../Game/Game.h"
+#include "Particle.h"
 
 class GameRenderer: public Renderer {
 public:
@@ -21,7 +22,7 @@ public:
 	static const int BOARD1_X = 390;
 	static const int BOARD1_Y = 43;
 
-	GameRenderer();
+	GameRenderer(Game&);
 	virtual ~GameRenderer();
 
 	virtual void tick() =0;
@@ -31,9 +32,11 @@ public:
 
 	virtual void shakeBoard(int id, int duration) =0;
 protected:
+	Game& _game;
 	std::list<Particle*> _particles;
 	void handleParticles();
 	void renderParticles();
+	void renderGameTime(int,int);
 };
 
 #endif /* GAMERENDERER_H_ */

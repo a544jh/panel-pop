@@ -17,6 +17,7 @@
 #include "../SDLContext.h"
 
 EndlessGameRenderer::EndlessGameRenderer(EndlessGame& game) :
+				GameRenderer(game),
 				_game(game),
 				_boardRenderer(_game.getBoard(0)),
 				_bShake(0) {
@@ -98,6 +99,7 @@ void EndlessGameRenderer::renderBoard() {
 }
 
 void EndlessGameRenderer::renderStatsText() {
+	renderGameTime(260,194);
 }
 
 void EndlessGameRenderer::shakeBoard(int id, int duration) {

@@ -30,7 +30,8 @@ public:
 	void shakeBoard(int id, int duration);
 
 private:
-	VsGame& _vsGame;
+	VsGame& _game;
+
 	BoardRenderer _boardRenderer0;
 	BoardRenderer _boardRenderer1;
 	GbQueueRenderer _gbqr0;
