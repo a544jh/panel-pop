@@ -14,12 +14,11 @@
 #include <iomanip>
 #include <sstream>
 
-#include "../Config/ConfigHandler.h"
 #include "../InputManager.h"
 #include "../SDLContext.h"
-#include "OptionsMenuState.h"
+#include "../Config/ConfigHandler.h"
+#include "EndlessGameState.h"
 #include "TitleScreen.h"
-#include "VsGameState.h"
 
 StateManager::StateManager() :
 				_currentState(nullptr),
@@ -100,7 +99,8 @@ void StateManager::switchToState(State* state) {
 
 void StateManager::startGame() {
 	//TODO:different game configurations
-	switchToState(new GameState());
+	//switchToState(new VsGameState());
+	switchToState(new EndlessGameState());
 }
 
 float StateManager::getAvgFps() const {
@@ -144,4 +144,8 @@ void StateManager::showFps() {
 
 void StateManager::goBack() {
 	_currentState->goBack();
+}
+
+void StateManager::quit() {
+	_running = false;
 }

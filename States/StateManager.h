@@ -28,6 +28,7 @@ public:
 	void setKeys(KeyConfig,int);
 	const KeyConfig& getP2keys() const;
 	void goBack();
+	void quit();
 
 private:
 	StateManager();

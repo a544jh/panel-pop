@@ -12,6 +12,8 @@
 
 #include "../Menus/PauseMenu.h"
 
+class Board;
+
 class GameEventHandler;
 
 class Game {
@@ -23,6 +25,8 @@ public:
 
 	Game(GameEventHandler*);
 	virtual ~Game();
+
+	virtual Board& getBoard(int id) =0;
 
 	virtual void tick() =0;
 	virtual void reset() =0;

@@ -15,10 +15,10 @@
 #include "../Config/KeyConfig.h"
 class KeyboardController: public BoardController {
 public:
-	KeyboardController(Board&, KeyConfig&);
+	KeyboardController(Board&, const KeyConfig&);
 	void tick();
 	virtual ~KeyboardController();
-	KeyConfig _config;
+	const KeyConfig _config;
 	const uint32_t REPEAT_MS = 200; //until direction starts repeating
 
 private:

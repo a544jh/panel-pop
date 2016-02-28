@@ -17,10 +17,16 @@ public:
 	virtual ~EndlessGame();
 	void reset();
 	void tick();
+	Board& getBoard(int);
+	int getHighScore() const;
+	int getScore() const;
+
 private:
 	Board _board;
 	int _score;
+	int _highScore;
 	void handleEnd();
+	BoardEventHandler* _boardEventHandler;
 };
 
 #endif /* GAME_ENDLESSGAME_H_ */

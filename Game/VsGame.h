@@ -19,11 +19,7 @@ public:
 
 	VsGame(GameEventHandler*, BoardEventHandler*, BoardEventHandler*);
 
-	BoardEventHandler* _beh0;
-	BoardEventHandler* _beh1;
 
-	Board _board0;
-	Board _board1;
 
 	static const int MATCH_POINTS = 2;
 
@@ -36,9 +32,14 @@ public:
 	int getP1Points() const;
 	int getP2MatchPoints() const;
 	int getP2Points() const;
+	Board& getBoard(int id);
 
 private:
+	BoardEventHandler* _beh0;
+	BoardEventHandler* _beh1;
 
+	Board _board0;
+	Board _board1;
 
 	int _p1MatchPoints;
 	int _p2MatchPoints;

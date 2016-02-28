@@ -825,7 +825,7 @@ bool Board::blockOnRow(int row) {
 	return false;
 }
 
-bool Board::getWarnColumn(int col) {
+bool Board::getWarnColumn(int col) const{
 	return _warnColumns[col];
 }
 

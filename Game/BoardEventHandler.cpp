@@ -7,6 +7,8 @@
 
 #include "BoardEventHandler.h"
 
+#include <SDL2/SDL_mixer.h>
+
 #include "../Rendering/BoardRenderer.h"
 #include "../Rendering/ChainPopup.h"
 #include "../Rendering/ComboPopup.h"

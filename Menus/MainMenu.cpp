@@ -13,17 +13,25 @@
 #include <vector>
 
 #include "../SDLContext.h"
+#include "../States/EndlessGameState.h"
 #include "../States/OptionsMenuState.h"
 #include "../States/StateManager.h"
+#include "../States/VsGameState.h"
 #include "MenuItem.h"
 
 MainMenu::MainMenu() {
 	addItem(
+			MenuItem("1P Endless",
+					[&]() {StateManager::getInstance().switchToState(new EndlessGameState);}));
+	addItem(
 			MenuItem("2P VS",
-					[&]() {StateManager::getInstance().startGame();}));
+					[&]() {StateManager::getInstance().switchToState(new VsGameState);}));
 	addItem(
 			MenuItem("Options",
 					[&]() {StateManager::getInstance().switchToState(new OptionsMenuState);}));
+	addItem(
+			MenuItem("Quit",
+					[&]() {StateManager::getInstance().quit();}));
 }
 
 MainMenu::~MainMenu() {
@@ -32,7 +40,7 @@ MainMenu::~MainMenu() {
 void MainMenu::render() const {
 
 	int x = 311;
-	int y = 230;
+	int y = 200;
 
 	for (unsigned i = 0; i < _items.size(); ++i) {
 		y += 18;

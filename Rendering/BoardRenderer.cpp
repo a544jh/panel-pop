@@ -24,7 +24,7 @@ const int BoardRenderer::BOARD_HEIGHT = 384;
 const int BoardRenderer::TILE_SIZE = 32;
 const int BoardRenderer::CURSOR_ANIM_MS = 500;
 
-BoardRenderer::BoardRenderer(Board& board) :
+BoardRenderer::BoardRenderer(const Board& board) :
 				_board(board) {
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET, BOARD_WIDTH, BOARD_HEIGHT);

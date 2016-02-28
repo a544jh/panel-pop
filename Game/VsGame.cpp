@@ -95,6 +95,17 @@ int VsGame::getP2Points() const {
 	return _p2Points;
 }
 
+Board& VsGame::getBoard(int id) {
+	switch (id) {
+		case 0:
+			return _board0;
+			break;
+		default:
+			return _board1;
+			break;
+	}
+}
+
 void VsGame::handleGarbageSpawning(Board& b1, Board& b2) {
 
 	int combo = b1.getTickMatched();
@@ -134,7 +145,7 @@ void VsGame::reset() {
 }
 
 VsGame::~VsGame() {
+	delete _eventHandler;
 	delete _beh0;
 	delete _beh1;
 }
-

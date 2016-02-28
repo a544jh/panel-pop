@@ -73,7 +73,7 @@ public:
 
 	bool hasActiveBlocks() const;
 	const Tile& getBufferRow(int) const;
-	bool getWarnColumn(int);
+	bool getWarnColumn(int) const;
 	int getChainCounter() const;
 	int getCursorX() const;
 	int getCursorY() const;

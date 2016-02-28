@@ -5,8 +5,6 @@
  *      Author: axel
  */
 
-#include "GameRenderer.h"
-
 #include <stddef.h>
 #include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_pixels.h>
@@ -22,13 +20,14 @@
 #include "../Game/Game.h"
 #include "../Game/VsGame.h"
 #include "../SDLContext.h"
+#include "VsGameRenderer.h"
 
-GameRenderer::GameRenderer(VsGame& game) :
-				_game(game),
-				_boardRenderer0(_game._board0),
-				_boardRenderer1(_game._board1),
-				_gbqr0(_game._board0),
-				_gbqr1(_game._board1),
+VsGameRenderer::VsGameRenderer(VsGame& game) :
+				_vsGame(game),
+				_boardRenderer0(_vsGame.getBoard(0)),
+				_boardRenderer1(_vsGame.getBoard(1)),
+				_gbqr0(_vsGame.getBoard(0)),
+				_gbqr1(_vsGame.getBoard(1)),
 				_b0Shake(0),
 				_b1Shake(0) {
 	_texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
@@ -38,8 +37,8 @@ GameRenderer::GameRenderer(VsGame& game) :
 	SDL_SetTextureBlendMode(_2pbg, SDL_BLENDMODE_BLEND);
 }
 
-void GameRenderer::tick() {
-	if (!_game.isPaused()) {
+void VsGameRenderer::tick() {
+	if (!_vsGame.isPaused()) {
 		_boardRenderer0.tick();
 		_boardRenderer1.tick();
 		handleParticles();
@@ -47,7 +46,7 @@ void GameRenderer::tick() {
 	}
 }
 
-SDL_Texture* GameRenderer::renderGame() {
+SDL_Texture* VsGameRenderer::renderGame() {
 
 	SDL_Texture* gbq = _gbqr0.renderQueue();
 	SDL_Texture* gbq2 = _gbqr1.renderQueue();
@@ -59,7 +58,7 @@ SDL_Texture* GameRenderer::renderGame() {
 	SDL_RenderCopy(_SDLRenderer, _bg, NULL, NULL);
 	SDL_RenderCopy(_SDLRenderer, _2pbg, NULL, NULL);
 
-	if (!_game.isPaused()) {
+	if (!_vsGame.isPaused()) {
 
 		renderBoard(0);
 		renderBoard(1);
@@ -73,17 +72,17 @@ SDL_Texture* GameRenderer::renderGame() {
 	renderStatsText();
 	renderMatchPoints();
 
-	if (_game.isPaused()) {
+	if (_vsGame.isPaused()) {
 		SDL_SetTextureColorMod(_texture, 0x50, 0x50, 0x50);
 		SDL_RenderCopy(_SDLRenderer, _texture, NULL, NULL);
 		SDL_SetTextureColorMod(_texture, 0xFF, 0xFF, 0xFF);
-		_game.getPauseMenu().render();
+		_vsGame.getPauseMenu().render();
 	} else {
 		SDL_SetTextureColorMod(_texture, 0xFF, 0xFF, 0xFF);
 	}
 
 	//TODO: make this state more fancy
-	if (_game.getState() == Game::State::ENDED
+	if (_vsGame.getState() == Game::State::ENDED
 			&& SDL_GetTicks() % 1000 >= 500) {
 		_SDLContext.renderText("PUSH START", { 255, 255, 255 },
 				_SDLContext._fontSquare, 134, 342);
@@ -92,14 +91,14 @@ SDL_Texture* GameRenderer::renderGame() {
 	return _texture;
 }
 
-void GameRenderer::renderStatsText() {
+void VsGameRenderer::renderStatsText() {
 //time
 	std::ostringstream os;
 	uint32_t time;
-	if (_game._board0.getState() == Board::COUNTDOWN) {
+	if (_vsGame.getBoard(0).getState() == Board::COUNTDOWN) {
 		time = 0;
 	} else {
-		time = _game.getTime() - Board::COUNTDOWN_MS;
+		time = _vsGame.getTime() - Board::COUNTDOWN_MS;
 	}
 	os << (time / 1000 / 60) << "\u2019" << std::setw(2) << std::setfill('0')
 			<< ((time / 1000) % 60) << "\u201d";
@@ -108,19 +107,19 @@ void GameRenderer::renderStatsText() {
 //points
 	os.str("");
 	os.clear();
-	os << "\u25c0" << std::setw(2) << std::setfill('0') << _game.getP1Points()
-			<< ' ' << std::setw(2) << std::setfill('0') << _game.getP2Points()
+	os << "\u25c0" << std::setw(2) << std::setfill('0') << _vsGame.getP1Points()
+			<< ' ' << std::setw(2) << std::setfill('0') << _vsGame.getP2Points()
 			<< "\u25b6";
 	_SDLContext.renderText(os.str(), { 255, 255, 255 }, _SDLContext._fontPs,
 			264, 180);
 }
 
-void GameRenderer::renderMatchPoints() {
+void VsGameRenderer::renderMatchPoints() {
 //p1
 	SDL_Rect sprite = { 0, 361, 21, 21 };
 	SDL_Rect pos = { 260, 35, 21, 21 };
 	for (int i = 0; i < VsGame::MATCH_POINTS; ++i) {
-		if (_game.getP1MatchPoints() >= VsGame::MATCH_POINTS - i) {
+		if (_vsGame.getP1MatchPoints() >= VsGame::MATCH_POINTS - i) {
 			sprite.x = 21;
 		} else {
 			sprite.x = 0;
@@ -131,7 +130,7 @@ void GameRenderer::renderMatchPoints() {
 //p2
 	pos = {359,35,21,21};
 	for (int i = 0; i < VsGame::MATCH_POINTS; ++i) {
-		if (_game.getP2MatchPoints() >= VsGame::MATCH_POINTS - i) {
+		if (_vsGame.getP2MatchPoints() >= VsGame::MATCH_POINTS - i) {
 			sprite.x = 21;
 		} else {
 			sprite.x = 0;
@@ -141,35 +140,13 @@ void GameRenderer::renderMatchPoints() {
 	}
 }
 
-GameRenderer::~GameRenderer() {
+VsGameRenderer::~VsGameRenderer() {
 	SDL_DestroyTexture(_bg);
 	SDL_DestroyTexture(_2pbg);
 }
 
-void GameRenderer::addParticle(Particle* p) {
-	_particles.push_back(p);
-}
 
-void GameRenderer::handleParticles() {
-	auto it = _particles.begin();
-	while (it != _particles.end()) {
-		if ((*it)->_alive) {
-			(*it)->tick();
-			++it;
-		} else {
-			delete *it;
-			it = _particles.erase(it);
-		}
-	}
-}
-
-void GameRenderer::renderParticles() {
-	for (auto it = _particles.begin(); it != _particles.end(); ++it) {
-		(*it)->render();
-	}
-}
-
-void GameRenderer::shakeBoard(int id, int duration) {
+void VsGameRenderer::shakeBoard(int id, int duration) {
 	if (id == 0) {
 		_b0Shake = duration;
 	} else if (id == 1) {
@@ -177,7 +154,7 @@ void GameRenderer::shakeBoard(int id, int duration) {
 	}
 }
 
-void GameRenderer::handleShake() {
+void VsGameRenderer::handleShake() {
 	if (_b0Shake > 0) {
 		--_b0Shake;
 	}
@@ -186,7 +163,7 @@ void GameRenderer::handleShake() {
 	}
 }
 
-void GameRenderer::renderBoard(int id) {
+void VsGameRenderer::renderBoard(int id) {
 	SDL_Rect pos;
 	double shake;
 	SDL_Texture* boardTexture;

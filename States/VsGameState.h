@@ -10,19 +10,19 @@
 
 #include "../Game/KeyboardController.h"
 #include "../Game/VsGame.h"
-#include "../Rendering/GameRenderer.h"
+#include "../Rendering/VsGameRenderer.h"
 #include "State.h"
 
-class GameState : public State {
+class VsGameState : public State {
 public:
-	GameState();
+	VsGameState();
 	void tick();
 	SDL_Texture* render();
-	virtual ~GameState();
+	virtual ~VsGameState();
 	void goBack();
 private:
-	GameRenderer _renderer;
-	VsGame _game;
+	VsGame _vsGame;
+	VsGameRenderer _renderer;
 	KeyConfig _p1keys;
 	KeyConfig _p2keys;
 	KeyboardController _kbc;
