@@ -100,12 +100,12 @@ void EndlessGameRenderer::renderBoard() {
 }
 
 void EndlessGameRenderer::renderStatsText() {
-	renderGameTime(260, 194);
+	renderGameTime(260, 196);
 	//speed
 	std::ostringstream os;
 	os << 11 - _game.getBoard(0).getStackRaiseTicks();
 	_SDLContext.renderText(os.str(), { 255, 255, 255 }, _SDLContext._fontPs,
-			260, 154);
+			260, 156);
 }
 
 void EndlessGameRenderer::shakeBoard(int id, int duration) {
