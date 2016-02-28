@@ -12,6 +12,7 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <cmath>
+#include <sstream>
 
 #include "../Game/EndlessGame.h"
 #include "../SDLContext.h"
@@ -99,7 +100,12 @@ void EndlessGameRenderer::renderBoard() {
 }
 
 void EndlessGameRenderer::renderStatsText() {
-	renderGameTime(260,194);
+	renderGameTime(260, 194);
+	//speed
+	std::ostringstream os;
+	os << 11 - _game.getBoard(0).getStackRaiseTicks();
+	_SDLContext.renderText(os.str(), { 255, 255, 255 }, _SDLContext._fontPs,
+			260, 154);
 }
 
 void EndlessGameRenderer::shakeBoard(int id, int duration) {
