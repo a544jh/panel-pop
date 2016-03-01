@@ -35,6 +35,9 @@ public:
 	int getMusicVolume();
 	int getSfxVolume();
 
+	int getEndlessHighScore();
+	void setEndlessHighScore(int);
+
 private:
 	ConfigHandler();
 	ConfigHandler(ConfigHandler const&) = delete;

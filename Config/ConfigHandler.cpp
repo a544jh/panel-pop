@@ -113,3 +113,11 @@ int ConfigHandler::getMusicVolume() {
 int ConfigHandler::getSfxVolume() {
 	return _settingsTree.get("audio.sfx_volume", MIX_MAX_VOLUME);
 }
+
+int ConfigHandler::getEndlessHighScore() {
+	return _settingsTree.get("endless.high_score", 0);
+}
+
+void ConfigHandler::setEndlessHighScore(int score) {
+	_settingsTree.put("endless.high_score", score);
+}

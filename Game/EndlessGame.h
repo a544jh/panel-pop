@@ -19,11 +19,9 @@ public:
 	void tick();
 	Board& getBoard(int);
 	int getHighScore() const;
-	int getScore() const;
 
 private:
 	Board _board;
-	int _score;
 	int _highScore;
 	void handleEnd();
 	BoardEventHandler* _boardEventHandler;

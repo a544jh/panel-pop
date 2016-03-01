@@ -90,6 +90,7 @@ public:
 	int getGraceTimer() const;
 	int getLastChain() const;
 	bool isPanic() const;
+	int getScore() const;
 	unsigned int getTicksRun() const;
 	const Tile& getTile(int, int) const;
 	const std::list<GarbageBlock>& getGarbageBlocks() const;
@@ -126,6 +127,7 @@ private:
 	int _tickMatchCol;
 	bool _blockOnTopRow;
 	bool _panic;
+	int _score;
 
 	void initTick();
 	void fillRandom();
@@ -152,6 +154,8 @@ private:
 	bool swappable(int, int);
 	bool spawnGarbage(int,int,int,int, GarbageBlockType);
 	void sendEvents();
+	void chainScoring();
+	void comboScoring();
 };
 
 #endif /* BOARD_H_ */

@@ -32,7 +32,8 @@ Board::Board(Game* game, BoardEventHandler* eh) :
 				_tickChainEnd(false),
 				_lastChain(0),
 				_blockOnTopRow(false),
-				_panic(false) {
+				_panic(false),
+				_score(0) {
 	fillRandom();
 	fillBufferRow();
 }
@@ -386,6 +387,7 @@ void Board::handleMatchedBlocks() {
 	if (chain) {
 		++_chainCounter;
 		_tickChain = true;
+		chainScoring();
 	}
 }
 
@@ -432,6 +434,7 @@ void Board::handleBlockTimers() {
 				if (tile.b._explosionTimer == tile.b._explosionAnimTicks) {
 					_eventHandler->blockExplode(col, row, _stackOffset,
 							tile.b._explOrder, _chainCounter);
+					_score += 10;
 				}
 
 				if (tile.b._explosionTicks == tile.b._explosionTimer) {
@@ -574,8 +577,8 @@ void Board::handleGarbageFalling() {
 				int y = it->getY();
 				clearTile(_tiles[y][i]);
 
-				if(y < BOARD_HEIGHT - 1 && _tiles[y+1][i].type == BLOCK){
-					_tiles[y+1][i].b._falling = true;
+				if (y < BOARD_HEIGHT - 1 && _tiles[y + 1][i].type == BLOCK) {
+					_tiles[y + 1][i].b._falling = true;
 				}
 
 			}
@@ -673,6 +676,11 @@ void Board::raiseStack() {
 			}
 			fillBufferRow();
 			_stackOffset = 0;
+
+			if (_stackRaiseForced) {
+				++_score;
+			}
+
 			_stackRaiseForced = false;
 			if (_cursorY <= 10) {
 				++_cursorY;
@@ -835,8 +843,12 @@ bool Board::blockOnRow(int row) {
 	return false;
 }
 
-bool Board::getWarnColumn(int col) const{
+bool Board::getWarnColumn(int col) const {
 	return _warnColumns[col];
+}
+
+int Board::getScore() const {
+	return _score;
 }
 
 void Board::sendEvents() {
@@ -847,9 +859,43 @@ void Board::sendEvents() {
 	if (_tickMatched > 3) {
 		_eventHandler->combo(_tickMatched, _tickMatchCol, _tickMatchRow,
 				_stackOffset);
+		chainScoring();
+		comboScoring();
 	}
 }
 
 bool Board::isPanic() const {
 	return _panic;
+}
+
+void Board::chainScoring() {
+	switch (_chainCounter) {
+	case 1:
+		break;
+	case 2:
+		_score += 50;
+		break;
+	case 3:
+		_score += 80;
+		break;
+	case 4:
+		_score += 150;
+		break;
+	case 5:
+		_score += 300;
+		break;
+	default:
+		_score += (_chainCounter + 2) * 200;
+		break;
+	}
+}
+
+void Board::comboScoring() {
+	if(_tickMatched == 4){
+		_score += 20;
+	} else if (_tickMatched == 5){
+		_score += 30;
+	} else if (_tickMatched >=6) {
+		_score += (_chainCounter - 4) * 20;
+	}
 }
