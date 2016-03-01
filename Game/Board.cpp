@@ -592,7 +592,7 @@ void Board::handleGarbageFalling() {
 		} else if (it->_falling) {
 			//handle event when gb stops falling
 			bool big = it->_h > 1;
-			if (big || it->_initialFall) {
+			if (it->_initialFall) {
 				_eventHandler->gbFall(big);
 			}
 			it->_initialFall = false;
