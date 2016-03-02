@@ -3,7 +3,7 @@ A Panel de Pon / Tetris Attack / Puzzle League clone made with C++ and SDL
 
 #### [Download latest release](https://github.com/a544jh/panel-pop/releases/latest)
 
-![gameplay](gameplay.gif)
+![screenshot](screenshot.png)
 
 Features:
 * Original-like mechanincs modeled after SNES version
@@ -15,8 +15,8 @@ Features:
 ###Controls
 Default gameplay keys:
 * Arrow keys - move cursor
-* `X` - swap blocks
-* `Z` - raise stack
+* `X` - accept/swap blocks
+* `Z` - cancel/raise stack
 * `5` - pause/start
 
 Debug keys:
