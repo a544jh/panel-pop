@@ -3,6 +3,8 @@ A Panel de Pon / Tetris Attack / Puzzle League clone made with C++ and SDL
 
 #### [Download latest release](https://github.com/a544jh/panel-pop/releases/latest)
 
+[Gameplay video](http://www.youtube.com/watch?v=z_DVUP2aS9Y)
+
 ![screenshot](screenshot.png)
 
 Features:
