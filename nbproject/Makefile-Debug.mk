@@ -66,7 +66,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/Rendering/TitleScreenRenderer.o \
 	${OBJECTDIR}/Rendering/VsGameRenderer.o \
 	${OBJECTDIR}/SDLContext.o \
+	${OBJECTDIR}/States/AIGameState.o \
 	${OBJECTDIR}/States/EndlessGameState.o \
+	${OBJECTDIR}/States/GameState.o \
 	${OBJECTDIR}/States/OptionsMenuState.o \
 	${OBJECTDIR}/States/State.o \
 	${OBJECTDIR}/States/StateManager.o \
@@ -254,10 +256,20 @@ ${OBJECTDIR}/SDLContext.o: SDLContext.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags SDL2_ttf` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/SDLContext.o SDLContext.cpp
 
+${OBJECTDIR}/States/AIGameState.o: States/AIGameState.cpp 
+	${MKDIR} -p ${OBJECTDIR}/States
+	${RM} "$@.d"
+	$(COMPILE.cc) -g `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags SDL2_ttf` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/States/AIGameState.o States/AIGameState.cpp
+
 ${OBJECTDIR}/States/EndlessGameState.o: States/EndlessGameState.cpp 
 	${MKDIR} -p ${OBJECTDIR}/States
 	${RM} "$@.d"
 	$(COMPILE.cc) -g `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags SDL2_ttf` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/States/EndlessGameState.o States/EndlessGameState.cpp
+
+${OBJECTDIR}/States/GameState.o: States/GameState.cpp 
+	${MKDIR} -p ${OBJECTDIR}/States
+	${RM} "$@.d"
+	$(COMPILE.cc) -g `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags SDL2_ttf` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/States/GameState.o States/GameState.cpp
 
 ${OBJECTDIR}/States/OptionsMenuState.o: States/OptionsMenuState.cpp 
 	${MKDIR} -p ${OBJECTDIR}/States

@@ -12,20 +12,14 @@
 #include "../Game/KeyboardController.h"
 #include "../Rendering/EndlessGameRenderer.h"
 #include "State.h"
+#include "GameState.h"
 
-class EndlessGameState: public State {
+class EndlessGameState : public GameState {
 public:
-	EndlessGameState();
-	virtual ~EndlessGameState();
-
-	void tick();
-	SDL_Texture* render();
-	void goBack();
+    EndlessGameState();
+    virtual ~EndlessGameState();
 
 private:
-	EndlessGame _endlessGame;
-	EndlessGameRenderer _renderer;
-	KeyboardController _kbc;
 
 };
 

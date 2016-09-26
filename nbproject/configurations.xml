@@ -5,6 +5,8 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>AI/AIBoardController.h</itemPath>
+      <itemPath>States/AIGameState.h</itemPath>
+      <itemPath>States/GameState.h</itemPath>
     </logicalFolder>
     <logicalFolder name="panel-pop" displayName="panel-pop" projectFiles="true">
       <logicalFolder name="assets" displayName="assets" projectFiles="true">
@@ -185,6 +187,8 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>AI/AIBoardController.cpp</itemPath>
+      <itemPath>States/AIGameState.cpp</itemPath>
+      <itemPath>States/GameState.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -354,9 +358,17 @@
       </item>
       <item path="SDLContext.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="States/AIGameState.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="States/AIGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="States/EndlessGameState.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="States/EndlessGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/GameState.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="States/GameState.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="States/OptionsMenuState.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -687,9 +699,17 @@
       </item>
       <item path="SDLContext.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="States/AIGameState.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="States/AIGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="States/EndlessGameState.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="States/EndlessGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/GameState.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="States/GameState.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="States/OptionsMenuState.cpp" ex="false" tool="1" flavor2="0">
       </item>
