@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>AI/AIBoardController.h</itemPath>
     </logicalFolder>
     <logicalFolder name="panel-pop" displayName="panel-pop" projectFiles="true">
       <logicalFolder name="assets" displayName="assets" projectFiles="true">
@@ -183,6 +184,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>AI/AIBoardController.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -221,6 +223,10 @@
         </linkerTool>
       </compileType>
       <item path=".gitignore" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AI/AIBoardController.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AI/AIBoardController.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Config/ConfigHandler.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -550,6 +556,10 @@
         </asmTool>
       </compileType>
       <item path=".gitignore" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AI/AIBoardController.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AI/AIBoardController.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Config/ConfigHandler.cpp" ex="false" tool="1" flavor2="0">
       </item>

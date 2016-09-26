@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/AI/AIBoardController.o \
 	${OBJECTDIR}/Config/ConfigHandler.o \
 	${OBJECTDIR}/Game/Block.o \
 	${OBJECTDIR}/Game/Board.o \
@@ -97,6 +98,11 @@ LDLIBSOPTIONS=`pkg-config --libs SDL2_image` `pkg-config --libs SDL2_mixer` `pkg
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/panel-pop: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/panel-pop ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/AI/AIBoardController.o: AI/AIBoardController.cpp 
+	${MKDIR} -p ${OBJECTDIR}/AI
+	${RM} "$@.d"
+	$(COMPILE.cc) -g `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags SDL2_ttf` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/AI/AIBoardController.o AI/AIBoardController.cpp
 
 ${OBJECTDIR}/Config/ConfigHandler.o: Config/ConfigHandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Config
