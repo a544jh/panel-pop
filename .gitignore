@@ -1,6 +1,2 @@
-/Debug/
-/Default/
-/.settings/
-.cproject
-.project
-/Release/
+/build/
+/dist/
