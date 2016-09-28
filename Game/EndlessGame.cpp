@@ -15,67 +15,65 @@
 
 class BoardEventHandler;
 
-EndlessGame::EndlessGame(GameEventHandler* geh, BoardEventHandler* beh) :
-				Game(geh),
-				_board(this, beh),
-				_highScore(ConfigHandler::getInstance().getEndlessHighScore()),
-				_boardEventHandler(beh) {
+EndlessGame::EndlessGame(GameEventHandler* geh) :
+Game(geh),
+_board(this),
+_highScore(ConfigHandler::getInstance().getEndlessHighScore()) {
 
 }
 
 EndlessGame::~EndlessGame() {
-	delete _boardEventHandler;
 }
 
 void EndlessGame::reset() {
-	_state = State::RUNNING;
-	_startTime = SDL_GetTicks();
-	_board = Board(this, _boardEventHandler);
-	_panic = false;
-	_eventHandler->gameReset();
+    _state = State::RUNNING;
+    _startTime = SDL_GetTicks();
+    _board = Board(this);
+    _panic = false;
+    _eventHandler->gameReset();
 }
 
 void EndlessGame::tick() {
-	if (_board.getState() == Board::COUNTDOWN) {
-		_eventHandler->countdown(getTime());
-	}
+    if (_board.getState() == Board::COUNTDOWN) {
+        _eventHandler->countdown(getTime());
+    }
 
-	if (_state == State::RUNNING) {
-		++_ticksRun;
-		_board.tick();
-		if (!_panic && _board.isPanic()) {
-			_panic = true;
-			_eventHandler->panicBegin();
-		}
-		if (_panic && !_board.isPanic()) {
-			_panic = false;
-			_eventHandler->panicEnd();
-		}
+    if (_state == State::RUNNING) {
+        ++_ticksRun;
+        _board.tick();
+        if (!_panic && _board.isPanic()) {
+            _panic = true;
+            _eventHandler->panicBegin();
+        }
+        if (_panic && !_board.isPanic()) {
+            _panic = false;
+            _eventHandler->panicEnd();
+        }
 
-		if (_board.getScore() > _highScore) {
-			_highScore = _board.getScore();
-		}
+        if (_board.getScore() > _highScore) {
+            _highScore = _board.getScore();
+        }
 
-		handleEnd();
-		_eventHandler->tickEnd();
-	}
+        handleEnd();
+        _eventHandler->tickEnd();
+    }
 }
 
 Board& EndlessGame::getBoard(int) {
-	return _board;
+    return _board;
 }
 
 int EndlessGame::getHighScore() const {
-	return _highScore;
+    return _highScore;
 }
 
 void EndlessGame::handleEnd() {
-	if (_board.getState() == Board::GAME_OVER) {
+    if (_board.getState() == Board::GAME_OVER) {
 
-		ConfigHandler::getInstance().setEndlessHighScore(_highScore);
-		ConfigHandler::getInstance().saveConfig();
+        ConfigHandler::getInstance().setEndlessHighScore(_highScore);
+        ConfigHandler::getInstance().saveConfig();
 
-		_pausedTime = SDL_GetTicks() - _startTime;
-		_state = State::ENDED;
-	}
+        _pausedTime = SDL_GetTicks() - _startTime;
+        _state = State::ENDED;
+    }
 }

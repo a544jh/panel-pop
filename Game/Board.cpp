@@ -12,10 +12,9 @@
 #include "BoardEventHandler.h"
 #include "VsGame.h"
 
-Board::Board(Game* game, BoardEventHandler* eh) :
+Board::Board(Game* game) :
 _game(game),
 _state(COUNTDOWN),
-_eventHandler(eh),
 _ticksRun(0),
 _garbageSpawnPositions{0},
 _warnColumns{0},
@@ -746,6 +745,7 @@ void Board::win() {
 }
 
 Board::~Board() {
+    delete _eventHandler;
 }
 
 bool Board::hasActiveBlocks() const {
@@ -906,3 +906,8 @@ void Board::comboScoring() {
         _score += (_chainCounter - 4) * 20;
     }
 }
+
+void Board::setEventHandler(BoardEventHandler* eh) {
+    _eventHandler = eh;
+}
+

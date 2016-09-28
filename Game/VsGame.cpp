@@ -13,13 +13,10 @@
 #include "GameEventHandler.h"
 #include "GarbageBlock.h"
 
-VsGame::VsGame(GameEventHandler* geh, BoardEventHandler* beh1,
-        BoardEventHandler* beh2) :
+VsGame::VsGame(GameEventHandler* geh) :
 Game(geh),
-_beh0(beh1),
-_beh1(beh2),
-_board0(this, beh1),
-_board1(this, beh2),
+_board0(this),
+_board1(this),
 _p1MatchPoints(0),
 _p2MatchPoints(0),
 _p1Points(0),
@@ -138,13 +135,11 @@ void VsGame::handleGarbageSpawning(Board& b1, Board& b2) {
 void VsGame::reset() {
     _state = State::RUNNING;
     _startTime = SDL_GetTicks();
-    _board0 = Board(this, _beh0); //fix this :P
-    _board1 = Board(this, _beh1);
+    _board0 = Board(this);
+    _board1 = Board(this);
     _panic = false;
     _eventHandler->gameReset();
 }
 
 VsGame::~VsGame() {
-    delete _beh0;
-    delete _beh1;
 }

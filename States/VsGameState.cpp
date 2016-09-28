@@ -16,11 +16,12 @@
 
 VsGameState::VsGameState() {
 
-    _game = new VsGame(new GameEventHandler(),
-            new BoardEventHandler(*_gameRenderer, 0),
-            new BoardEventHandler(*_gameRenderer, 1));
+    _game = new VsGame(new GameEventHandler());
 
     _gameRenderer = new VsGameRenderer((VsGame&) * _game);
+
+    _game->getBoard(0).setEventHandler(new BoardEventHandler(*_gameRenderer, 0));
+    _game->getBoard(1).setEventHandler(new BoardEventHandler(*_gameRenderer, 1));
 
     _playerBoardController = new KeyboardController(_game->getBoard(0), StateManager::getInstance().getP1keys());
 

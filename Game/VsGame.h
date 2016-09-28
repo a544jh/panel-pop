@@ -16,7 +16,7 @@ class GameEventHandler;
 class VsGame : public Game {
 public:
 
-    VsGame(GameEventHandler*, BoardEventHandler*, BoardEventHandler*);
+    VsGame(GameEventHandler*);
 
 
 
@@ -34,8 +34,6 @@ public:
     Board& getBoard(int id);
 
 private:
-    BoardEventHandler* _beh0;
-    BoardEventHandler* _beh1;
 
     Board _board0;
     Board _board1;

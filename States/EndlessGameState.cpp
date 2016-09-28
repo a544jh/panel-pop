@@ -14,9 +14,9 @@
 #include "StateManager.h"
 
 EndlessGameState::EndlessGameState() {
-    _game = new EndlessGame(new GameEventHandler(),
-            new BoardEventHandler(*_gameRenderer, 0));
-    _gameRenderer = new EndlessGameRenderer((EndlessGame &) *_game);
+    _game = new EndlessGame(new GameEventHandler());
+    _gameRenderer = new EndlessGameRenderer((EndlessGame &) * _game);
+    _game->getBoard(0).setEventHandler(new BoardEventHandler(*_gameRenderer, 0));
     _playerBoardController = new KeyboardController(_game->getBoard(0),
             StateManager::getInstance().getP1keys());
 }

@@ -13,7 +13,7 @@
 
 class EndlessGame: public Game {
 public:
-	EndlessGame(GameEventHandler*, BoardEventHandler*);
+	EndlessGame(GameEventHandler*);
 	virtual ~EndlessGame();
 	void reset();
 	void tick();
@@ -24,7 +24,6 @@ private:
 	Board _board;
 	int _highScore;
 	void handleEnd();
-	BoardEventHandler* _boardEventHandler;
 };
 
 #endif /* GAME_ENDLESSGAME_H_ */
