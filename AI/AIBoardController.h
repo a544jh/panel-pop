@@ -10,7 +10,7 @@ class AIBoardController : public BoardController {
     
 public:
     enum InputAction {
-        UP, RIGHT, DOWN, LEFT, SWAP
+        UP, RIGHT, DOWN, LEFT, SWAP, WAIT
     };
     
     AIBoardController(Board&);
@@ -21,7 +21,10 @@ public:
 private:
     std::queue<InputAction> _inputQueue;
     void doInput(InputAction);
-
+    
+    void moveBlock(int x, int y, int dx, int dy);
+    void moveCursorTo(int x, int y);
+    
 };
 
 #endif /* AIBOARDCONTROLLER_H */
