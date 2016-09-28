@@ -12,12 +12,9 @@ void AIBoardController::tick() {
         doInput(_inputQueue.front());
         _inputQueue.pop();
     }//test logic
-    else if (true) {
+    else {
         moveBlock(0, 0, 5, 0);
         moveBlock(5, 1, 0, 1);
-        //moveCursorTo(0,0);
-    } else if (_board.getTicksRun() % 500 == 250) {
-        //moveCursorTo(10,5);
     }
 }
 
