@@ -51,9 +51,10 @@ public:
     };
 
     Board(Game*);
+    Board reset();
     void setEventHandler(BoardEventHandler*);
-
-
+    BoardEventHandler* getEventHandler() const;
+    
     virtual ~Board();
 
     void tick();

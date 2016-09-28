@@ -23,12 +23,13 @@ _highScore(ConfigHandler::getInstance().getEndlessHighScore()) {
 }
 
 EndlessGame::~EndlessGame() {
+    delete _board.getEventHandler();
 }
 
 void EndlessGame::reset() {
     _state = State::RUNNING;
     _startTime = SDL_GetTicks();
-    _board = Board(this);
+    _board = _board.reset();
     _panic = false;
     _eventHandler->gameReset();
 }

@@ -135,11 +135,13 @@ void VsGame::handleGarbageSpawning(Board& b1, Board& b2) {
 void VsGame::reset() {
     _state = State::RUNNING;
     _startTime = SDL_GetTicks();
-    _board0 = Board(this);
-    _board1 = Board(this);
+    _board0 = _board0.reset();
+    _board1 = _board1.reset();
     _panic = false;
     _eventHandler->gameReset();
 }
 
 VsGame::~VsGame() {
+    delete _board0.getEventHandler();
+    delete _board1.getEventHandler();
 }

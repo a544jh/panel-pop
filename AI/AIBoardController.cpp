@@ -11,10 +11,10 @@ void AIBoardController::tick() {
     if (!_inputQueue.empty()) {
         doInput(_inputQueue.front());
         _inputQueue.pop();
-    }
-        //test logic
+    }//test logic
     else if (true) {
         moveBlock(0, 0, 5, 0);
+        moveBlock(5, 1, 0, 1);
         //moveCursorTo(0,0);
     } else if (_board.getTicksRun() % 500 == 250) {
         //moveCursorTo(10,5);
@@ -38,6 +38,8 @@ void AIBoardController::doInput(InputAction action) {
         case (SWAP):
             _board.inputSwapBlocks();
             break;
+        case (WAIT):
+            break;
     }
 
 }
@@ -52,11 +54,8 @@ void AIBoardController::moveBlock(int x, int y, int dx, int dy) {
             _inputQueue.push(SWAP);
             _inputQueue.push(WAIT);
             _inputQueue.push(WAIT);
-            _inputQueue.push(WAIT);
-            _inputQueue.push(WAIT);
-            _inputQueue.push(WAIT);
-            _inputQueue.push(WAIT);
-            moveCursorTo(x + i + 1, y);
+            _inputQueue.push(RIGHT);
+            
         }
     }
     if (dx < x) { //move left
@@ -65,11 +64,7 @@ void AIBoardController::moveBlock(int x, int y, int dx, int dy) {
             _inputQueue.push(SWAP);
             _inputQueue.push(WAIT);
             _inputQueue.push(WAIT);
-            _inputQueue.push(WAIT);
-            _inputQueue.push(WAIT);
-            _inputQueue.push(WAIT);
-            _inputQueue.push(WAIT);
-            moveCursorTo(x - i, y);
+            _inputQueue.push(LEFT);
         }
     }
 }
@@ -98,6 +93,7 @@ void AIBoardController::moveCursorTo(int x, int y) {
             _inputQueue.push(DOWN);
         }
     }
+
 }
 
 AIBoardController::~AIBoardController() {

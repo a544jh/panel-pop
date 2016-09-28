@@ -17,7 +17,8 @@ _game(game),
 _state(COUNTDOWN),
 _ticksRun(0),
 _garbageSpawnPositions{0},
-_warnColumns{0},
+_warnColumns{0}
+,
 _cursorX(2),
 _cursorY(5),
 _tickMatched(0),
@@ -35,6 +36,20 @@ _panic(false),
 _score(0) {
     fillRandom();
     fillBufferRow();
+}
+
+void Board::setEventHandler(BoardEventHandler* eh) {
+    _eventHandler = eh;
+}
+
+BoardEventHandler* Board::getEventHandler() const {
+    return _eventHandler;
+}
+
+Board Board::reset() {
+    Board reset = Board(_game);
+    reset._eventHandler = _eventHandler;
+    return reset;
 }
 
 Board::Tile::Tile() :
@@ -745,7 +760,6 @@ void Board::win() {
 }
 
 Board::~Board() {
-    delete _eventHandler;
 }
 
 bool Board::hasActiveBlocks() const {
@@ -907,7 +921,4 @@ void Board::comboScoring() {
     }
 }
 
-void Board::setEventHandler(BoardEventHandler* eh) {
-    _eventHandler = eh;
-}
 
