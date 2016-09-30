@@ -96,7 +96,7 @@ public:
     bool isPanic() const;
     int getScore() const;
     unsigned int getTicksRun() const;
-    const Tile& getTile(int, int) const;
+    const Tile& getTile(int row, int col) const;
     const std::list<GarbageBlock>& getGarbageBlocks() const;
     const std::list<GarbageSpawn>& getGarbageQueue() const;
     void win();

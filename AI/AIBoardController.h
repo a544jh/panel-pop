@@ -4,6 +4,7 @@
 
 #include<queue>
 #include"../Game/BoardController.h"
+#include "BoardScanner.h"
 
 class AIBoardController : public BoardController {
     
@@ -13,17 +14,33 @@ public:
         UP, RIGHT, DOWN, LEFT, SWAP, WAIT
     };
     
+    struct CursorMoveAction {
+        int x; int y;
+    };
+    
+    struct BlockMoveAction {
+        int x; int y; int dx; int dy;
+    };
+    
     AIBoardController(Board&);
     
     void tick() override;
     
     virtual ~AIBoardController();
 private:
-    std::queue<InputAction> _inputQueue;
-    void doInput(InputAction);
+    BoardScanner _scanner;
     
-    void moveBlock(int x, int y, int dx, int dy);
-    void moveCursorTo(int x, int y);
+    std::queue<InputAction> _inputQueue;
+    std::queue<CursorMoveAction> _cursorQueue;
+    std::queue<BlockMoveAction> _blockMoveQueue;
+    
+    void doInput(InputAction);
+    void doCursorMove(int x, int y);
+    void doBlockMove(int x, int y, int dx, int dy);
+    
+    
+    
+    void basic3match();
     
 };
 

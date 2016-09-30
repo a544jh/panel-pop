@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/AI/AIBoardController.o \
+	${OBJECTDIR}/AI/BoardScanner.o \
 	${OBJECTDIR}/Config/ConfigHandler.o \
 	${OBJECTDIR}/Game/Block.o \
 	${OBJECTDIR}/Game/Board.o \
@@ -105,6 +106,11 @@ ${OBJECTDIR}/AI/AIBoardController.o: AI/AIBoardController.cpp
 	${MKDIR} -p ${OBJECTDIR}/AI
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/AI/AIBoardController.o AI/AIBoardController.cpp
+
+${OBJECTDIR}/AI/BoardScanner.o: AI/BoardScanner.cpp 
+	${MKDIR} -p ${OBJECTDIR}/AI
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/AI/BoardScanner.o AI/BoardScanner.cpp
 
 ${OBJECTDIR}/Config/ConfigHandler.o: Config/ConfigHandler.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Config

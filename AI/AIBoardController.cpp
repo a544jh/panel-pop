@@ -4,17 +4,25 @@
 #include "AIBoardController.h"
 
 AIBoardController::AIBoardController(Board& board) :
-BoardController(board) {
+BoardController(board),
+_scanner(board) {
 }
 
 void AIBoardController::tick() {
     if (!_inputQueue.empty()) {
         doInput(_inputQueue.front());
         _inputQueue.pop();
-    }//test logic
-    else {
-        moveBlock(0, 0, 5, 0);
-        moveBlock(5, 1, 0, 1);
+    } else if
+        (!_cursorQueue.empty()) {
+        CursorMoveAction move = _cursorQueue.front();
+        doCursorMove(move.x, move.y);
+        _cursorQueue.pop();
+    } else if (!_blockMoveQueue.empty()) {
+        BlockMoveAction move = _blockMoveQueue.front();
+        doBlockMove(move.x, move.y, move.dx, move.dy);
+        _blockMoveQueue.pop();
+    } else {
+        basic3match();
     }
 }
 
@@ -41,22 +49,22 @@ void AIBoardController::doInput(InputAction action) {
 
 }
 
-void AIBoardController::moveBlock(int x, int y, int dx, int dy) {
+void AIBoardController::doBlockMove(int x, int y, int dx, int dy) {
     if (dy > y) {
         throw std::invalid_argument("Can't move block upwards");
     }
     if (dx > x) { //move right
-        moveCursorTo(x, y);
+        doCursorMove(x, y);
         for (int i = 0; i < dx - x; i++) {
             _inputQueue.push(SWAP);
             _inputQueue.push(WAIT);
             _inputQueue.push(WAIT);
             _inputQueue.push(RIGHT);
-            
+
         }
     }
     if (dx < x) { //move left
-        moveCursorTo(x - 1, y);
+        doCursorMove(x - 1, y);
         for (int i = 0; i < x - dx; i++) {
             _inputQueue.push(SWAP);
             _inputQueue.push(WAIT);
@@ -66,7 +74,7 @@ void AIBoardController::moveBlock(int x, int y, int dx, int dy) {
     }
 }
 
-void AIBoardController::moveCursorTo(int x, int y) {
+void AIBoardController::doCursorMove(int x, int y) {
     int curX = _board.getCursorX();
     int curY = _board.getCursorY();
 
@@ -91,6 +99,16 @@ void AIBoardController::moveCursorTo(int x, int y) {
         }
     }
 
+}
+
+void AIBoardController::basic3match() {
+    BoardScanner::VerticalMatch match = _scanner.findVerticalMatch();
+    int firstCol = _scanner.findColorCol(match.color, match.bottomRow);
+    for (int row = match.bottomRow + 1; row <= match.topRow; ++row) {
+        int col = _scanner.findColorCol(match.color, row);
+        BlockMoveAction action = {col, row, firstCol, row};
+        _blockMoveQueue.push(BlockMoveAction(action));
+    }
 }
 
 AIBoardController::~AIBoardController() {
