@@ -22,7 +22,7 @@ void AIBoardController::tick() {
         doBlockMove(move.x, move.y, move.dx, move.dy);
         _blockMoveQueue.pop();
     } else {
-        basic3match();
+        basicVerticalmatch();
     }
 }
 
@@ -101,7 +101,7 @@ void AIBoardController::doCursorMove(int x, int y) {
 
 }
 
-void AIBoardController::basic3match() {
+void AIBoardController::basicVerticalmatch() {
     BoardScanner::VerticalMatch match = _scanner.findVerticalMatch();
     int firstCol = _scanner.findColorCol(match.color, match.bottomRow);
     for (int row = match.bottomRow + 1; row <= match.topRow; ++row) {

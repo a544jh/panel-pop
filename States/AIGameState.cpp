@@ -25,7 +25,8 @@ AIGameState::AIGameState() {
     _game->getBoard(1).setEventHandler(new BoardEventHandler(*_gameRenderer, 1));
 
     _playerBoardController = new KeyboardController(_game->getBoard(0), StateManager::getInstance().getP1keys());
-
+    //_playerBoardController = new AIBoardController(_game->getBoard(0));
+    
     _opponentBoardcontollers.push_back(new AIBoardController(_game->getBoard(1)));
 }
 

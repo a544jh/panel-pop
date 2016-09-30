@@ -40,7 +40,7 @@ private:
     
     
     
-    void basic3match();
+    void basicVerticalmatch();
     
 };
 
