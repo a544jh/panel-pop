@@ -9,9 +9,11 @@
         <group name="c++">
             <file>file:/home/axel/NetBeansProjects/panel-pop/panelpop.ini</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/.gitignore</file>
+            <file>file:/home/axel/NetBeansProjects/panel-pop/Game/Block.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Game/Game.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Game/VsGame.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/States/GameState.cpp</file>
+            <file>file:/home/axel/NetBeansProjects/panel-pop/Menus/MenuItem.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Game/BoardController.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Game/Board.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/States/StateManager.cpp</file>
@@ -19,13 +21,14 @@
             <file>file:/home/axel/NetBeansProjects/panel-pop/States/AIGameState.cpp</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/States/EndlessGameState.cpp</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Makefile</file>
+            <file>file:/home/axel/NetBeansProjects/panel-pop/AI/BoardScanner.cpp</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/main.cpp</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Rendering/GameRenderer.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Rendering/EndlessGameRenderer.cpp</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/States/State.cpp</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/States/GameState.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Game/GameEventHandler.cpp</file>
-            <file>file:/home/axel/NetBeansProjects/panel-pop/Game/Board.cpp</file>
+            <file>file:/home/axel/NetBeansProjects/panel-pop/Menus/Menu.cpp</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/States/VsGameState.cpp</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/States/State.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Menus/MenuItem.cpp</file>
@@ -40,6 +43,7 @@
             <file>file:/home/axel/NetBeansProjects/panel-pop/main.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/States/EndlessGameState.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/AI/AIBoardController.cpp</file>
+            <file>file:/home/axel/NetBeansProjects/panel-pop/AI/BoardScanner.h</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Game/BoardEventHandler.cpp</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Game/Game.cpp</file>
             <file>file:/home/axel/NetBeansProjects/panel-pop/Game/BoardEventHandler.h</file>

@@ -8,6 +8,7 @@
       <itemPath>States/AIGameState.h</itemPath>
       <itemPath>AI/BoardScanner.h</itemPath>
       <itemPath>States/GameState.h</itemPath>
+      <itemPath>AI/MoveActions.h</itemPath>
     </logicalFolder>
     <logicalFolder name="panel-pop" displayName="panel-pop" projectFiles="true">
       <logicalFolder name="assets" displayName="assets" projectFiles="true">
@@ -238,6 +239,8 @@
       <item path="AI/BoardScanner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="AI/BoardScanner.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AI/MoveActions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Config/ConfigHandler.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -583,6 +586,8 @@
       <item path="AI/BoardScanner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="AI/BoardScanner.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AI/MoveActions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Config/ConfigHandler.cpp" ex="false" tool="1" flavor2="0">
       </item>

@@ -43,6 +43,10 @@ void AIBoardController::doInput(InputAction action) {
         case (SWAP):
             _board.inputSwapBlocks();
             break;
+        case (RAISE):
+            _board.inputForceStackRaise();
+            break;
+
         case (WAIT):
             break;
     }
@@ -103,8 +107,13 @@ void AIBoardController::doCursorMove(int x, int y) {
 
 void AIBoardController::basicVerticalmatch() {
     BoardScanner::VerticalMatch match = _scanner.findVerticalMatch();
-    int firstCol = _scanner.findColorCol(match.color, match.bottomRow);
-    for (int row = match.bottomRow + 1; row <= match.topRow; ++row) {
+    if(!match.found){
+        if (!_board.isPanic()) _inputQueue.push(RAISE);
+        else _blockMoveQueue.push(_scanner.findStackFlatteningMove());
+        return;
+    }
+    int firstCol = _scanner.findColorCol(match.color, match.topRow);
+    for (int row = match.topRow - 1; row >= match.bottomRow; --row) {
         int col = _scanner.findColorCol(match.color, row);
         BlockMoveAction action = {col, row, firstCol, row};
         _blockMoveQueue.push(BlockMoveAction(action));

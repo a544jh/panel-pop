@@ -11,6 +11,7 @@
 
 #include <map>
 #include "../Game/Board.h"
+#include"MoveActions.h"
 
 class BoardScanner {
 public:
@@ -18,6 +19,7 @@ public:
     typedef std::array<colorCounts, Board::BOARD_HEIGHT> rowColors;
     
     struct VerticalMatch {
+        bool found;
         BlockColor color;
         int bottomRow;
         int topRow;
@@ -28,7 +30,9 @@ public:
     rowColors countRowColors();
     VerticalMatch findVerticalMatch();
     int findColorCol(BlockColor color, int row);
-
+    
+    BlockMoveAction findStackFlatteningMove();
+    
     virtual ~BoardScanner();
 private:
     Board& _board;
