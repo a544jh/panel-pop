@@ -45,7 +45,7 @@ BoardScanner::VerticalMatch BoardScanner::findVerticalMatch() {
                     VerticalMatch match = {true, color, row + 1, topRow};
                     return match;
                 }
-                topRow = row;
+                topRow = row - 1;
                 sameColorFound = 0;
             }
         }

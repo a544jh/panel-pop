@@ -35,7 +35,7 @@ private:
 
 
 
-    void basicVerticalmatch();
+    void basicVerticalmatchStrat();
 
 };
 
