@@ -72,16 +72,24 @@ BlockMoveAction BoardScanner::findStackFlatteningMove() {
     for (int row = Board::BOARD_HEIGHT - 1; row >= 1; --row) {
         for (int col = 0; col < Board::BOARD_WIDTH; ++col) {
             //can be moved left
-            if (col > 0 && _board.getTile(row, col - 1).type == AIR
-                    && _board.getTile(row, col).type == BLOCK) {
-                BlockMoveAction action = {col, row, 0, row};
-                return action;
+            if (col > 0 && _board.getTile(row, col).type == BLOCK) {
+                for (int dcol = col - 1; dcol >= 0; --dcol) {
+                    if (_board.getTile(row, dcol).type != AIR) break;
+                    if (_board.getTile(row - 1, dcol).type == AIR) {
+                        BlockMoveAction action = {col, row, dcol, row};
+                        return action;
+                    }
+                }
             }
             //can be moved right
-            if (col < Board::BOARD_WIDTH - 1 && _board.getTile(row, col + 1).type == AIR
-                    && _board.getTile(row, col).type == BLOCK) {
-                BlockMoveAction action = {col, row, Board::BOARD_WIDTH, row};
-                return action;
+            if (col < Board::BOARD_WIDTH - 1 && _board.getTile(row, col).type == BLOCK) {
+                for (int dcol = col + 1; dcol < Board::BOARD_WIDTH; ++dcol) {
+                    if (_board.getTile(row, dcol).type != AIR) break;
+                    if (_board.getTile(row - 1, dcol).type == AIR) {
+                        BlockMoveAction action = {col, row, dcol, row};
+                        return action;
+                    }
+                }
             }
         }
     }
