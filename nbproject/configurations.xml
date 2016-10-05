@@ -7,6 +7,7 @@
       <itemPath>AI/AIBoardController.h</itemPath>
       <itemPath>States/AIGameState.h</itemPath>
       <itemPath>AI/BoardScanner.h</itemPath>
+      <itemPath>States/DemoGameState.h</itemPath>
       <itemPath>States/GameState.h</itemPath>
       <itemPath>AI/MoveActions.h</itemPath>
     </logicalFolder>
@@ -191,6 +192,7 @@
       <itemPath>AI/AIBoardController.cpp</itemPath>
       <itemPath>States/AIGameState.cpp</itemPath>
       <itemPath>AI/BoardScanner.cpp</itemPath>
+      <itemPath>States/DemoGameState.cpp</itemPath>
       <itemPath>States/GameState.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
@@ -371,6 +373,10 @@
       <item path="States/AIGameState.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="States/AIGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/DemoGameState.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="States/DemoGameState.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="States/EndlessGameState.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -718,6 +724,10 @@
       <item path="States/AIGameState.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="States/AIGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/DemoGameState.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="States/DemoGameState.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="States/EndlessGameState.cpp" ex="false" tool="1" flavor2="0">
       </item>

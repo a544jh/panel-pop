@@ -24,6 +24,7 @@ public:
 private:
 	TitleScreenRenderer _tr;
 	MainMenu _menu;
+        int _demoTimeout;
 };
 
 
