@@ -23,7 +23,7 @@ AS=as
 # Macros
 CND_PLATFORM=MinGW-Windows
 CND_DLIB_EXT=dll
-CND_CONF=Debug
+CND_CONF=WinDebug
 CND_DISTDIR=dist
 CND_BUILDDIR=build
 
@@ -83,8 +83,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=
-CXXFLAGS=
+CCFLAGS=-mwindows
+CXXFLAGS=-mwindows
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -93,7 +93,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lSDL2_image -lSDL2_mixer -lSDL2_ttf
+LDLIBSOPTIONS=-lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}

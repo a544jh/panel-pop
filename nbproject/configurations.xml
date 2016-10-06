@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="97">
+<configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
@@ -226,9 +226,9 @@
         </ccTool>
         <linkerTool>
           <linkerLibItems>
-            <linkerOptionItem>`pkg-config --libs SDL2_image`</linkerOptionItem>
-            <linkerOptionItem>`pkg-config --libs SDL2_mixer`</linkerOptionItem>
-            <linkerOptionItem>`pkg-config --libs SDL2_ttf`</linkerOptionItem>
+            <linkerOptionItem>-lSDL2_image</linkerOptionItem>
+            <linkerOptionItem>-lSDL2_mixer</linkerOptionItem>
+            <linkerOptionItem>-lSDL2_ttf</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -905,6 +905,360 @@
       <item path="gameplay.gif" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="main.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="panelpop.ini" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="screenshot.png" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="WinDebug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <standard>8</standard>
+          <commandLine>-mwindows</commandLine>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <linkerTool>
+          <linkerCopySharedLibs>true</linkerCopySharedLibs>
+          <linkerLibItems>
+            <linkerOptionItem>-lmingw32</linkerOptionItem>
+            <linkerOptionItem>-lSDL2main</linkerOptionItem>
+            <linkerOptionItem>-lSDL2</linkerOptionItem>
+            <linkerOptionItem>-lSDL2_image</linkerOptionItem>
+            <linkerOptionItem>-lSDL2_mixer</linkerOptionItem>
+            <linkerOptionItem>-lSDL2_ttf</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path=".gitignore" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AI/AIBoardController.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="AI/AIBoardController.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AI/BoardScanner.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="AI/BoardScanner.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AI/MoveActions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Config/ConfigHandler.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Config/ConfigHandler.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Config/KeyConfig.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Game/Block.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Game/Block.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Game/Board.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Game/Board.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Game/BoardController.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Game/BoardController.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Game/BoardEventHandler.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Game/BoardEventHandler.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Game/EndlessGame.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Game/EndlessGame.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Game/Game.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Game/Game.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Game/GameEventHandler.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Game/GameEventHandler.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Game/GarbageBlock.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Game/GarbageBlock.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Game/KeyboardController.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Game/KeyboardController.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Game/VsGame.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Game/VsGame.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="InputManager.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="InputManager.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Menus/KeyConfigMenu.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Menus/KeyConfigMenu.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Menus/MainMenu.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Menus/MainMenu.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Menus/Menu.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Menus/Menu.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Menus/MenuItem.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Menus/MenuItem.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Menus/OptionsMenu.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Menus/OptionsMenu.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Menus/PauseMenu.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Menus/PauseMenu.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="README.md" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/BoardRenderer.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/BoardRenderer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/ChainPopup.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/ChainPopup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/ComboPopup.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/ComboPopup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/EndlessGameRenderer.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/EndlessGameRenderer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/GameRenderer.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/GameRenderer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/GbQueueRenderer.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/GbQueueRenderer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/Particle.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/Particle.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/Popup.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/Popup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/Renderer.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/Renderer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/TitleScreenRenderer.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/TitleScreenRenderer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Rendering/VsGameRenderer.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="Rendering/VsGameRenderer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SDLContext.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="SDLContext.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/AIGameState.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="States/AIGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/DemoGameState.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="States/DemoGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/EndlessGameState.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="States/EndlessGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/GameState.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="States/GameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/OptionsMenuState.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="States/OptionsMenuState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/State.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="States/State.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/StateManager.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="States/StateManager.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/TitleScreen.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="States/TitleScreen.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/VsGameState.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="States/VsGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/1p.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/1p.xcf" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/2p.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/2p.xcf" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/bg1.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/bg1.xcf" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/fonts/PressStart2P.ttf" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/fonts/square_sans_serif_7.ttf"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="assets/icon.ico" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/icon.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/music/battle1_loop.ogg" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/music/battle1_panic.ogg" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/music/panelpop_intro.ogg" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/music/panelpop_loop.ogg" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/panel-pop_sfx.ftm" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/1x1.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/1x10.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/1x2.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/1x3.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/1x4.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/1x5.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/1x6.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/1x7.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/1x8.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/1x9.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/2x1.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/2x10.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/2x2.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/2x3.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/2x4.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/2x5.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/2x6.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/2x7.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/2x8.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/2x9.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/3x1.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/3x10.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/3x2.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/3x3.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/3x4.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/3x5.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/3x6.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/3x7.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/3x8.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/3x9.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/4x1.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/4x10.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/4x2.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/4x3.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/4x4.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/4x5.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/4x6.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/4x7.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/4x8.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/4x9.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/bigthump.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/chain.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/combo.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/countdown.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/cursor.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/fanfare1.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/fanfare2.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/fanfare3.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/go.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/pause.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/swap.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sfx/thump.wav" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sprites.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/sprites.xcf" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/title.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="assets/title.xcf" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="gameplay.gif" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="main.h" ex="false" tool="3" flavor2="0">
       </item>
