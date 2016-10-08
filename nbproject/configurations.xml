@@ -227,6 +227,7 @@
         </ccTool>
         <linkerTool>
           <linkerLibItems>
+            <linkerOptionItem>-lSDL2</linkerOptionItem>
             <linkerOptionItem>-lSDL2_image</linkerOptionItem>
             <linkerOptionItem>-lSDL2_mixer</linkerOptionItem>
             <linkerOptionItem>-lSDL2_ttf</linkerOptionItem>

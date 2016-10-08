@@ -9,7 +9,7 @@ _scanner(board) {
 }
 
 void AIBoardController::tick() {
-    if(_board.getState()!=Board::BoardState::RUNNING || _board.getTicksRun() % 5 != 0) return;
+    if (_board.getState() != Board::BoardState::RUNNING || _board.getTicksRun() % 5 != 0) return;
     if (!_inputQueue.empty()) {
         doInput(_inputQueue.front());
         _inputQueue.pop();
@@ -107,18 +107,21 @@ void AIBoardController::doCursorMove(int x, int y) {
 }
 
 void AIBoardController::basicVerticalmatchStrat() {
-    BoardScanner::VerticalMatch match = _scanner.findVerticalMatch();
+    BoardScanner::VerticalMatch vertMatch = _scanner.findVerticalMatch();
     BlockMoveAction flatteningMove = _scanner.findStackFlatteningMove();
-    if(_board.isPanic() && flatteningMove.y != 0){
+    if (_board.isPanic() && flatteningMove.y != 0) {
         _blockMoveQueue.push(flatteningMove);
         return;
     }
-    
-    if(!match.found){
+
+    if (!vertMatch.found) {
         _inputQueue.push(RAISE);
         return;
     }
-    
+    doVerticalMatch(vertMatch);
+}
+
+void AIBoardController::doVerticalMatch(BoardScanner::VerticalMatch match) {
     int firstCol = _scanner.findColorCol(match.color, match.topRow);
     int firstRow = match.topRow - 1;
     int alt = 0;
@@ -126,9 +129,27 @@ void AIBoardController::basicVerticalmatchStrat() {
         int altRow = (i % 2 == 0 ? firstRow - alt : match.bottomRow + alt++);
         int col = _scanner.findColorCol(match.color, altRow);
         BlockMoveAction action = {col, altRow, firstCol, altRow};
-        _blockMoveQueue.push(BlockMoveAction(action));
+        _blockMoveQueue.push(action);
     }
-    
+}
+
+void AIBoardController::doChainMatch(BoardScanner::ChainMatch match) {
+    //doesn't quite work yet, blocks cannot be moved over incomplete rows (duh)
+    //also it tries to accomplish too mush in too little time (maybe just look for specific cases then)
+
+    //upper (offset)
+    int col = _scanner.findColorCol(match.color, match.offsetRow);
+    BlockMoveAction action = {col, match.offsetRow, match.col + (match.side == Direction::LEFT ? 1 : -1), match.offsetRow};
+    _blockMoveQueue.push(action);
+    //lower
+    if (match.side == Direction::LEFT) {
+        col = _scanner.findColorOn(match.color, match.row, 0, match.col);
+    } else {
+        col = _scanner.findColorOn(match.color, match.row, match.col, Board::BOARD_WIDTH - 1);
+    }
+    action = {col, match.row, match.col, match.row};
+    _blockMoveQueue.push(action);
+
 }
 
 AIBoardController::~AIBoardController() {

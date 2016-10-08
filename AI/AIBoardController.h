@@ -32,7 +32,8 @@ private:
     void doInput(InputAction);
     void doCursorMove(int x, int y);
     void doBlockMove(int x, int y, int dx, int dy);
-
+    void doVerticalMatch(BoardScanner::VerticalMatch match);
+    void doChainMatch(BoardScanner::ChainMatch match);
 
 
     void basicVerticalmatchStrat();
