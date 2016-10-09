@@ -8,6 +8,7 @@
       <itemPath>States/AIGameState.h</itemPath>
       <itemPath>AI/BoardScanner.h</itemPath>
       <itemPath>States/DemoGameState.h</itemPath>
+      <itemPath>States/FadeTransition.h</itemPath>
       <itemPath>States/GameState.h</itemPath>
       <itemPath>AI/MoveActions.h</itemPath>
     </logicalFolder>
@@ -193,6 +194,7 @@
       <itemPath>States/AIGameState.cpp</itemPath>
       <itemPath>AI/BoardScanner.cpp</itemPath>
       <itemPath>States/DemoGameState.cpp</itemPath>
+      <itemPath>States/FadeTransition.cpp</itemPath>
       <itemPath>States/GameState.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
@@ -383,6 +385,10 @@
       <item path="States/EndlessGameState.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="States/EndlessGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/FadeTransition.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="States/FadeTransition.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="States/GameState.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -736,6 +742,10 @@
       </item>
       <item path="States/EndlessGameState.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="States/FadeTransition.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="States/FadeTransition.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="States/GameState.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="States/GameState.h" ex="false" tool="3" flavor2="0">
@@ -919,7 +929,7 @@
     <conf name="WinDebug" type="1" platformSpecific="true">
       <toolsSet>
         <compilerSet>default</compilerSet>
-		<platform>3</platform>
+        <platform>2</platform>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
@@ -1090,6 +1100,10 @@
       <item path="States/EndlessGameState.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="States/EndlessGameState.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="States/FadeTransition.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="States/FadeTransition.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="States/GameState.cpp" ex="false" tool="1" flavor2="8">
       </item>

@@ -10,6 +10,7 @@
 #include "../InputManager.h"
 #include "StateManager.h"
 #include "DemoGameState.h"
+#include "FadeTransition.h"
 
 TitleScreen::TitleScreen() : _tr(*this)
 , _demoTimeout(0) {
@@ -23,11 +24,13 @@ SDL_Texture* TitleScreen::render() {
 }
 
 void TitleScreen::tick() {
-    if(InputManager::getInstance().anyKeyDown()){
+    if (InputManager::getInstance().anyKeyDown()) {
         _demoTimeout = 0;
     }
-    if(_demoTimeout++ >= 300){
-        StateManager::getInstance().switchToState(new DemoGameState);
+    if (_demoTimeout++ >= 300) {
+        StateManager::getInstance().switchToState(new FadeTransition([]() {
+            return new DemoGameState;
+        }));
     }
     _menu.handleInput();
 }

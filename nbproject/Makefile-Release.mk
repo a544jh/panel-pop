@@ -70,6 +70,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/States/AIGameState.o \
 	${OBJECTDIR}/States/DemoGameState.o \
 	${OBJECTDIR}/States/EndlessGameState.o \
+	${OBJECTDIR}/States/FadeTransition.o \
 	${OBJECTDIR}/States/GameState.o \
 	${OBJECTDIR}/States/OptionsMenuState.o \
 	${OBJECTDIR}/States/State.o \
@@ -277,6 +278,11 @@ ${OBJECTDIR}/States/EndlessGameState.o: States/EndlessGameState.cpp
 	${MKDIR} -p ${OBJECTDIR}/States
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/States/EndlessGameState.o States/EndlessGameState.cpp
+
+${OBJECTDIR}/States/FadeTransition.o: States/FadeTransition.cpp
+	${MKDIR} -p ${OBJECTDIR}/States
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/States/FadeTransition.o States/FadeTransition.cpp
 
 ${OBJECTDIR}/States/GameState.o: States/GameState.cpp
 	${MKDIR} -p ${OBJECTDIR}/States
