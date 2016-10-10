@@ -8,25 +8,13 @@
 #ifndef STATES_VSGAMESTATE_H_
 #define STATES_VSGAMESTATE_H_
 
-#include "../Game/KeyboardController.h"
-#include "../Game/VsGame.h"
-#include "../Rendering/VsGameRenderer.h"
-#include "State.h"
+#include "GameState.h"
 
-class VsGameState : public State {
+class VsGameState : public GameState {
 public:
-	VsGameState();
-	void tick();
-	SDL_Texture* render();
-	virtual ~VsGameState();
-	void goBack();
+    VsGameState();
+    virtual ~VsGameState();
 private:
-	VsGame _vsGame;
-	VsGameRenderer _renderer;
-	KeyConfig _p1keys;
-	KeyConfig _p2keys;
-	KeyboardController _kbc;
-	KeyboardController _kbc2;
 };
 
 #endif /* STATES_VSGAMESTATE_H_ */

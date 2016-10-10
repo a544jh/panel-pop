@@ -24,7 +24,7 @@ PauseMenu::PauseMenu(Game& game) :
 	addItem(MenuItem("RESUME", [this]() {_game.inputTogglePause();}));
 	addItem(
 			MenuItem("QUIT",
-					[]() {StateManager::getInstance().returnToTile();}));
+					[]() {StateManager::getInstance().returnToTitle();}));
 }
 
 PauseMenu::~PauseMenu() {

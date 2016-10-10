@@ -1,6 +1,3 @@
-/Debug/
-/Default/
-/.settings/
-.cproject
-.project
-/Release/
+/nbproject/private
+/build/
+/dist/
