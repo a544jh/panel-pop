@@ -13,7 +13,7 @@
 #include "FadeTransition.h"
 
 TitleScreen::TitleScreen() : _tr(*this)
-, _demoTimeout(0) {
+, _idleTicks(0) {
 }
 
 TitleScreen::~TitleScreen() {
@@ -25,9 +25,9 @@ SDL_Texture* TitleScreen::render() {
 
 void TitleScreen::tick() {
     if (InputManager::getInstance().anyKeyDown()) {
-        _demoTimeout = 0;
+        _idleTicks = 0;
     }
-    if (_demoTimeout++ >= 300) {
+    if (++_idleTicks >= DEMO_TIMEOUT) {
         StateManager::getInstance().switchToState(new FadeTransition([]() {
             return new DemoGameState;
         }));

@@ -34,6 +34,7 @@ void DemoGameState::tick() {
     if (input.anyKeyDown()) {
         Mix_HaltMusic();
         StateManager::getInstance().returnToTitle();
+        return;
     }
     if (_game->getState() == Game::State::RUNNING) {
         _playerBoardController->tick();
@@ -43,6 +44,7 @@ void DemoGameState::tick() {
     } else if (_game->getState() == Game::State::ENDED) {
         Mix_HaltMusic();
         StateManager::getInstance().returnToTitle();
+        return;
     }
     _game->tick();
     _gameRenderer->tick();

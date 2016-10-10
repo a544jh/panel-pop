@@ -12,19 +12,21 @@
 #include "../Rendering/TitleScreenRenderer.h"
 #include "State.h"
 
-class TitleScreen: public State {
+class TitleScreen : public State {
 public:
-	TitleScreen();
-	virtual ~TitleScreen();
-	void tick();
-	SDL_Texture* render();
-	const MainMenu& getMenu() const;
-	void goBack();
+    static const int DEMO_TIMEOUT = 600;
+
+    TitleScreen();
+    virtual ~TitleScreen();
+    void tick();
+    SDL_Texture* render();
+    const MainMenu& getMenu() const;
+    void goBack();
 
 private:
-	TitleScreenRenderer _tr;
-	MainMenu _menu;
-        int _demoTimeout;
+    TitleScreenRenderer _tr;
+    MainMenu _menu;
+    int _idleTicks;
 };
 
 
