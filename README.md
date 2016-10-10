@@ -11,6 +11,7 @@ Features:
 * Original-like mechanincs modeled after SNES version
 * Additional visual gameplay tweaks
 * Single player endless mode
+* Simple AI
 * Two-player VS game with garbage blocks
 
 
