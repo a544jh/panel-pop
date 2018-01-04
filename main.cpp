@@ -18,6 +18,7 @@
 #include "States/StateManager.h"
 
 int main(int argc, char* args[]) {
+	system("mkdir -p ~/Library/Application\\ Support/panel-pop; [ ! -f ~/Library/Application\\ Support/panel-pop/.panelpop ] &&  cp panelpop.ini ~/Library/Application\\ Support/panel-pop/.panelpop");
 	srand(time(NULL));
 	SDLContext& SDL = SDLContext::getInstance();
 	ConfigHandler& configHandler = ConfigHandler::getInstance();

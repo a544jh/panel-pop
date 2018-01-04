@@ -17,8 +17,8 @@ public:
 
 	static ConfigHandler& getInstance();
 
-	static constexpr const char* CONFIG_FILENAME = "panelpop.ini";
-	static constexpr const KeyConfig DEFAULT_KEYS = {
+	const char* CONFIG_FILENAME = "~/Library/Application Support/panel-pop/.panelpop";
+	const KeyConfig DEFAULT_KEYS = {
 			SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT,
 			SDL_SCANCODE_RIGHT, SDL_SCANCODE_X, SDL_SCANCODE_Z };
 

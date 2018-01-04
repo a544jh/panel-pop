@@ -29,3 +29,7 @@ Debug keys:
 Misc:
 * `Ctrl`+`F` - toggle fps diplay
 * `Alt`+`Return` - toggle fullscreen
+
+# Building (OSX)
+
+    brew install sdl2 sdl2_mixir sdl2_ttf boost

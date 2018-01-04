@@ -21,11 +21,12 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=GNU-MacOSX
 CND_DLIB_EXT=dll
 CND_CONF=Debug
 CND_DISTDIR=dist
 CND_BUILDDIR=build
+EXE_NAME=panel-pop
 
 # Include project Makefile
 include Makefile
@@ -98,9 +99,9 @@ LDLIBSOPTIONS=-lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/panel-pop.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/${EXE_NAME}
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/panel-pop.exe: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/${EXE_NAME}: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/panel-pop ${OBJECTFILES} ${LDLIBSOPTIONS}
 
