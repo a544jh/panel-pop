@@ -1,5 +1,5 @@
 
-/* 
+/*
  * File:   BoardScanner.h
  * Author: axel
  *
@@ -10,6 +10,7 @@
 #define BOARDSCANNER_H
 
 #include <map>
+#include <array>
 #include "../Game/Board.h"
 #include"MoveActions.h"
 
@@ -58,4 +59,3 @@ private:
 };
 
 #endif /* BOARDSCANNER_H */
-
