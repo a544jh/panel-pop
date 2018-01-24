@@ -9,19 +9,6 @@ project(panel-pop)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
-
-if(UNIX AND NOT APPLE)
-    set(LINUX TRUE)
-endif()
-
-if(APPLE)
-    set(APPLE TRUE)
-endif()
-
-if(WIN32)
-    set(WIN32 TRUE)
-endif()
-
 set(SRCS
     main.cpp
     Game/GameEventHandler.cpp
@@ -72,7 +59,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMake")
 
 add_executable(panel-pop ${SRCS})
 
-if(LINUX)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
@@ -87,4 +73,3 @@ target_link_libraries(panel-pop ${SDL2_LIBRARY}
                                 ${SDL2_IMAGE_LIBRARIES}
                                 ${SDL2_TTF_LIBRARIES}
                                 ${SDL2_MIXER_LIBRARIES})
-endif()
