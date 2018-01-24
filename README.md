@@ -15,13 +15,13 @@ Features:
 * Two-player VS game with garbage blocks
 
 
-* Build
+### Build:
 
 1. `cmake`
 2. `make`
 
 
-*Controls
+### Controls:
 
 Default gameplay keys:
     * Arrow keys - move cursor
