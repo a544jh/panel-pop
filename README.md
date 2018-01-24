@@ -7,7 +7,7 @@ A Panel de Pon / Tetris Attack / Puzzle League clone made with C++ and SDL
 
 ![screenshot](screenshot.png)
 
-Features:
+### Features:
 * Original-like mechanincs modeled after SNES version
 * Additional visual gameplay tweaks
 * Single player endless mode
