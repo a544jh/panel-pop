@@ -15,7 +15,14 @@ Features:
 * Two-player VS game with garbage blocks
 
 
-###Controls
+# Build
+
+1. `cmake`
+2. `make`
+
+
+-Controls-
+
 Default gameplay keys:
 * Arrow keys - move cursor
 * `X` - accept/swap blocks
