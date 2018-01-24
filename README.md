@@ -16,9 +16,19 @@ A Panel de Pon / Tetris Attack / Puzzle League clone made with C++ and SDL
 
 
 ### Build:
-
+* Linux
 1. `cmake`
 2. `make`
+
+* MacOS
+1. `cmake`
+2. `make`
+
+* Windows
+
+(you'll need MinGW in the root folder)
+1. `cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"`
+2. `mingw32-make.exe`
 
 
 ### Controls:
