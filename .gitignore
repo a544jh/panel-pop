@@ -1,3 +1,5 @@
-/nbproject/private
-/build/
-/dist/
+Thumbs.db
+.DS_Store
+CMakeCache.txt
+cmake_install.cmake
+/CMakeFiles/

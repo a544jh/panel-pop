@@ -3,7 +3,7 @@
  *
  *  Created on: 11.2.2016
  *      Author: axelw
- */
+*/
 
 #ifndef CONFIG_CONFIGHANDLER_H_
 #define CONFIG_CONFIGHANDLER_H_
@@ -17,8 +17,8 @@ public:
 
 	static ConfigHandler& getInstance();
 
-	static constexpr const char* CONFIG_FILENAME = "panelpop.ini";
-	static constexpr const KeyConfig DEFAULT_KEYS = {
+	const char* CONFIG_FILENAME = "panelpop.ini";
+	const KeyConfig DEFAULT_KEYS = {
 			SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT,
 			SDL_SCANCODE_RIGHT, SDL_SCANCODE_X, SDL_SCANCODE_Z };
 
