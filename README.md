@@ -15,24 +15,24 @@ Features:
 * Two-player VS game with garbage blocks
 
 
-# Build
+* Build
 
 1. `cmake`
 2. `make`
 
 
--Controls-
+*Controls
 
 Default gameplay keys:
-* Arrow keys - move cursor
-* `X` - accept/swap blocks
-* `Z` - cancel/raise stack
-* `5` - pause/start
+    * Arrow keys - move cursor
+    * `X` - accept/swap blocks
+    * `Z` - cancel/raise stack
+    * `5` - pause/start
 
 Debug keys:
-* `Esc` - reset boards
-* `1`,`2`,`3`,`4`,`6`,`7`,`8` - drop garbage block
+    * `Esc` - reset boards
+    * `1`,`2`,`3`,`4`,`6`,`7`,`8` - drop garbage block
 
 Misc:
-* `Ctrl`+`F` - toggle fps diplay
-* `Alt`+`Return` - toggle fullscreen
+    * `Ctrl`+`F` - toggle fps diplay
+    * `Alt`+`Return` - toggle fullscreen
