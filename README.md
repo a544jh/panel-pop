@@ -14,8 +14,12 @@ A Panel de Pon / Tetris Attack / Puzzle League clone made with C++ and SDL
 * Simple AI
 * Two-player VS game with garbage blocks
 
-
 ### Build:
+
+Dependencies are required if you want to compile the program correctly:
+
+`boost sdl2 sdl2_image sdl2_mixer sdl2_ttf`
+
 * Linux
 1. `cmake`
 2. `make`
@@ -26,7 +30,7 @@ A Panel de Pon / Tetris Attack / Puzzle League clone made with C++ and SDL
 
 * Windows
 
-(you'll need MinGW in the root folder)
+In addition you'll need MinGW in your root folder:
 1. `cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"`
 2. `mingw32-make.exe`
 
