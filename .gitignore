@@ -3,3 +3,7 @@ Thumbs.db
 CMakeCache.txt
 cmake_install.cmake
 /CMakeFiles/
+.idea/
+/cmake-build-debug/
+/cmake-build-release/
+/Makefile
