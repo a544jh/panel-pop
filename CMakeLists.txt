@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 set(SRCS
-    main.cpp
+    Main.cpp
     Game/GameEventHandler.cpp
     Game/Block.cpp
     Game/BoardController.cpp

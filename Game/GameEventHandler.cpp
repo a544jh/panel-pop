@@ -5,11 +5,12 @@
  *      Author: axelw
  */
 
+
 #include "GameEventHandler.h"
+#include "../SDLContext.h"
 
 #include <SDL2/SDL_mixer.h>
 
-#include "../SDLContext.h"
 
 GameEventHandler::GameEventHandler() :
 				_SDLContext(SDLContext::getInstance()),

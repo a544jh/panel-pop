@@ -5,10 +5,12 @@
  *      Author: axel
  */
 
+
 #ifndef BLOCK_H_
 #define BLOCK_H_
 
 #include <list>
+
 
 enum BlockState {
 	NORMAL, FLOATING, MATCHED, EXPLODING, SWAPPING_LEFT, SWAPPING_RIGHT

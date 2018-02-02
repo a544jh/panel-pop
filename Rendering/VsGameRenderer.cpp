@@ -5,22 +5,25 @@
  *      Author: axel
  */
 
+
 #include <stddef.h>
-#include <SDL2/SDL_blendmode.h>
-#include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_timer.h>
 #include <cstdint>
 #include <iomanip>
 #include <sstream>
 #include <math.h>
 
+#include <SDL2/SDL_blendmode.h>
+#include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_timer.h>
+
+#include "VsGameRenderer.h"
 #include "../Game/Board.h"
 #include "../Game/Game.h"
 #include "../Game/VsGame.h"
 #include "../SDLContext.h"
-#include "VsGameRenderer.h"
+
 
 VsGameRenderer::VsGameRenderer(VsGame& game) :
 				GameRenderer(game),

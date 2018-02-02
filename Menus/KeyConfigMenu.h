@@ -5,11 +5,13 @@
  *      Author: axelw
  */
 
+
 #ifndef MENUS_KEYCONFIGMENU_H_
 #define MENUS_KEYCONFIGMENU_H_
 
-#include "../Config/KeyConfig.h"
 #include "Menu.h"
+#include "../Config/KeyConfig.h"
+
 
 class OptionsMenuState;
 

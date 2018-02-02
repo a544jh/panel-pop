@@ -5,13 +5,14 @@
  *      Author: axelw
  */
 
+
 #include "EndlessGame.h"
+#include "BoardEventHandler.h"
+#include "GameEventHandler.h"
+#include "../Config/ConfigHandler.h"
 
 #include <SDL2/SDL_timer.h>
 
-#include "../Config/ConfigHandler.h"
-#include "BoardEventHandler.h"
-#include "GameEventHandler.h"
 
 class BoardEventHandler;
 

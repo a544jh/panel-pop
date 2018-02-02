@@ -5,12 +5,14 @@
  *      Author: axelw
  */
 
+
 #ifndef RENDERING_PARTICLE_H_
 #define RENDERING_PARTICLE_H_
 
+#include "Renderer.h"
+
 #include <string>
 
-#include "Renderer.h"
 
 class Particle: public Renderer {
 public:

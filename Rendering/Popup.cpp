@@ -5,9 +5,11 @@
  *      Author: axel
  */
 
+
 #include "Popup.h"
 
 #include <sstream>
+
 
 Popup::Popup() :
 				_value(0) {

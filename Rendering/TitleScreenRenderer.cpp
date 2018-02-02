@@ -5,17 +5,20 @@
  *      Author: axelw
  */
 
+
 #include "TitleScreenRenderer.h"
+
+#include "../Main.h"
+#include "../SDLContext.h"
+#include "../States/TitleScreen.h"
 
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_timer.h>
+
 #include <string>
 
-#include "../main.h"
-#include "../SDLContext.h"
-#include "../States/TitleScreen.h"
 
 TitleScreenRenderer::TitleScreenRenderer(TitleScreen& ts) :
 				_titleScreen(ts) {

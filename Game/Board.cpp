@@ -5,12 +5,13 @@
  *      Author: axel
  */
 
+
 #include "Board.h"
+#include "BoardEventHandler.h"
+#include "VsGame.h"
 
 #include <iostream>
 
-#include "BoardEventHandler.h"
-#include "VsGame.h"
 
 Board::Board(Game* game) :
 _game(game),

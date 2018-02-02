@@ -1,7 +1,15 @@
+/*
+ * File:   AIBoardController.cpp
+ * Author: axel
+ *
+ * Created on October 10, 2016
+ */
+
+
+#include "AIBoardController.h"
 
 #include <stdexcept>
 
-#include "AIBoardController.h"
 
 AIBoardController::AIBoardController(Board& board) :
 BoardController(board),
