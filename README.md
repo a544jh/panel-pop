@@ -7,42 +7,48 @@ A Panel de Pon / Tetris Attack / Puzzle League clone made with C++ and SDL
 
 ![screenshot](screenshot.png)
 
-### Features:
+## Features:
 * Original-like mechanincs modeled after SNES version
 * Additional visual gameplay tweaks
 * Single player endless mode
 * Simple AI
 * Two-player VS game with garbage blocks
 
-
-### Build:
-* Linux
-1. `cmake`
-2. `make`
-
-* MacOS
-1. `cmake`
-2. `make`
-
-* Windows
-
-(you'll need MinGW in the root folder)
-1. `cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"`
-2. `mingw32-make.exe`
-
-
-### Controls:
+## Controls
 
 Default gameplay keys:
-    * Arrow keys - move cursor
-    * `X` - accept/swap blocks
-    * `Z` - cancel/raise stack
-    * `5` - pause/start
+* Arrow keys - move cursor
+* `X` - accept/swap blocks
+* `Z` - cancel/raise stack
+* `5` - pause/start
 
 Debug keys:
-    * `Esc` - reset boards
-    * `1`,`2`,`3`,`4`,`6`,`7`,`8` - drop garbage block
+* `Esc` - reset boards
+* `1`,`2`,`3`,`4`,`6`,`7`,`8` - drop garbage block
 
 Misc:
-    * `Ctrl`+`F` - toggle fps diplay
-    * `Alt`+`Return` - toggle fullscreen
+* `Ctrl`+`F` - toggle fps diplay
+* `Alt`+`Return` - toggle fullscreen
+
+
+## How to build
+#### Dependencies
+* cmake
+* SDL2
+* SDL2_image
+* SDL2_ttf
+* SDL2_mixer
+* boost
+
+#### Linux
+1. `cmake`
+2. `make`
+
+#### MacOS
+1. `cmake`
+2. `make`
+
+#### Windows (MinGW)
+
+1. `cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"`
+2. `mingw32-make.exe`
