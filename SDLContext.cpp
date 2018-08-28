@@ -24,29 +24,29 @@
 #include <sstream>
 
 SDLContext::SDLContext() :
-_fontPs(nullptr),
-_fontSquare(nullptr),
-_musicBgIntro(nullptr),
-_musicBgLoop(nullptr),
-_musicPanic(nullptr),
-_sfxCursor(nullptr),
-_sfxSwap(nullptr),
-_sfxThump(nullptr),
-_sfxBigThump(nullptr),
-_sfxCombo(nullptr),
-_sfxChain(nullptr),
-_sfxFanfare1(nullptr),
-_sfxFanfare2(nullptr),
-_sfxFanfare3(nullptr),
-_sfxCountdown(nullptr),
-_sfxGo(nullptr),
-_sfxPause(nullptr),
-_window(nullptr),
-_renderer(nullptr),
-_spriteSheet(nullptr) {
+        _fontPs(nullptr),
+        _fontSquare(nullptr),
+        _musicBgIntro(nullptr),
+        _musicBgLoop(nullptr),
+        _musicPanic(nullptr),
+        _sfxCursor(nullptr),
+        _sfxSwap(nullptr),
+        _sfxThump(nullptr),
+        _sfxBigThump(nullptr),
+        _sfxCombo(nullptr),
+        _sfxChain(nullptr),
+        _sfxFanfare1(nullptr),
+        _sfxFanfare2(nullptr),
+        _sfxFanfare3(nullptr),
+        _sfxCountdown(nullptr),
+        _sfxGo(nullptr),
+        _sfxPause(nullptr),
+        _window(nullptr),
+        _renderer(nullptr),
+        _spriteSheet(nullptr) {
 }
 
-SDLContext& SDLContext::getInstance() {
+SDLContext &SDLContext::getInstance() {
     static SDLContext instance;
     return instance;
 }
@@ -60,7 +60,7 @@ bool SDLContext::init() {
     }
 
     _window = SDL_CreateWindow("Panel pop", SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
+                               SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
     if (_window == NULL) {
         std::cout << SDL_GetError();
         success = false;
@@ -88,6 +88,40 @@ bool SDLContext::init() {
         success = false;
     }
 
+
+// Initialize the joystick subsystem
+    SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+    SDL_Joystick *joy;
+
+    SDL_Init(SDL_INIT_GAMECONTROLLER);
+    SDL_GameController *ctrl;
+
+// Check for joysticks
+    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+        joy = SDL_JoystickOpen(i);
+        if (joy) {
+            printf("Opened Joystick %d\n", i);
+            printf("Name: %s\n", SDL_JoystickNameForIndex(i));
+            printf("Number of Axes: %d\n", SDL_JoystickNumAxes(joy));
+            printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(joy));
+            printf("Number of Balls: %d\n", SDL_JoystickNumBalls(joy));
+        } else {
+            printf("Couldn't open Joystick 0\n");
+        }
+
+        if (SDL_IsGameController(i)) {
+            char *mapping;
+            SDL_Log("Index \'%i\' is a compatible controller, named \'%s\'", i, SDL_GameControllerNameForIndex(i));
+            ctrl = SDL_GameControllerOpen(i);
+            mapping = SDL_GameControllerMapping(ctrl);
+            SDL_Log("Controller %i is mapped as \"%s\".", i, mapping);
+            SDL_free(mapping);
+        } else {
+            SDL_Log("Index \'%i\' is not a compatible controller.", i);
+        }
+    }
+
+
     Mix_VolumeMusic(ConfigHandler::getInstance().getMusicVolume());
     Mix_Volume(-1, ConfigHandler::getInstance().getSfxVolume());
 
@@ -102,11 +136,11 @@ bool SDLContext::init() {
     return success;
 }
 
-SDL_Renderer* SDLContext::getRenderer() {
+SDL_Renderer *SDLContext::getRenderer() {
     return _renderer;
 }
 
-SDL_Texture* SDLContext::getSpriteSheet() {
+SDL_Texture *SDLContext::getSpriteSheet() {
     return _spriteSheet;
 }
 
@@ -125,39 +159,39 @@ bool SDLContext::loadFonts() {
     return true;
 }
 
-SDL_Texture* SDLContext::makeTextureFromFont(std::string text, SDL_Color color,
-        TTF_Font* font) {
-    SDL_Surface* surface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
+SDL_Texture *SDLContext::makeTextureFromFont(std::string text, SDL_Color color,
+                                             TTF_Font *font) {
+    SDL_Surface *surface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
     if (surface == NULL) {
         std::cout << TTF_GetError();
         return NULL;
     }
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(_renderer, surface);
     SDL_FreeSurface(surface);
     return texture;
 }
 
-SDL_Texture* SDLContext::makeTextureFromImage(std::string path) {
-    SDL_Surface* surface = IMG_Load(path.c_str());
+SDL_Texture *SDLContext::makeTextureFromImage(std::string path) {
+    SDL_Surface *surface = IMG_Load(path.c_str());
     if (surface == NULL) {
         std::cout << IMG_GetError();
         return nullptr;
     }
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(_renderer, surface);
     SDL_FreeSurface(surface);
     return texture;
 }
 
-void SDLContext::renderText(std::string text, SDL_Color color, TTF_Font* font,
-        int x, int y) {
-    SDL_Texture* texture = makeTextureFromFont(text, color, font);
+void SDLContext::renderText(std::string text, SDL_Color color, TTF_Font *font,
+                            int x, int y) {
+    SDL_Texture *texture = makeTextureFromFont(text, color, font);
     SDL_Rect r = {x, y, 0, 0};
     SDL_QueryTexture(texture, NULL, NULL, &r.w, &r.h);
     SDL_RenderCopy(_renderer, texture, NULL, &r);
     SDL_DestroyTexture(texture);
 }
 
-void SDLContext::renderTextureToWindow(SDL_Texture* texture) {
+void SDLContext::renderTextureToWindow(SDL_Texture *texture) {
     SDL_SetRenderTarget(_renderer, NULL);
     SDL_RenderCopy(_renderer, texture, NULL, NULL);
     SDL_RenderPresent(_renderer);

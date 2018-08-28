@@ -17,18 +17,19 @@
 #include "SDLContext.h"
 #include "States/StateManager.h"
 
-int main(int argc, char* args[]) {
-	srand(time(NULL));
-	SDLContext& SDL = SDLContext::getInstance();
-	ConfigHandler& configHandler = ConfigHandler::getInstance();
+int main(int argc, char *args[]) {
+    srand(time(NULL));
+    SDLContext &SDL = SDLContext::getInstance();
+    ConfigHandler &configHandler = ConfigHandler::getInstance();
 
-	configHandler.loadConfig();
+    configHandler.loadConfig();
 
-	SDL.init();
-	StateManager& sm = StateManager::getInstance();
-	sm.run();
+    SDL.init();
 
-	SDL.tearDown();
+    StateManager &sm = StateManager::getInstance();
+    sm.run();
 
-	return 0;
+    SDL.tearDown();
+
+    return 0;
 }
