@@ -7,3 +7,5 @@ cmake_install.cmake
 /cmake-build-debug/
 /cmake-build-release/
 /Makefile
+/panel-pop
+/panel-pop.cbp
