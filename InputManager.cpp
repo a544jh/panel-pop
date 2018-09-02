@@ -7,9 +7,12 @@
 
 #include "InputManager.h"
 #include <SDL2/SDL.h>
+#include <string.h>
 
 InputManager::InputManager() :
         _quit(false) {
+    _keys = SDL_GetKeyboardState(&_keys_len);
+    _prevKeys = new uint8_t[_keys_len];
 }
 
 InputManager &InputManager::getInstance() {
@@ -18,15 +21,12 @@ InputManager &InputManager::getInstance() {
 }
 
 void InputManager::poll() {
-    _prevKeys = _keys;
+    _keys = SDL_GetKeyboardState(&_keys_len);
+    memcpy(_prevKeys, _keys, sizeof(uint8_t) * _keys_len);
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
         if (e.type == SDL_QUIT) {
             _quit = true;
-        } else if (e.type == SDL_KEYDOWN) {
-            _keys[e.key.keysym.scancode] = true;
-        } else if (e.type == SDL_KEYUP) {
-            _keys[e.key.keysym.scancode] = false;
         } else if (e.type == SDL_JOYBUTTONDOWN) {
             printf("Joy %d button %d pressed \n", e.jbutton.which, e.jbutton.button);
         }
@@ -46,7 +46,7 @@ bool InputManager::keyPressed(int key) {
 }
 
 bool InputManager::anyKeyDown() {
-    for (int i = 0; i < KEYBOARD_SIZE; ++i) {
+    for (int i = 0; i < _keys_len; ++i) {
         if (!_prevKeys[i] && _keys[i]) {
             return true;
         }
@@ -55,7 +55,7 @@ bool InputManager::anyKeyDown() {
 }
 
 int InputManager::getKeyDown() {
-    for (int i = 0; i < KEYBOARD_SIZE; ++i) {
+    for (int i = 0; i < _keys_len; ++i) {
         if (!_prevKeys[i] && _keys[i]) {
             return i;
         }
