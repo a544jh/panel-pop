@@ -13,6 +13,8 @@
 #include <array>
 
 #include "../Config/KeyConfig.h"
+#include "../InputState.h"
+
 class KeyboardController: public BoardController {
 public:
 	KeyboardController(Board&, const KeyConfig&);

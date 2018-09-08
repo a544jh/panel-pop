@@ -53,7 +53,7 @@ set(SRCS
     Menus/PauseMenu.cpp
     Menus/MenuItem.cpp
     Menus/Menu.cpp
-)
+        InputState.cpp InputState.h Config/InputConfig.cpp Config/InputConfig.h)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMake")
 

@@ -6,16 +6,17 @@
  */
 
 #include "KeyboardController.h"
+#include "../InputState.h"
 
 #include <SDL2/SDL.h>
 
 #include "Board.h"
 
-KeyboardController::KeyboardController(Board& b, const KeyConfig& c) :
-BoardController(b),
-_config(c),
-_directionHeld(NONE),
-_holdBegin(0) {
+KeyboardController::KeyboardController(Board &b, const KeyConfig &c) :
+        BoardController(b),
+        _config(c),
+        _directionHeld(NONE),
+        _holdBegin(0) {
 }
 
 int KeyboardController::getDirectionKey(Direction d) {
@@ -39,29 +40,24 @@ int KeyboardController::getDirectionKey(Direction d) {
 }
 
 void KeyboardController::tick() {
-    InputManager& input = InputManager::getInstance();
-    Direction directions[] = {UP, DOWN, LEFT, RIGHT};
 
-    if (!input.keyPressed(getDirectionKey(_directionHeld))) {
-        _directionHeld = NONE;
+
+    InputState state = InputState::getCurrentState();
+
+    InputManager &input = InputManager::getInstance();
+
+    if (state._direction != _directionHeld) {
+        _directionHeld = state._direction;
+        _holdBegin = SDL_GetTicks();
+        _board.inputMoveCursor(_directionHeld);
     } else if (SDL_GetTicks() - _holdBegin >= REPEAT_MS) {
         _board.inputMoveCursor(_directionHeld);
     }
 
-    if (_directionHeld == NONE || SDL_GetTicks() - _holdBegin < REPEAT_MS) {
-        for (int i = 0; i < 4; ++i) {
-            if (input.keyDown(getDirectionKey(directions[i]))) {
-                _board.inputMoveCursor(directions[i]);
-                _directionHeld = directions[i];
-                _holdBegin = SDL_GetTicks();
-            }
-        }
-    }
-
-    if (input.keyDown(_config.swap)) {
+    if (input.keyDown(_config.swap) || state._swap) {
         _board.inputSwapBlocks();
     }
-    if (input.keyPressed(_config.raiseStack)) {
+    if (input.keyPressed(_config.raiseStack) || state._raiseStack) {
         _board.inputForceStackRaise();
     }
 

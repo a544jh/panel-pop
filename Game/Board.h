@@ -14,14 +14,11 @@
 #include "Block.h"
 #include "GarbageBlock.h"
 #include "BoardEventHandler.h"
+#include "../InputState.h"
 
 class Game;
 
 class BoardEventHandler;
-
-enum Direction {
-    UP, RIGHT, DOWN, LEFT, NONE
-};
 
 enum TileType {
     AIR, BLOCK, GARBAGE

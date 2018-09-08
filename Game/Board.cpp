@@ -9,9 +9,6 @@
 
 #include <iostream>
 
-#include "BoardEventHandler.h"
-#include "VsGame.h"
-
 Board::Board(Game* game) :
 _game(game),
 _state(COUNTDOWN),
