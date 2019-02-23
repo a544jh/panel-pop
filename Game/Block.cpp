@@ -5,11 +5,8 @@
  *      Author: axel
  */
 
-
 #include "Block.h"
-
 #include <stdlib.h>
-
 
 Block::Block() :
 				_state(NORMAL),

@@ -5,13 +5,11 @@
  *      Author: axelw
  */
 
-
 #ifndef MENUS_MENUITEM_H_
 #define MENUS_MENUITEM_H_
 
 #include <string>
 #include <functional>
-
 
 class Menu;
 

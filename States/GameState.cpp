@@ -1,15 +1,13 @@
-/*
+
+/* 
  * File:   GameState.cpp
  * Author: axel
- *
+ * 
  * Created on September 26, 2016, 10:16 PM
  */
 
-
 #include "GameState.h"
-
 #include "../InputManager.h"
-
 
 void GameState::tick() {
     InputManager& input = InputManager::getInstance();

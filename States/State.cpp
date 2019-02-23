@@ -5,9 +5,7 @@
  *      Author: axelw
  */
 
-
 #include "State.h"
-
 
 State::State() {
 

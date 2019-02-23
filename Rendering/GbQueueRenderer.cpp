@@ -5,9 +5,7 @@
  *      Author: axelw
  */
 
-
 #include "GbQueueRenderer.h"
-
 
 GbQueueRenderer::GbQueueRenderer(Board& b) :
 		_board(b) {

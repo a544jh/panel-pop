@@ -5,20 +5,17 @@
  *      Author: axel
  */
 
-
 #include "EndlessGameRenderer.h"
-
-#include "../Game/EndlessGame.h"
-#include "../SDLContext.h"
 
 #include <SDL2/begin_code.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
-
 #include <cmath>
 #include <sstream>
 
+#include "../Game/EndlessGame.h"
+#include "../SDLContext.h"
 
 EndlessGameRenderer::EndlessGameRenderer(EndlessGame& game) :
 				GameRenderer(game),

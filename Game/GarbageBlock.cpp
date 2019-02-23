@@ -5,9 +5,7 @@
  *      Author: axel
  */
 
-
 #include "GarbageBlock.h"
-
 
 GarbageBlock::GarbageBlock(int x, int y, int w, int h, GarbageBlockType t) :
 				_x(x),

@@ -8,9 +8,7 @@
 #ifndef STATE_H_
 #define STATE_H_
 
-
 #include "SDL2/SDL.h"
-
 
 class State {
 public:

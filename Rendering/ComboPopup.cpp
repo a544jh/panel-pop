@@ -5,9 +5,7 @@
  *      Author: axel
  */
 
-
 #include "ComboPopup.h"
-
 
 ComboPopup::ComboPopup() {
 

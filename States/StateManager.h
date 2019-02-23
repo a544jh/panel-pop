@@ -5,14 +5,12 @@
  *      Author: axelw
  */
 
-
 #ifndef STATEMANAGER_H_
 #define STATEMANAGER_H_
 
-#include "../Config/KeyConfig.h"
-
 #include <cstdint>
 
+#include "../Config/KeyConfig.h"
 
 class InputManager;
 class SDLContext;

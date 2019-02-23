@@ -5,14 +5,12 @@
  *      Author: axel
  */
 
-
 #ifndef POPUP_H_
 #define POPUP_H_
 
 #include <string>
 
 #include "Particle.h"
-
 
 class Popup : public Particle {
 public:

@@ -5,13 +5,11 @@
  *      Author: axel
  */
 
-
 #ifndef RENDERER_H_
 #define RENDERER_H_
 
-#include <SDL2/SDL.h>
 #include "../SDLContext.h"
-
+#include <SDL2/SDL.h>
 
 class Renderer {
 public:

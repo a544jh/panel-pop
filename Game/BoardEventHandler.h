@@ -5,12 +5,10 @@
  *      Author: axelw
  */
 
-
 #ifndef GAME_BOARDEVENTHANDLER_H_
 #define GAME_BOARDEVENTHANDLER_H_
 
 #include "../Rendering/GameRenderer.h"
-
 
 class BoardEventHandler {
 public:

@@ -5,22 +5,19 @@
  *      Author: axel
  */
 
-
 #include "BoardRenderer.h"
 
-#include "../Game/Block.h"
-#include "../Game/GarbageBlock.h"
-#include "../SDLContext.h"
-
+#include <math.h>
+#include <stddef.h>
 #include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
-
-#include <math.h>
-#include <stddef.h>
 #include <cstdint>
 
+#include "../Game/Block.h"
+#include "../Game/GarbageBlock.h"
+#include "../SDLContext.h"
 
 const int BoardRenderer::BOARD_WIDTH = 192;
 const int BoardRenderer::BOARD_HEIGHT = 384;

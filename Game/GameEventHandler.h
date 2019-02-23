@@ -5,12 +5,10 @@
  *      Author: axelw
  */
 
-
 #ifndef GAME_GAMEEVENTHANDLER_H_
 #define GAME_GAMEEVENTHANDLER_H_
 
 #include <cstdint>
-
 
 class SDLContext;
 

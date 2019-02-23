@@ -5,12 +5,10 @@
  *      Author: axel
  */
 
-
 #ifndef CHAINPOPUP_H_
 #define CHAINPOPUP_H_
 
 #include "Popup.h"
-
 
 class ChainPopup : public Popup {
 public:

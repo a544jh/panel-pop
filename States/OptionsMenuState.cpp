@@ -5,17 +5,15 @@
  *      Author: axelw
  */
 
-
 #include "OptionsMenuState.h"
-#include "StateManager.h"
-
-#include "../Config/ConfigHandler.h"
-#include "../Menus/OptionsMenu.h"
-#include "../Menus/KeyConfigMenu.h"
 
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 
+#include "../Config/ConfigHandler.h"
+#include "../Menus/OptionsMenu.h"
+#include "../Menus/KeyConfigMenu.h"
+#include "StateManager.h"
 
 OptionsMenuState::OptionsMenuState() :
 _p1keys(ConfigHandler::getInstance().getKeyConfig(1)),

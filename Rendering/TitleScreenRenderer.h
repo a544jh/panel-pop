@@ -8,9 +8,7 @@
 #ifndef RENDERING_TITLESCREENRENDERER_H_
 #define RENDERING_TITLESCREENRENDERER_H_
 
-
 #include "Renderer.h"
-
 
 class TitleScreen;
 

@@ -1,24 +1,23 @@
 /*
-  * PauseMenu.cpp
+ * PauseMenu.cpp
  *
  *  Created on: 6.2.2016
  *      Author: axelw
  */
 
-
 #include "PauseMenu.h"
-#include "MenuItem.h"
-#include "../Game/Game.h"
-#include "../SDLContext.h"
-#include "../States/StateManager.h"
 
-#include <string>
-#include <vector>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_timer.h>
+#include <string>
+#include <vector>
 
+#include "../Game/Game.h"
+#include "../SDLContext.h"
+#include "../States/StateManager.h"
+#include "MenuItem.h"
 
 PauseMenu::PauseMenu(Game& game) :
 				_game(game) {

@@ -6,14 +6,13 @@
  */
 
 #include "VsGameState.h"
-#include "StateManager.h"
 
 #include "../Game/BoardEventHandler.h"
 #include "../Game/GameEventHandler.h"
+#include "StateManager.h"
 #include "../Game/KeyboardController.h"
 #include "../Game/VsGame.h"
 #include "../Rendering/VsGameRenderer.h"
-
 
 VsGameState::VsGameState() {
 

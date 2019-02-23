@@ -1,20 +1,18 @@
-/*
+
+/* 
  * File:   DemoGameState.cpp
  * Author: axel
- *
+ * 
  * Created on October 5, 2016, 9:36 PM
  */
 
-
 #include "DemoGameState.h"
 #include "StateManager.h"
-
 #include "../InputManager.h"
 #include "../Game/VsGame.h"
 #include "../Rendering/VsGameRenderer.h"
 #include "../AI/AIBoardController.h"
 #include "../Game/GameEventHandler.h"
-
 
 DemoGameState::DemoGameState() {
 

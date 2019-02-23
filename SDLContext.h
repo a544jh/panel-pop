@@ -5,15 +5,12 @@
  *      Author: axel
  */
 
-
 #ifndef SDLCONTEXT_H_
 #define SDLCONTEXT_H_
 
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
-
 #include <string>
-
 
 class SDLContext {
 public:

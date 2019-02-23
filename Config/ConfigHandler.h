@@ -5,15 +5,12 @@
  *      Author: axelw
 */
 
-
 #ifndef CONFIG_CONFIGHANDLER_H_
 #define CONFIG_CONFIGHANDLER_H_
 
-#include "KeyConfig.h"
-
 #include <boost/property_tree/ptree.hpp>
 #include <SDL2/SDL_scancode.h>
-
+#include "KeyConfig.h"
 
 class ConfigHandler {
 public:

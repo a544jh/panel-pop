@@ -5,14 +5,12 @@
  *      Author: axelw
  */
 
-
 #include "MenuItem.h"
 
 #include <iostream>
 #include <ostream>
 #include <string>
 #include <sstream>
-
 
 MenuItem::MenuItem(std::string name, command c) :
 				_optionType(OptionType::NONE),

@@ -5,12 +5,10 @@
  *      Author: axelw
  */
 
-
 #ifndef MENUS_PAUSEMENU_H_
 #define MENUS_PAUSEMENU_H_
 
 #include "Menu.h"
-
 
 class Game;
 

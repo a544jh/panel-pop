@@ -5,14 +5,12 @@
  *      Author: axel
  */
 
-
 #ifndef VSGAMERENDERER_H_
 #define VSGAMERENDERER_H_
 
 #include "BoardRenderer.h"
 #include "GameRenderer.h"
 #include "GbQueueRenderer.h"
-
 
 class VsGame;
 

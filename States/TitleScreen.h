@@ -5,15 +5,12 @@
  *      Author: axelw
  */
 
-
 #ifndef STATES_TITLESCREEN_H_
 #define STATES_TITLESCREEN_H_
 
-#include "State.h"
-
 #include "../Menus/MainMenu.h"
 #include "../Rendering/TitleScreenRenderer.h"
-
+#include "State.h"
 
 class TitleScreen : public State {
 public:

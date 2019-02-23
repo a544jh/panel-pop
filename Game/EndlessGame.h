@@ -5,13 +5,11 @@
  *      Author: axelw
  */
 
-
 #ifndef GAME_ENDLESSGAME_H_
 #define GAME_ENDLESSGAME_H_
 
 #include "Board.h"
 #include "Game.h"
-
 
 class EndlessGame: public Game {
 public:

@@ -5,15 +5,13 @@
  *      Author: axelw
  */
 
-
 #ifndef MENUS_MENU_H_
 #define MENUS_MENU_H_
 
-#include "MenuItem.h"
-#include "../Rendering/Renderer.h"
-
 #include <vector>
 
+#include "../Rendering/Renderer.h"
+#include "MenuItem.h"
 
 class Menu : public Renderer {
 public:

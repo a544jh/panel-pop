@@ -5,9 +5,7 @@
  *      Author: axel
  */
 
-
 #include "Renderer.h"
-
 
 Renderer::Renderer() :
 				_SDLContext(SDLContext::getInstance()),

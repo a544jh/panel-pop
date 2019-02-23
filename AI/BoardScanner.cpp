@@ -1,14 +1,13 @@
-/*
+
+/* 
  * File:   BoardScanner.cpp
  * Author: axel
- *
+ * 
  * Created on September 30, 2016, 10:22 PM
  */
 
-
 #include "BoardScanner.h"
 #include <iostream>
-
 
 BoardScanner::BoardScanner(Board& board) :
 _board(board) {

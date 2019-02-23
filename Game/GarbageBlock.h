@@ -5,7 +5,6 @@
  *      Author: axel
  */
 
-
 #ifndef GARBAGEBLOCK_H_
 #define GARBAGEBLOCK_H_
 

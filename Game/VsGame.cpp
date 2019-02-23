@@ -5,14 +5,13 @@
  *      Author: axel
  */
 
-
 #include "VsGame.h"
-#include "BoardEventHandler.h"
-#include "GameEventHandler.h"
-#include "GarbageBlock.h"
 
 #include <SDL2/SDL_timer.h>
 
+#include "BoardEventHandler.h"
+#include "GameEventHandler.h"
+#include "GarbageBlock.h"
 
 VsGame::VsGame(GameEventHandler* geh) :
 Game(geh),

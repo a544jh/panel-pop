@@ -5,16 +5,13 @@
  * Created on September 30, 2016, 10:22 PM
  */
 
-
 #ifndef BOARDSCANNER_H
 #define BOARDSCANNER_H
 
-#include "../Game/Board.h"
-#include "MoveActions.h"
-
 #include <map>
 #include <array>
-
+#include "../Game/Board.h"
+#include "MoveActions.h"
 
 class BoardScanner {
 public:

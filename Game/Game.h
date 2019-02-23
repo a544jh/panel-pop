@@ -5,14 +5,12 @@
  *      Author: axelw
  */
 
-
 #ifndef GAME_GAME_H_
 #define GAME_GAME_H_
 
-#include "../Menus/PauseMenu.h"
-
 #include <stdint.h>
 
+#include "../Menus/PauseMenu.h"
 
 class Board;
 

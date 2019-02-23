@@ -5,17 +5,13 @@
  *      Author: axelw
  */
 
-
 #ifndef STATES_OPTIONSMENUSTATE_H_
 #define STATES_OPTIONSMENUSTATE_H_
 
-#include "State.h"
-
 #include "../Rendering/Renderer.h"
-#include "../Config/KeyConfig.h"
-
+#include "State.h"
 #include <list>
-
+#include "../Config/KeyConfig.h"
 
 class Menu;
 

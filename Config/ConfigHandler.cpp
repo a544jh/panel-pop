@@ -5,7 +5,6 @@
  *      Author: axelw
  */
 
-
 #include "ConfigHandler.h"
 #include "../SDLContext.h"
 #include "../States/StateManager.h"
@@ -18,7 +17,6 @@
 #include <exception>
 #include <iostream>
 #include <string>
-
 
 ConfigHandler::ConfigHandler() {
 }

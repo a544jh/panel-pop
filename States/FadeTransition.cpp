@@ -1,16 +1,14 @@
-/*
+
+/* 
  * File:   FadeTransition.cpp
  * Author: axel
- *
+ * 
  * Created on October 9, 2016, 10:33 PM
  */
 
-
 #include "FadeTransition.h"
 #include "StateManager.h"
-
 #include "../SDLContext.h"
-
 
 FadeTransition::FadeTransition(StateConstructor constr) : _nextStateConstr(constr),
 _ticksRun(0), _nextState(nullptr) {

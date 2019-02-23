@@ -5,19 +5,18 @@
  *      Author: axelw
  */
 
-
 #include "OptionsMenu.h"
-#include "MenuItem.h"
-#include "../Config/ConfigHandler.h"
-#include "../SDLContext.h"
-#include "../States/OptionsMenuState.h"
 
-#include <string>
-#include <vector>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_timer.h>
+#include <string>
+#include <vector>
 
+#include "../Config/ConfigHandler.h"
+#include "../SDLContext.h"
+#include "MenuItem.h"
+#include "../States/OptionsMenuState.h"
 
 OptionsMenu::OptionsMenu(OptionsMenuState& state) :
 				_state(state) {
