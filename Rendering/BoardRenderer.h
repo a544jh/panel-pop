@@ -5,13 +5,15 @@
  *      Author: axel
  */
 
+
 #ifndef BOARDRENDERER_H_
 #define BOARDRENDERER_H_
 
-#include <list>
 
-#include "../Game/Board.h"
 #include "Popup.h"
+#include "../Game/Board.h"
+
+#include <list>
 
 
 class BoardRenderer: public Renderer {

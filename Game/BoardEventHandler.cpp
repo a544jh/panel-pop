@@ -5,15 +5,16 @@
  *      Author: axelw
  */
 
+
 #include "BoardEventHandler.h"
-
-#include <SDL2/SDL_mixer.h>
-
+#include "Board.h"
 #include "../Rendering/BoardRenderer.h"
 #include "../Rendering/ChainPopup.h"
 #include "../Rendering/ComboPopup.h"
 #include "../SDLContext.h"
-#include "Board.h"
+
+#include <SDL2/SDL_mixer.h>
+
 
 BoardEventHandler::BoardEventHandler(GameRenderer& gr, int boardId) :
 				_gameRenderer(gr),

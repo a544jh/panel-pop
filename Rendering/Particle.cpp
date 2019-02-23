@@ -5,10 +5,12 @@
  *      Author: axelw
  */
 
+
 #include "Particle.h"
 
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
+
 
 Particle::Particle() :
 				_x(0),

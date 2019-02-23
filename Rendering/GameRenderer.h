@@ -2,16 +2,18 @@
  * GameRenderer.h
  *
  *  Created on: Feb 28, 2016
- *      Author: axel
+ *      Author: axelw
  */
+
 
 #ifndef GAMERENDERER_H_
 #define GAMERENDERER_H_
 
+#include "Particle.h"
+#include "../Game/Game.h"
+
 #include <list>
 
-#include "../Game/Game.h"
-#include "Particle.h"
 
 class GameRenderer: public Renderer {
 public:

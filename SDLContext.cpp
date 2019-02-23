@@ -5,6 +5,7 @@
  *      Author: axel
  */
 
+
 #include "SDLContext.h"
 #include "Config/ConfigHandler.h"
 
@@ -18,10 +19,12 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_video.h>
+
 #include <cstdint>
 #include <iostream>
 #include <string>
 #include <sstream>
+
 
 SDLContext::SDLContext() :
 _fontPs(nullptr),

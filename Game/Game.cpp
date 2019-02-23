@@ -5,11 +5,12 @@
  *      Author: axelw
  */
 
+
 #include "Game.h"
+#include "GameEventHandler.h"
 
 #include <SDL2/SDL_timer.h>
 
-#include "GameEventHandler.h"
 
 Game::Game(GameEventHandler* geh) :
 _eventHandler(geh),

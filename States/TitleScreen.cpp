@@ -1,16 +1,18 @@
 /*
- * TitleScreen.cpp
+ *k TitleScreen.cpp
  *
  *  Created on: 15.1.2016
- *      Author: axelw
+ *      Author: axel
  */
 
-#include "TitleScreen.h"
 
-#include "../InputManager.h"
+#include "TitleScreen.h"
 #include "StateManager.h"
 #include "DemoGameState.h"
 #include "FadeTransition.h"
+
+#include "../InputManager.h"
+
 
 TitleScreen::TitleScreen() : _tr(*this)
 , _idleTicks(0) {

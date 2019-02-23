@@ -1,16 +1,18 @@
-
-/* 
+/*
  * File:   FadeTransition.h
  * Author: axel
  *
  * Created on October 9, 2016, 10:33 PM
  */
 
+
 #ifndef FADETRANSITION_H
 #define FADETRANSITION_H
 
 #include "State.h"
+
 #include <functional>
+
 
 class FadeTransition : public State {
     typedef std::function<State* () > StateConstructor;

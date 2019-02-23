@@ -5,11 +5,12 @@
  *      Author: axelw
  */
 
+
 #include "KeyboardController.h"
+#include "Board.h"
 
 #include <SDL2/SDL.h>
 
-#include "Board.h"
 
 KeyboardController::KeyboardController(Board& b, const KeyConfig& c) :
 BoardController(b),

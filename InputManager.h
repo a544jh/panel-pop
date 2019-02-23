@@ -5,12 +5,14 @@
  *      Author: axel
  */
 
+
 #ifndef INPUTMANAGER_H_
 #define INPUTMANAGER_H_
 
 #include <array>
 
 #define KEYBOARD_SIZE 282
+
 
 class InputManager {
 public:

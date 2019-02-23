@@ -5,14 +5,18 @@
  *      Author: axelw
  */
 
+
 #ifndef GAME_KEYBOARDCONTROLLER_H_
 #define GAME_KEYBOARDCONTROLLER_H_
 
+
 #include "BoardController.h"
 #include "../InputManager.h"
+#include "../Config/KeyConfig.h"
+
 #include <array>
 
-#include "../Config/KeyConfig.h"
+
 class KeyboardController: public BoardController {
 public:
 	KeyboardController(Board&, const KeyConfig&);

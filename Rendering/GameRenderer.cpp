@@ -2,19 +2,22 @@
  * GameRenderer.cpp
  *
  *  Created on: Feb 28, 2016
- *      Author: axel
+ *      Author: axelw
  */
+
 
 #include "GameRenderer.h"
 
+#include "../Game/Board.h"
+#include "../SDLContext.h"
+
 #include <SDL2/SDL_pixels.h>
+
 #include <cstdint>
 #include <iomanip>
 #include <ostream>
 #include <sstream>
 
-#include "../Game/Board.h"
-#include "../SDLContext.h"
 
 class Particle;
 class Popup;

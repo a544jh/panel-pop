@@ -5,20 +5,21 @@
  *      Author: axelw
  */
 
-#include "KeyConfigMenu.h"
 
+#include "KeyConfigMenu.h"
+#include "MenuItem.h"
+#include "../Config/ConfigHandler.h"
+#include "../InputManager.h"
+#include "../SDLContext.h"
+#include "../States/OptionsMenuState.h"
+
+#include <string>
+#include <vector>
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_scancode.h>
 #include <SDL2/SDL_timer.h>
-#include <string>
-#include <vector>
 
-#include "../Config/ConfigHandler.h"
-#include "../InputManager.h"
-#include "../SDLContext.h"
-#include "MenuItem.h"
-#include "../States/OptionsMenuState.h"
 
 KeyConfigMenu::KeyConfigMenu(OptionsMenuState& state, int player) :
 				_state(state),
