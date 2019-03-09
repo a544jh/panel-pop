@@ -5,11 +5,13 @@
  *      Author: axel
  */
 
+
 #ifndef ENDLESSGAMERENDERER_H_
 #define ENDLESSGAMERENDERER_H_
 
 #include "BoardRenderer.h"
 #include "GameRenderer.h"
+
 
 class EndlessGame;
 

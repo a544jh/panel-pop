@@ -5,15 +5,17 @@
  *      Author: axel
  */
 
+
 #ifndef BOARD_H_
 #define BOARD_H_
+
+#include "Block.h"
+#include "BoardEventHandler.h"
+#include "GarbageBlock.h"
 
 #include <cstdint>
 #include <list>
 
-#include "Block.h"
-#include "GarbageBlock.h"
-#include "BoardEventHandler.h"
 
 class Game;
 

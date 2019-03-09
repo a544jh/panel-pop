@@ -1,13 +1,19 @@
+/*
+ * File:   AIBoardController.h
+ * Author: axel
+ *
+ * Created on October 10, 2016
+ */
+
 
 #ifndef AIBOARDCONTROLLER_H
 #define AIBOARDCONTROLLER_H
 
-#include<queue>
 #include"../Game/BoardController.h"
 #include"MoveActions.h"
-
 #include "BoardScanner.h"
 
+#include<queue>
 
 
 class AIBoardController : public BoardController {

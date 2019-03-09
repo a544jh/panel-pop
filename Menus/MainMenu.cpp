@@ -5,12 +5,9 @@
  *      Author: axelw
  */
 
-#include "MainMenu.h"
 
-#include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_timer.h>
-#include <string>
-#include <vector>
+#include "MainMenu.h"
+#include "MenuItem.h"
 
 #include "../SDLContext.h"
 #include "../States/EndlessGameState.h"
@@ -18,7 +15,12 @@
 #include "../States/StateManager.h"
 #include "../States/VsGameState.h"
 #include "../States/AIGameState.h"
-#include "MenuItem.h"
+
+#include <string>
+#include <vector>
+#include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_timer.h>
+
 
 MainMenu::MainMenu() {
     addItem(

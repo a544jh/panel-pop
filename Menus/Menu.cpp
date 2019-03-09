@@ -5,13 +5,14 @@
  *      Author: axelw
  */
 
+
 #include "Menu.h"
-
-#include <SDL2/SDL_timer.h>
-
 #include "../Config/KeyConfig.h"
 #include "../InputManager.h"
 #include "../States/StateManager.h"
+
+#include <SDL2/SDL_timer.h>
+
 
 Menu::Menu() :
 _selection(0),

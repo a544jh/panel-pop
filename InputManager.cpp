@@ -5,8 +5,11 @@
  *      Author: axel
  */
 
+
 #include "InputManager.h"
+
 #include <SDL2/SDL.h>
+
 
 InputManager::InputManager() :
 				_quit(false) {

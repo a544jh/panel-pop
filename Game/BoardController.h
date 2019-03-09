@@ -5,9 +5,12 @@
  *      Author: axelw
  */
 
+
 #ifndef GAME_BOARDCONTROLLER_H_
 #define GAME_BOARDCONTROLLER_H_
+
 #include "Board.h"
+
 
 class BoardController {
 public:

@@ -5,11 +5,13 @@
  *      Author: axelw
  */
 
+
 #ifndef RENDERING_GBQUEUERENDERER_H_
 #define RENDERING_GBQUEUERENDERER_H_
 
-#include "../Game/Board.h"
 #include "Renderer.h"
+#include "../Game/Board.h"
+
 
 class GbQueueRenderer: public Renderer {
 public:

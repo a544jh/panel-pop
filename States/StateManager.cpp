@@ -5,21 +5,24 @@
  *      Author: axelw
  */
 
+
 #include "StateManager.h"
+#include "EndlessGameState.h"
+#include "TitleScreen.h"
+#include "FadeTransition.h"
+
+#include "../InputManager.h"
+#include "../SDLContext.h"
+#include "../Config/ConfigHandler.h"
+
+#include <iomanip>
+#include <sstream>
 
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_scancode.h>
 #include <SDL2/SDL_timer.h>
-#include <iomanip>
-#include <sstream>
 
-#include "../InputManager.h"
-#include "../SDLContext.h"
-#include "../Config/ConfigHandler.h"
-#include "EndlessGameState.h"
-#include "TitleScreen.h"
-#include "FadeTransition.h"
 
 StateManager::StateManager() :
 _currentState(nullptr),

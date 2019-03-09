@@ -5,13 +5,15 @@
  *      Author: axel
  */
 
-#include "EndlessGameState.h"
 
-#include <SDL2/SDL_scancode.h>
+#include "StateManager.h"
+#include "EndlessGameState.h"
 
 #include "../Game/BoardEventHandler.h"
 #include "../Game/GameEventHandler.h"
-#include "StateManager.h"
+
+#include <SDL2/SDL_scancode.h>
+
 
 EndlessGameState::EndlessGameState() {
     _game = new EndlessGame(new GameEventHandler());
