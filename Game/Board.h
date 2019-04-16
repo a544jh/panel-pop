@@ -32,6 +32,7 @@ public:
 
         TileType type;
         Block b;
+        // TODO: refactor to use index instead of pointer, so we can copy this object...
         GarbageBlock* g;
 
     };

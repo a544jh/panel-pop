@@ -26,6 +26,7 @@ public:
 private:
 	Direction _directionHeld;
 	uint32_t _holdBegin;
+	InputState _prevState;
 	int getDirectionKey(Direction);
 };
 

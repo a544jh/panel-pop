@@ -16,7 +16,8 @@ KeyboardController::KeyboardController(Board &b, const KeyConfig &c) :
         BoardController(b),
         _config(c),
         _directionHeld(NONE),
-        _holdBegin(0) {
+        _holdBegin(0),
+        _prevState(Direction::DOWN, false, false){
 }
 
 int KeyboardController::getDirectionKey(Direction d) {
@@ -54,7 +55,7 @@ void KeyboardController::tick() {
         _board.inputMoveCursor(_directionHeld);
     }
 
-    if (input.keyDown(_config.swap) || state._swap) {
+    if (input.keyDown(_config.swap) || (state._swap && !_prevState._swap)) {
         _board.inputSwapBlocks();
     }
     if (input.keyPressed(_config.raiseStack) || state._raiseStack) {
@@ -83,6 +84,8 @@ void KeyboardController::tick() {
     if (input.keyDown(SDL_SCANCODE_8)) {
         _board.queueGarbage(true, 12, GarbageBlockType::NORMAL);
     }
+
+    _prevState = state;
 }
 
 KeyboardController::~KeyboardController() {
