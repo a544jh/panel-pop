@@ -55,7 +55,7 @@ void GameRenderer::renderGameTime(int x, int y) {
 	if (_game.getBoard(0).getState() == Board::COUNTDOWN) {
 		time = 0;
 	} else {
-		time = _game.getTime() - Board::COUNTDOWN_MS;
+		time = _game.getTime() - 3000; //TODO: extract constant
 	}
 	os << (time / 1000 / 60) << "\u2019" << std::setw(2) << std::setfill('0')
 			<< ((time / 1000) % 60) << "\u201d";

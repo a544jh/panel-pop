@@ -15,8 +15,8 @@
 
 VsGame::VsGame(GameEventHandler* geh) :
 Game(geh),
-_board0(this),
-_board1(this),
+_board0(),
+_board1(),
 _p1MatchPoints(0),
 _p2MatchPoints(0),
 _p1Points(0),

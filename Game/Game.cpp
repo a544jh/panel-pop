@@ -48,7 +48,7 @@ uint32_t Game::getTime() {
     return SDL_GetTicks() - _startTime;
 }
 
-const bool Game::isPaused() const {
+bool Game::isPaused() const {
     return _state == State::PAUSED;
 }
 

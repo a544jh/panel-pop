@@ -1,4 +1,4 @@
-/*
+ /*
  * EndlessGame.cpp
  *
  *  Created on: 24.2.2016
@@ -17,7 +17,7 @@ class BoardEventHandler;
 
 EndlessGame::EndlessGame(GameEventHandler* geh) :
 Game(geh),
-_board(this),
+_board(),
 _highScore(ConfigHandler::getInstance().getEndlessHighScore()) {
 
 }

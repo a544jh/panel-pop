@@ -32,7 +32,7 @@ public:
 
         TileType type;
         Block b;
-        // TODO: refactor to use index instead of pointer, so we can copy this object...
+        // TODO: refactor to use lookup from list instead of pointer, so we can copy this object...
         GarbageBlock* g;
 
     };
@@ -48,7 +48,7 @@ public:
         RUNNING, COUNTDOWN, WON, GAME_OVER
     };
 
-    Board(Game*);
+    Board();
     Board reset();
     void setEventHandler(BoardEventHandler*);
     BoardEventHandler* getEventHandler() const;
@@ -71,7 +71,7 @@ public:
     static const int WARN_HEIGHT = 10;
     static const int FLOAT_TICKS = 12;
     static const int STACK_RAISE_STEPS = 32;
-    static const int COUNTDOWN_MS = 3000;
+    static const int COUNTDOWN_TICKS = 188;
 
     bool hasActiveBlocks() const;
     const Tile& getBufferRow(int) const;
@@ -98,8 +98,6 @@ public:
     const std::list<GarbageBlock>& getGarbageBlocks() const;
     const std::list<GarbageSpawn>& getGarbageQueue() const;
     void win();
-    Game& getGame() const;
-    uint32_t getTime() const;
 
 private:
     Tile _tiles[BOARD_HEIGHT][BOARD_WIDTH];
@@ -107,10 +105,10 @@ private:
     std::list<GarbageBlock> _garbageBlocks;
     std::list<GarbageSpawn> _garbageQueue;
 
-    Game* _game;
     BoardState _state;
     BoardEventHandler* _eventHandler;
     unsigned int _ticksRun;
+    // TODO: replace unneccesary variables with derived data, for easier copying....
     int _garbageSpawnPositions[3];
     bool _warnColumns[BOARD_WIDTH];
     int _cursorX, _cursorY;

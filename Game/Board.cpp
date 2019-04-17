@@ -9,8 +9,7 @@
 
 #include <iostream>
 
-Board::Board(Game* game) :
-_game(game),
+Board::Board() :
 _state(COUNTDOWN),
 _ticksRun(0),
 _garbageSpawnPositions{0},
@@ -43,7 +42,7 @@ BoardEventHandler* Board::getEventHandler() const {
 }
 
 Board Board::reset() {
-    Board reset = Board(_game);
+    Board reset = Board();
     reset._eventHandler = _eventHandler;
     return reset;
 }
@@ -303,7 +302,6 @@ void Board::initTick() {
     if (_ticksRun % 1440 == 1439 && _stackRaiseTicks > 0) {
         --_stackRaiseTicks;
     }
-    ++_ticksRun;
 }
 
 void Board::matchBlocks() {
@@ -732,7 +730,8 @@ bool Board::activeBlocks() {
 
 void Board::tick() {
     if (_state == COUNTDOWN) {
-        if (_game->getTime() > COUNTDOWN_MS) {
+        // TODO: make this tick based to get rid of Game pointer, it will have effectively the same result anyways...
+        if (_ticksRun > COUNTDOWN_TICKS) {
             _state = RUNNING;
         }
     } else if (_state == RUNNING) {
@@ -749,6 +748,7 @@ void Board::tick() {
         sendEvents();
     }
     _eventHandler->endTick();
+    ++_ticksRun;
 }
 
 void Board::win() {
@@ -840,14 +840,6 @@ int Board::getLastChain() const {
 
 unsigned int Board::getTicksRun() const {
     return _ticksRun;
-}
-
-Game& Board::getGame() const {
-    return *_game;
-}
-
-uint32_t Board::getTime() const {
-    return _game->getTime();
 }
 
 bool Board::blockOnRow(int row) {

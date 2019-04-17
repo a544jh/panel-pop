@@ -31,9 +31,9 @@ public:
     virtual void tick() = 0;
     virtual void reset() = 0;
     void inputTogglePause();
-    const bool isPaused() const;
+    bool isPaused() const;
     int getTicksRun() const;
-    uint32_t getTime();
+    uint32_t getTime(); //for how many milliseconds the Game has been run
     State getState() const;
     PauseMenu& getPauseMenu();
     bool isPanic() const;

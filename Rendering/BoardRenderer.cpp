@@ -22,7 +22,7 @@
 const int BoardRenderer::BOARD_WIDTH = 192;
 const int BoardRenderer::BOARD_HEIGHT = 384;
 const int BoardRenderer::TILE_SIZE = 32;
-const int BoardRenderer::CURSOR_ANIM_MS = 500;
+const int BoardRenderer::CURSOR_ANIM_TICKS = 32;
 
 BoardRenderer::BoardRenderer(const Board& board) :
 				_board(board) {
@@ -49,7 +49,7 @@ void BoardRenderer::tick() {
 }
 
 void BoardRenderer::drawCountdown() {
-	uint32_t time = _board.getTime();
+	unsigned int ticks = _board.getTicksRun();
 	if (_board.getState() == Board::COUNTDOWN) {
 		SDL_Rect pos = { 2, 100 };
 		SDL_QueryTexture(_readyText, NULL, NULL, &pos.w, &pos.h);
@@ -57,9 +57,9 @@ void BoardRenderer::drawCountdown() {
 		SDL_RenderCopy(_SDLRenderer, _readyText, NULL, &pos);
 		pos.y += 42;
 		SDL_Texture* digit;
-		if (time < Board::COUNTDOWN_MS / 3) {
+		if (ticks < Board::COUNTDOWN_TICKS / 3) {
 			digit = _3Text;
-		} else if (time < 2 * Board::COUNTDOWN_MS / 3) {
+		} else if (ticks < 2 * Board::COUNTDOWN_TICKS / 3) {
 			digit = _2Text;
 		} else {
 			digit = _1Text;
@@ -69,8 +69,8 @@ void BoardRenderer::drawCountdown() {
 		pos.x = (BOARD_WIDTH - pos.w) / 2;
 		SDL_RenderCopy(_SDLRenderer, digit, NULL, &pos);
 	}
-	if (time < Board::COUNTDOWN_MS + Board::COUNTDOWN_MS / 3
-			&& time > Board::COUNTDOWN_MS) {
+	if (ticks < Board::COUNTDOWN_TICKS + Board::COUNTDOWN_TICKS / 3
+			&& ticks > Board::COUNTDOWN_TICKS) {
 		SDL_Rect pos = { 0, 142 };
 		SDL_QueryTexture(_goText, NULL, NULL, &pos.w, &pos.h);
 		pos.x = (BOARD_WIDTH - pos.w) / 2;
@@ -427,7 +427,7 @@ void BoardRenderer::drawGarbageBlocks() {
 
 void BoardRenderer::drawCursor() {
 	SDL_Rect sprite = { 224, 64, 76, 44 };
-	if (_board.getTime() % (2 * CURSOR_ANIM_MS) >= CURSOR_ANIM_MS) {
+	if (_board.getTicksRun() % (2 * CURSOR_ANIM_TICKS) >= CURSOR_ANIM_TICKS) {
 		sprite.y += 44;
 	}
 	SDL_Rect pos = { (_board.getCursorX() * TILE_SIZE) - 6, (BOARD_HEIGHT
