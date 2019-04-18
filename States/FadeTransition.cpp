@@ -17,6 +17,9 @@ _ticksRun(0), _nextState(nullptr) {
 }
 
 void FadeTransition::tick() {
+    if (_nextState != nullptr && _ticksRun >= TRANSITION_TICKS / 2) {
+        _nextState->tick();
+    }
     if (++_ticksRun >= TRANSITION_TICKS) {
         StateManager::getInstance().switchToState(_nextState);
     }
@@ -35,7 +38,6 @@ SDL_Texture* FadeTransition::render() {
         if (_nextState == nullptr) {
             _nextState = _nextStateConstr();
         }
-        _nextState->tick();
         target = _nextState->render();
         fadeout = 1 - ((_ticksRun - TRANSITION_TICKS / 2) / (double) (TRANSITION_TICKS / 2));
     }
