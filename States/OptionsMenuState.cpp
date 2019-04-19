@@ -15,9 +15,7 @@
 #include "../Menus/KeyConfigMenu.h"
 #include "StateManager.h"
 
-OptionsMenuState::OptionsMenuState() :
-    _p1keys(ConfigHandler::getInstance().getKeyConfig(1)),
-    _p2keys(ConfigHandler::getInstance().getKeyConfig(2)) {
+OptionsMenuState::OptionsMenuState() {
     _texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
                                  SDL_TEXTUREACCESS_TARGET, 640, 480);
     _currentMenu = new OptionsMenu(*this);

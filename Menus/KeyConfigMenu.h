@@ -8,8 +8,8 @@
 #ifndef MENUS_KEYCONFIGMENU_H_
 #define MENUS_KEYCONFIGMENU_H_
 
-#include "../Config/KeyConfig.h"
 #include "Menu.h"
+#include "../Config/InputConfig.h"
 
 class OptionsMenuState;
 
@@ -30,7 +30,7 @@ class KeyConfigMenu : public Menu {
   int *_activeKey;
   bool _waitingForKey;
 
-  KeyConfig _newKeyConfig;
+  InputConfig _newKeyConfig;
 };
 
 #endif /* MENUS_KEYCONFIGMENU_H_ */

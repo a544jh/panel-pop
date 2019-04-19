@@ -12,15 +12,14 @@
 #include "../InputManager.h"
 #include <array>
 
-#include "../Config/KeyConfig.h"
 #include "../InputState.h"
 
 class KeyboardController : public BoardController {
  public:
-  KeyboardController(Board &, const KeyConfig &);
+  KeyboardController(Board &, InputConfig &);
   void tick();
   virtual ~KeyboardController();
-  const KeyConfig _config;
+  InputConfig &_config;
   const uint32_t REPEAT_MS = 200; //until direction starts repeating
 
  private:

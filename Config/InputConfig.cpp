@@ -4,12 +4,12 @@
 
 #include "InputConfig.h"
 
-InputConfig::InputConfig(const InputEvent &up,
-                         const InputEvent &down,
-                         const InputEvent &left,
-                         const InputEvent &right,
-                         const InputEvent &swap,
-                         const InputEvent &raiseStack) :
+InputConfig::InputConfig(InputEvent *up,
+                         InputEvent *down,
+                         InputEvent *left,
+                         InputEvent *right,
+                         InputEvent *swap,
+                         InputEvent *raiseStack) :
     _up(up),
     _down(down),
     _left(left),

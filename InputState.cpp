@@ -15,9 +15,9 @@ InputState InputState::getCurrentState(InputConfig &inputConfig) {
 
     Direction direction = getDirection(inputConfig);
 
-    bool swap = inputConfig._swap.isActive();
+    bool swap = inputConfig._swap->isActive();
 
-    bool raise = inputConfig._raiseStack.isActive();
+    bool raise = inputConfig._raiseStack->isActive();
 
     InputState state = InputState(direction, swap, raise);
 
@@ -25,13 +25,13 @@ InputState InputState::getCurrentState(InputConfig &inputConfig) {
 }
 
 Direction InputState::getDirection(InputConfig &config) {
-    if (config._up.isActive()) {
+    if (config._up->isActive()) {
         return Direction::UP;
-    } else if (config._down.isActive()) {
+    } else if (config._down->isActive()) {
         return Direction::DOWN;
-    } else if (config._left.isActive()) {
+    } else if (config._left->isActive()) {
         return Direction::LEFT;
-    } else if (config._right.isActive()) {
+    } else if (config._right->isActive()) {
         return Direction::RIGHT;
     } else {
         return Direction::NONE;

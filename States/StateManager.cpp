@@ -34,9 +34,8 @@ StateManager::StateManager() :
     _startTime(SDL_GetTicks()),
     _lastFrame(0),
     _avgFps(0),
-    _showFps(false) {
-    _p1keys = ConfigHandler::getInstance().getKeyConfig(1);
-    _p2keys = ConfigHandler::getInstance().getKeyConfig(2);
+    _showFps(false),
+    _inputConfigs{ConfigHandler::getInstance().getKeyConfig(1), ConfigHandler::getInstance().getKeyConfig(2)} {
     _currentState = new TitleScreen();
 }
 
@@ -114,24 +113,12 @@ void StateManager::returnToTitle() {
     }
 }
 
-const KeyConfig &StateManager::getP1keys() const {
-
-    return _p1keys;
+InputConfig &StateManager::getKeys(int player) {
+    return _inputConfigs[player - 1];
 }
 
-void StateManager::setKeys(KeyConfig keys, int player) {
-    switch (player) {
-        case 1:_p1keys = keys;
-            break;
-        case 2:_p2keys = keys;
-
-        default:break;
-    }
-}
-
-const KeyConfig &StateManager::getP2keys() const {
-
-    return _p2keys;
+void StateManager::setKeys(InputConfig keys, int player) {
+    _inputConfigs[player - 1] = keys;
 }
 
 void StateManager::showFps() {

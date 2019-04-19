@@ -9,7 +9,6 @@
 
 #include <SDL2/SDL_timer.h>
 
-#include "../Config/KeyConfig.h"
 #include "../InputManager.h"
 #include "../States/StateManager.h"
 
@@ -67,26 +66,26 @@ void Menu::resetCursor() {
 }
 
 void Menu::handleInput() {
-    InputManager &input = InputManager::getInstance();
-    KeyConfig p1keys = StateManager::getInstance().getP1keys();
-    KeyConfig p2keys = StateManager::getInstance().getP2keys();
-    if (input.keyDown(p1keys.down) || input.keyDown(p2keys.down)) {
+
+    InputState state1 = InputState::getCurrentState(StateManager::getInstance().getKeys(1));
+    InputState state2 = InputState::getCurrentState(StateManager::getInstance().getKeys(2));
+
+    if (state1._direction == DOWN || state2._direction == DOWN) {
         inputDown();
     }
-    if (input.keyDown(p1keys.up) || input.keyDown(p2keys.up)) {
+    if (state1._direction == UP || state2._direction == UP) {
         inputUp();
     }
-    if (input.keyDown(p1keys.left) || input.keyDown(p2keys.left)) {
+    if (state1._direction == LEFT || state2._direction == LEFT) {
         inputLeft();
     }
-    if (input.keyDown(p1keys.right) || input.keyDown(p2keys.right)) {
+    if (state1._direction == RIGHT || state2._direction == RIGHT) {
         inputRight();
     }
-    if (input.keyDown(p1keys.swap) || input.keyDown(p2keys.swap)) {
+    if (state1._swap || state2._swap) {
         inputEnter();
     }
-    if (input.keyDown(p1keys.raiseStack)
-        || input.keyDown(p2keys.raiseStack)) {
+    if (state1._raiseStack || state2._raiseStack) {
         inputCancel();
     }
 }

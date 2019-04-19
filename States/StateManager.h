@@ -9,8 +9,9 @@
 #define STATEMANAGER_H_
 
 #include <cstdint>
+#include <array>
 
-#include "../Config/KeyConfig.h"
+#include "../Config/InputConfig.h"
 
 class InputManager;
 class SDLContext;
@@ -24,9 +25,8 @@ class StateManager {
   void returnToTitle();
   float getAvgFps() const;
   State *getCurrentState() const;
-  const KeyConfig &getP1keys() const;
-  void setKeys(KeyConfig, int);
-  const KeyConfig &getP2keys() const;
+  InputConfig &getKeys(int);
+  void setKeys(InputConfig, int);
   void goBack();
   void quit();
 
@@ -48,7 +48,7 @@ class StateManager {
   float _avgFps;
   bool _showFps;
   void showFps();
-  KeyConfig _p1keys, _p2keys;
+  std::array<InputConfig, 2> _inputConfigs;
 };
 
 #endif /* STATEMANAGER_H_ */

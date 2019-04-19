@@ -13,7 +13,7 @@
 #include "Board.h"
 #include "../InputEvents/KeyboardKey.h"
 
-KeyboardController::KeyboardController(Board &b, const KeyConfig &c) :
+KeyboardController::KeyboardController(Board &b, InputConfig &c) :
     BoardController(b),
     _config(c),
     _directionHeld(NONE),
@@ -23,15 +23,7 @@ KeyboardController::KeyboardController(Board &b, const KeyConfig &c) :
 
 void KeyboardController::tick() {
 
-    // TODO: use loaded config....
-    InputConfig defaultConfig((KeyboardKey(SDL_SCANCODE_UP)),
-                              KeyboardKey(SDL_SCANCODE_DOWN),
-                              KeyboardKey(SDL_SCANCODE_LEFT),
-                              KeyboardKey(SDL_SCANCODE_RIGHT),
-                              KeyboardKey(SDL_SCANCODE_X),
-                              KeyboardKey(SDL_SCANCODE_Z));
-
-    InputState state = InputState::getCurrentState(defaultConfig);
+    InputState state = InputState::getCurrentState(_config);
 
     //InputManager &input = InputManager::getInstance();
 

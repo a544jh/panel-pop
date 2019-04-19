@@ -24,10 +24,10 @@ KeyConfigMenu::KeyConfigMenu(OptionsMenuState &state, int player) :
     _state(state),
     _player(player),
     _activeKey(nullptr),
-    _waitingForKey(false) {
-
-    _newKeyConfig = ConfigHandler::getInstance().getKeyConfig(player);
-
+    _waitingForKey(false),
+    _newKeyConfig(ConfigHandler::getInstance().getKeyConfig(player)) {
+    // TODO: implement...
+/*
     addItem(
         MenuItem("Up",
                  [&]() {
@@ -69,7 +69,7 @@ KeyConfigMenu::KeyConfigMenu(OptionsMenuState &state, int player) :
                    _activeKey = &_newKeyConfig.raiseStack;
                    _waitingForKey = true;
                  },
-                 _newKeyConfig.raiseStack, 0, MenuItem::OptionType::NONE));
+                 _newKeyConfig.raiseStack, 0, MenuItem::OptionType::NONE));*/
 
     addItem(MenuItem("Apply", [&]() {
       ConfigHandler::getInstance().setKeyConfig(_newKeyConfig, _player);

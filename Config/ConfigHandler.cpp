@@ -18,6 +18,14 @@
 #include <iostream>
 #include <string>
 
+InputConfig ConfigHandler::DEFAULT_KEYS = InputConfig(new KeyboardKey(SDL_SCANCODE_UP),
+                                                      new KeyboardKey(SDL_SCANCODE_DOWN),
+                                                      new KeyboardKey(SDL_SCANCODE_LEFT),
+                                                      new KeyboardKey(SDL_SCANCODE_RIGHT),
+                                                      new KeyboardKey(SDL_SCANCODE_X),
+                                                      new KeyboardKey(SDL_SCANCODE_Z)
+);
+
 ConfigHandler::ConfigHandler() {
 }
 
@@ -43,44 +51,12 @@ bool ConfigHandler::saveConfig() {
     return true;
 }
 
-KeyConfig ConfigHandler::getKeyConfig(int player) {
-    KeyConfig conf;
-    std::ostringstream confKey;
-    std::string name;
-
-    try {
-
-#define X(key) confKey.clear();\
-    confKey.str("");\
-    confKey << "keys.p" << player << "_" << #key;\
-    name = _settingsTree.get<std::string>(confKey.str());\
-    conf.key = SDL_GetScancodeFromName(name.c_str());
-
-        KEYS
-
-#undef X
-
-    } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
-        std::cerr << "not all keys defined for player " << player
-                  << ", using defaults\n";
-        return DEFAULT_KEYS;
-    }
-
-    return conf;
+InputConfig ConfigHandler::getKeyConfig(int player) {
+    // TODO: implement
+    return DEFAULT_KEYS;
 }
 
-void ConfigHandler::setKeyConfig(KeyConfig config, int player) {
-    std::ostringstream confKey;
-
-#define X(key) confKey.clear();\
-        confKey.str("");\
-        confKey << "keys.p" << player << "_" << #key;\
-        _settingsTree.put(confKey.str(), SDL_GetScancodeName((SDL_Scancode) config.key));
-
-    KEYS
-
-#undef X
+void ConfigHandler::setKeyConfig(InputConfig config, int player) {
 
     StateManager::getInstance().setKeys(config, player);
 }
