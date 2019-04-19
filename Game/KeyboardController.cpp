@@ -11,41 +11,31 @@
 #include <SDL2/SDL.h>
 
 #include "Board.h"
+#include "../InputEvents/KeyboardKey.h"
 
 KeyboardController::KeyboardController(Board &b, const KeyConfig &c) :
-        BoardController(b),
-        _config(c),
-        _directionHeld(NONE),
-        _holdBegin(0),
-        _prevState(Direction::DOWN, false, false){
+    BoardController(b),
+    _config(c),
+    _directionHeld(NONE),
+    _holdBegin(0),
+    _prevState(Direction::DOWN, false, false) {
 }
 
-int KeyboardController::getDirectionKey(Direction d) {
-    switch (d) {
-        case UP:
-            return _config.up;
-            break;
-        case DOWN:
-            return _config.down;
-            break;
-        case LEFT:
-            return _config.left;
-            break;
-        case RIGHT:
-            return _config.right;
-            break;
-        default:
-            return 0;
-            break;
-    }
-}
+
 
 void KeyboardController::tick() {
 
+    // TODO: use loaded config....
+    InputConfig defaultConfig((KeyboardKey(SDL_SCANCODE_UP)),
+                              KeyboardKey(SDL_SCANCODE_DOWN),
+                              KeyboardKey(SDL_SCANCODE_LEFT),
+                              KeyboardKey(SDL_SCANCODE_RIGHT),
+                              KeyboardKey(SDL_SCANCODE_X),
+                              KeyboardKey(SDL_SCANCODE_Z));
 
-    InputState state = InputState::getCurrentState();
+    InputState state = InputState::getCurrentState(defaultConfig);
 
-    InputManager &input = InputManager::getInstance();
+    //InputManager &input = InputManager::getInstance();
 
     if (state._direction != _directionHeld) {
         _directionHeld = state._direction;
@@ -55,13 +45,14 @@ void KeyboardController::tick() {
         _board.inputMoveCursor(_directionHeld);
     }
 
-    if (input.keyDown(_config.swap) || (state._swap && !_prevState._swap)) {
+    if ((state._swap && !_prevState._swap)) {
         _board.inputSwapBlocks();
     }
-    if (input.keyPressed(_config.raiseStack) || state._raiseStack) {
+    if (state._raiseStack) {
         _board.inputForceStackRaise();
     }
 
+    /*
     //debug stuff...
     if (input.keyDown(SDL_SCANCODE_1)) {
         _board.queueGarbage(false, 3, GarbageBlockType::NORMAL);
@@ -83,7 +74,7 @@ void KeyboardController::tick() {
     }
     if (input.keyDown(SDL_SCANCODE_8)) {
         _board.queueGarbage(true, 12, GarbageBlockType::NORMAL);
-    }
+    }*/
 
     _prevState = state;
 }

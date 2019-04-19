@@ -27,7 +27,6 @@ private:
 	Direction _directionHeld;
 	uint32_t _holdBegin;
 	InputState _prevState;
-	int getDirectionKey(Direction);
 };
 
 #endif /* GAME_KEYBOARDCONTROLLER_H_ */

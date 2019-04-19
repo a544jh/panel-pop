@@ -3,51 +3,37 @@
 //
 
 #include <SDL_gamecontroller.h>
+#include <SDL_scancode.h>
 #include "InputState.h"
+#include "InputEvents/KeyboardKey.h"
 
 InputState::InputState(Direction direction, bool swap, bool raiseStack) : _direction(direction),
-                                                                                      _swap(swap),
-                                                                                      _raiseStack(raiseStack) {}
+                                                                          _swap(swap),
+                                                                          _raiseStack(raiseStack) {}
 
-Direction getControllerDirection() {
+InputState InputState::getCurrentState(InputConfig &inputConfig) {
 
-    SDL_GameController *ctrl = SDL_GameControllerOpen(0);
+  Direction direction = getDirection(inputConfig);
 
-    if (SDL_GameControllerGetButton(ctrl, SDL_CONTROLLER_BUTTON_DPAD_UP)) {
-        return Direction::UP;
-    } else if (SDL_GameControllerGetButton(ctrl, SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-        return Direction::DOWN;
-    } else if (SDL_GameControllerGetButton(ctrl, SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
-        return Direction::LEFT;
-    } else if (SDL_GameControllerGetButton(ctrl, SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-        return Direction::RIGHT;
-    }
+  bool swap = inputConfig._swap.isActive();
 
+  bool raise = inputConfig._raiseStack.isActive();
+
+  InputState state = InputState(direction, swap, raise);
+
+  return state;
+}
+
+Direction InputState::getDirection(InputConfig &config) {
+  if (config._up.isActive()) {
+    return Direction::UP;
+  } else if (config._down.isActive()) {
+    return Direction::DOWN;
+  } else if (config._left.isActive()) {
+    return Direction::LEFT;
+  } else if (config._right.isActive()) {
+    return Direction::RIGHT;
+  } else {
     return Direction::NONE;
-
-}
-
-bool getControllerSwap() {
-    SDL_GameController *ctrl = SDL_GameControllerOpen(0);
-
-    return SDL_GameControllerGetButton(ctrl, SDL_CONTROLLER_BUTTON_A);
-}
-
-bool getControllerStackRaise() {
-    SDL_GameController *ctrl = SDL_GameControllerOpen(0);
-
-    return SDL_GameControllerGetButton(ctrl, SDL_CONTROLLER_BUTTON_B) || SDL_GameControllerGetButton(ctrl, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
-}
-
-InputState InputState::getCurrentState() {
-
-    Direction direction = getControllerDirection();
-
-    bool swap = getControllerSwap();
-
-    bool raise = getControllerStackRaise();
-
-    InputState state = InputState(direction, swap, raise);
-
-    return state;
+  }
 }

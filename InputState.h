@@ -5,21 +5,25 @@
 #ifndef PANEL_POP_INPUTSTATE_H
 #define PANEL_POP_INPUTSTATE_H
 
+#include "Config/InputConfig.h"
+
+class InputConfig;
 
 enum Direction {
-    UP, RIGHT, DOWN, LEFT, NONE
+  UP, RIGHT, DOWN, LEFT, NONE
 };
 
 class InputState {
-public:
-    Direction _direction;
-    bool _swap;
-    bool _raiseStack;
+ public:
+  Direction _direction;
+  bool _swap;
+  bool _raiseStack;
 
-    InputState(Direction direction, bool swap, bool raiseStack);
+  InputState(Direction direction, bool swap, bool raiseStack);
 
-    static InputState getCurrentState(); //TODO add config parameter...
+  static InputState getCurrentState(InputConfig &);
+ private:
+  static Direction getDirection(InputConfig &);
 };
-
 
 #endif //PANEL_POP_INPUTSTATE_H
