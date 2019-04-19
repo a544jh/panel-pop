@@ -11,13 +11,13 @@
 #include "../Game/Board.h"
 #include "Renderer.h"
 
-class GbQueueRenderer: public Renderer {
-public:
-	GbQueueRenderer(Board&);
-	virtual ~GbQueueRenderer();
-	SDL_Texture* renderQueue();
-private:
-	Board& _board;
+class GbQueueRenderer : public Renderer {
+ public:
+  GbQueueRenderer(Board &);
+  virtual ~GbQueueRenderer();
+  SDL_Texture *renderQueue();
+ private:
+  Board &_board;
 };
 
 #endif /* RENDERING_GBQUEUERENDERER_H_ */

@@ -8,13 +8,13 @@
 #include "Renderer.h"
 
 Renderer::Renderer() :
-				_SDLContext(SDLContext::getInstance()),
-				_texture(nullptr),
-				_SDLRenderer(_SDLContext.getRenderer()),
-				_spriteSheet(_SDLContext.getSpriteSheet()) {
+    _SDLContext(SDLContext::getInstance()),
+    _texture(nullptr),
+    _SDLRenderer(_SDLContext.getRenderer()),
+    _spriteSheet(_SDLContext.getSpriteSheet()) {
 }
 
 Renderer::~Renderer() {
-	SDL_DestroyTexture(_texture);
+    SDL_DestroyTexture(_texture);
 }
 

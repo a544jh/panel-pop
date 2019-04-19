@@ -13,37 +13,37 @@
 #include "KeyConfig.h"
 
 class ConfigHandler {
-public:
+ public:
 
-	static ConfigHandler& getInstance();
+  static ConfigHandler &getInstance();
 
-	const char* CONFIG_FILENAME = "panelpop.ini";
-	const KeyConfig DEFAULT_KEYS = {
-			SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT,
-			SDL_SCANCODE_RIGHT, SDL_SCANCODE_X, SDL_SCANCODE_Z };
+  const char *CONFIG_FILENAME = "panelpop.ini";
+  const KeyConfig DEFAULT_KEYS = {
+      SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT,
+      SDL_SCANCODE_RIGHT, SDL_SCANCODE_X, SDL_SCANCODE_Z};
 
-	bool loadConfig();
-	bool saveConfig();
+  bool loadConfig();
+  bool saveConfig();
 
-	KeyConfig getKeyConfig(int player);
-	void setKeyConfig(KeyConfig, int player);
-	void setFullscreen(bool);
-	void setMusicVolume(int);
-	void setSfxVolume(int);
+  KeyConfig getKeyConfig(int player);
+  void setKeyConfig(KeyConfig, int player);
+  void setFullscreen(bool);
+  void setMusicVolume(int);
+  void setSfxVolume(int);
 
-	bool getFullscreen();
-	int getMusicVolume();
-	int getSfxVolume();
+  bool getFullscreen();
+  int getMusicVolume();
+  int getSfxVolume();
 
-	int getEndlessHighScore();
-	void setEndlessHighScore(int);
+  int getEndlessHighScore();
+  void setEndlessHighScore(int);
 
-private:
-	ConfigHandler();
-	ConfigHandler(ConfigHandler const&) = delete;
-	void operator=(ConfigHandler const&) = delete;
+ private:
+  ConfigHandler();
+  ConfigHandler(ConfigHandler const &) = delete;
+  void operator=(ConfigHandler const &) = delete;
 
-	boost::property_tree::ptree _settingsTree;
+  boost::property_tree::ptree _settingsTree;
 };
 
 #endif /* CONFIG_CONFIGHANDLER_H_ */

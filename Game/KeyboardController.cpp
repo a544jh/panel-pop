@@ -21,8 +21,6 @@ KeyboardController::KeyboardController(Board &b, const KeyConfig &c) :
     _prevState(Direction::DOWN, false, false) {
 }
 
-
-
 void KeyboardController::tick() {
 
     // TODO: use loaded config....

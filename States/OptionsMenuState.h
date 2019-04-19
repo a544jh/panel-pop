@@ -15,20 +15,20 @@
 
 class Menu;
 
-class OptionsMenuState: public State, public Renderer{
-public:
-	OptionsMenuState();
-	virtual ~OptionsMenuState();
-	void tick();
-	SDL_Texture* render();
-	void goBack();
-	void configurePlayerKeys(int);
+class OptionsMenuState : public State, public Renderer {
+ public:
+  OptionsMenuState();
+  virtual ~OptionsMenuState();
+  void tick();
+  SDL_Texture *render();
+  void goBack();
+  void configurePlayerKeys(int);
 
-private:
-	std::list<Menu*> _menuStack;
-	KeyConfig _p1keys, _p2keys;
-	Menu* _currentMenu;
-	void pushMenu(Menu*);
+ private:
+  std::list<Menu *> _menuStack;
+  KeyConfig _p1keys, _p2keys;
+  Menu *_currentMenu;
+  void pushMenu(Menu *);
 };
 
 #endif /* STATES_OPTIONSMENUSTATE_H_ */

@@ -11,11 +11,11 @@
 #include "Popup.h"
 
 class ComboPopup : public Popup {
-public:
-	ComboPopup();
-	ComboPopup(int x, int y, int value, int lifetime);
-	virtual ~ComboPopup();
-	void render();
+ public:
+  ComboPopup();
+  ComboPopup(int x, int y, int value, int lifetime);
+  virtual ~ComboPopup();
+  void render();
 };
 
 #endif /* COMBOPOPUP_H_ */

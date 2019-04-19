@@ -14,8 +14,8 @@
 #include "../States/StateManager.h"
 
 Menu::Menu() :
-_selection(0),
-_time(SDL_GetTicks()) {
+    _selection(0),
+    _time(SDL_GetTicks()) {
 }
 
 Menu::~Menu() {
@@ -67,7 +67,7 @@ void Menu::resetCursor() {
 }
 
 void Menu::handleInput() {
-    InputManager& input = InputManager::getInstance();
+    InputManager &input = InputManager::getInstance();
     KeyConfig p1keys = StateManager::getInstance().getP1keys();
     KeyConfig p2keys = StateManager::getInstance().getP2keys();
     if (input.keyDown(p1keys.down) || input.keyDown(p2keys.down)) {
@@ -86,7 +86,7 @@ void Menu::handleInput() {
         inputEnter();
     }
     if (input.keyDown(p1keys.raiseStack)
-            || input.keyDown(p2keys.raiseStack)) {
+        || input.keyDown(p2keys.raiseStack)) {
         inputCancel();
     }
 }

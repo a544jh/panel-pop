@@ -10,11 +10,11 @@
 
 #include "Menu.h"
 
-class MainMenu: public Menu {
-public:
-	MainMenu();
-	virtual ~MainMenu();
-	void render() const;
+class MainMenu : public Menu {
+ public:
+  MainMenu();
+  virtual ~MainMenu();
+  void render() const;
 };
 
 #endif /* MENUS_MAINMENU_H_ */

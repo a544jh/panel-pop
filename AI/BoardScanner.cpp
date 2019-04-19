@@ -9,8 +9,8 @@
 #include "BoardScanner.h"
 #include <iostream>
 
-BoardScanner::BoardScanner(Board& board) :
-_board(board) {
+BoardScanner::BoardScanner(Board &board) :
+    _board(board) {
 }
 
 BoardScanner::RowColors BoardScanner::countRowColors() {
@@ -121,7 +121,7 @@ BoardScanner::ChainOffsetArea BoardScanner::findChainOffsetArea() {
         for (int col = 0; col < Board::BOARD_WIDTH; ++col) {
             Board::Tile tile = _board.getTile(row, col);
             if (tile.type == TileType::BLOCK
-                    && tile.b._state == BlockState::EXPLODING) {
+                && tile.b._state == BlockState::EXPLODING) {
                 area.found = true;
                 area.col = col;
                 area.row = row;
@@ -132,11 +132,11 @@ BoardScanner::ChainOffsetArea BoardScanner::findChainOffsetArea() {
     if (!area.found) {
         return area;
     }
-findSize:
+    findSize:
     for (int row = area.row; row < Board::BOARD_HEIGHT; ++row) {
         Board::Tile tile = _board.getTile(row, area.col);
         if (tile.type == TileType::BLOCK
-                && tile.b._state == BlockState::EXPLODING) {
+            && tile.b._state == BlockState::EXPLODING) {
             ++area.offset;
         } else {
             break;
@@ -145,7 +145,7 @@ findSize:
     for (int col = 0; area.col < Board::BOARD_WIDTH; ++col) {
         Board::Tile tile = _board.getTile(area.row, col);
         if (tile.type == TileType::BLOCK
-                && tile.b._state == BlockState::EXPLODING) {
+            && tile.b._state == BlockState::EXPLODING) {
             ++area.width;
         } else {
             break;
@@ -164,26 +164,25 @@ BoardScanner::ChainMatch BoardScanner::findChainMatch() {
 
     int row = 0;
     BoardScanner::ColorCounts lowerCount;
-    BoardScanner::ColorCounts offsetCount = countColorsOn(row + area.offset, 0, Board::BOARD_WIDTH - 1);
-    ;
+    BoardScanner::ColorCounts offsetCount = countColorsOn(row + area.offset, 0, Board::BOARD_WIDTH - 1);;
 
     auto countColors = [&](int matchCol, Direction side) {
-        for (int colorInt = 0; colorInt < BlockColor::COUNT; ++colorInt) {
-            BlockColor color = static_cast<BlockColor> (colorInt);
-            if ((area.width == 1 && lowerCount[color] >= 2 && offsetCount[color] > 0)
-                    || (area.width > 1 && lowerCount[color] > 0 && offsetCount[color] >= 2)) {
-                match.found = true;
-                match.color = color;
-                match.side = side;
-                match.col = matchCol;
-                match.row = row;
-                match.offsetRow = row + area.offset;
-                return match;
-            }
-        }
+      for (int colorInt = 0; colorInt < BlockColor::COUNT; ++colorInt) {
+          BlockColor color = static_cast<BlockColor> (colorInt);
+          if ((area.width == 1 && lowerCount[color] >= 2 && offsetCount[color] > 0)
+              || (area.width > 1 && lowerCount[color] > 0 && offsetCount[color] >= 2)) {
+              match.found = true;
+              match.color = color;
+              match.side = side;
+              match.col = matchCol;
+              match.row = row;
+              match.offsetRow = row + area.offset;
+              return match;
+          }
+      }
 
-        match.found = false;
-        return match;
+      match.found = false;
+      return match;
     };
 
     if (area.col > 0) {

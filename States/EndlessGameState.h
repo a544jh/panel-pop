@@ -15,11 +15,11 @@
 #include "GameState.h"
 
 class EndlessGameState : public GameState {
-public:
-    EndlessGameState();
-    virtual ~EndlessGameState();
+ public:
+  EndlessGameState();
+  virtual ~EndlessGameState();
 
-private:
+ private:
 
 };
 

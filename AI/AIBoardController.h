@@ -8,35 +8,32 @@
 
 #include "BoardScanner.h"
 
-
-
 class AIBoardController : public BoardController {
-public:
+ public:
 
-    enum InputAction {
-        UP, RIGHT, DOWN, LEFT, SWAP, RAISE, WAIT
-    };
+  enum InputAction {
+    UP, RIGHT, DOWN, LEFT, SWAP, RAISE, WAIT
+  };
 
-    AIBoardController(Board&);
+  AIBoardController(Board &);
 
-    void tick() override;
+  void tick() override;
 
-    virtual ~AIBoardController();
-private:
-    BoardScanner _scanner;
+  virtual ~AIBoardController();
+ private:
+  BoardScanner _scanner;
 
-    std::queue<InputAction> _inputQueue;
-    std::queue<CursorMoveAction> _cursorQueue;
-    std::queue<BlockMoveAction> _blockMoveQueue;
+  std::queue<InputAction> _inputQueue;
+  std::queue<CursorMoveAction> _cursorQueue;
+  std::queue<BlockMoveAction> _blockMoveQueue;
 
-    void doInput(InputAction);
-    void doCursorMove(int x, int y);
-    void doBlockMove(int x, int y, int dx, int dy);
-    void doVerticalMatch(BoardScanner::VerticalMatch match);
-    void doChainMatch(BoardScanner::ChainMatch match);
+  void doInput(InputAction);
+  void doCursorMove(int x, int y);
+  void doBlockMove(int x, int y, int dx, int dy);
+  void doVerticalMatch(BoardScanner::VerticalMatch match);
+  void doChainMatch(BoardScanner::ChainMatch match);
 
-
-    void basicVerticalmatchStrat();
+  void basicVerticalmatchStrat();
 
 };
 

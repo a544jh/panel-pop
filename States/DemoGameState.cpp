@@ -18,7 +18,7 @@ DemoGameState::DemoGameState() {
 
     _game = new VsGame();
 
-    _gameRenderer = new VsGameRenderer((VsGame&) * _game);
+    _gameRenderer = new VsGameRenderer((VsGame &) *_game);
 
     _game->getBoard(0).setEventHandler(new BoardEventHandler(*_gameRenderer, 0));
     _game->getBoard(1).setEventHandler(new BoardEventHandler(*_gameRenderer, 1));
@@ -30,7 +30,7 @@ DemoGameState::DemoGameState() {
 
 void DemoGameState::tick() {
 
-    InputManager& input = InputManager::getInstance();
+    InputManager &input = InputManager::getInstance();
     if (input.anyKeyDown()) {
         Mix_HaltMusic();
         StateManager::getInstance().returnToTitle();
@@ -38,7 +38,7 @@ void DemoGameState::tick() {
     }
     if (_game->getState() == Game::State::RUNNING) {
         _playerBoardController->tick();
-        for (BoardController* controller : _opponentBoardcontollers) {
+        for (BoardController *controller : _opponentBoardcontollers) {
             controller->tick();
         }
     } else if (_game->getState() == Game::State::ENDED) {
@@ -51,11 +51,15 @@ void DemoGameState::tick() {
 
 }
 
-SDL_Texture* DemoGameState::render() {
-    SDL_Texture* texture = _gameRenderer->renderGame();
+SDL_Texture *DemoGameState::render() {
+    SDL_Texture *texture = _gameRenderer->renderGame();
     SDL_SetRenderTarget(SDLContext::getInstance().getRenderer(), texture);
-    if(SDL_GetTicks() % 1000 < 500){
-        SDLContext::getInstance().renderText("PUSH ANY KEY",{255, 255, 255}, SDLContext::getInstance()._fontPs, 440, 450);
+    if (SDL_GetTicks() % 1000 < 500) {
+        SDLContext::getInstance().renderText("PUSH ANY KEY",
+                                             {255, 255, 255},
+                                             SDLContext::getInstance()._fontPs,
+                                             440,
+                                             450);
     }
     return texture;
 }

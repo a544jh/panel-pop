@@ -10,7 +10,7 @@
 #include "../InputManager.h"
 
 void GameState::tick() {
-    InputManager& input = InputManager::getInstance();
+    InputManager &input = InputManager::getInstance();
     if (input.keyDown(SDL_SCANCODE_5)) {
         _game->inputTogglePause();
     }
@@ -19,12 +19,12 @@ void GameState::tick() {
     }
     if (_game->getState() == Game::State::RUNNING) {
         _playerBoardController->tick();
-        for (BoardController* controller : _opponentBoardcontollers) {
+        for (BoardController *controller : _opponentBoardcontollers) {
             controller->tick();
         }
     } else if (_game->getState() == Game::State::PAUSED) {
         //send input to pause menu instead
-        PauseMenu& menu = _game->getPauseMenu();
+        PauseMenu &menu = _game->getPauseMenu();
         menu.handleInput();
     } else if (_game->getState() == Game::State::ENDED) {
         //TODO: change to any key and add timeout..?
@@ -36,7 +36,7 @@ void GameState::tick() {
     _gameRenderer->tick();
 }
 
-SDL_Texture* GameState::render() {
+SDL_Texture *GameState::render() {
     return _gameRenderer->renderGame();
 }
 
@@ -44,7 +44,7 @@ GameState::~GameState() {
     delete _game;
     delete _gameRenderer;
     delete _playerBoardController;
-    for (BoardController* bc : _opponentBoardcontollers) {
+    for (BoardController *bc : _opponentBoardcontollers) {
         delete bc;
     }
 }

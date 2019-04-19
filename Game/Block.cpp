@@ -9,16 +9,16 @@
 #include <stdlib.h>
 
 Block::Block() :
-				_state(NORMAL),
-				_color(COUNT),
-				_falling(false),
-				_floatTimer(0),
-				_swapTimer(0),
-				_chain(false),
-				_explOrder(0),
-				_explosionTicks(0),
-				_explosionAnimTicks(0),
-				_explosionTimer(0) {
+    _state(NORMAL),
+    _color(COUNT),
+    _falling(false),
+    _floatTimer(0),
+    _swapTimer(0),
+    _chain(false),
+    _explOrder(0),
+    _explosionTicks(0),
+    _explosionAnimTicks(0),
+    _explosionTimer(0) {
 
 }
 
@@ -26,11 +26,11 @@ Block::~Block() {
 }
 
 BlockColor Block::getRandomColor(std::list<int> colors) {
-	auto it = colors.begin();
+    auto it = colors.begin();
 
-	int r = (rand() % colors.size());
-	for (int k = 0; k < r; k++) {
-		it++;
-	}
-	return static_cast<BlockColor>(*it);
+    int r = (rand() % colors.size());
+    for (int k = 0; k < r; k++) {
+        it++;
+    }
+    return static_cast<BlockColor>(*it);
 }

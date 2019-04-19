@@ -11,30 +11,30 @@
 #include <array>
 
 class InputManager {
-public:
-    static InputManager &getInstance();
+ public:
+  static InputManager &getInstance();
 
-    void poll();
+  void poll();
 
-    bool _quit;
-    int _keys_len;
-    const uint8_t *_keys;
-    uint8_t *_prevKeys;
+  bool _quit;
+  int _keys_len;
+  const uint8_t *_keys;
+  uint8_t *_prevKeys;
 
-    bool keyDown(int); // key pressed down this poll
-    bool anyKeyDown();
+  bool keyDown(int); // key pressed down this poll
+  bool anyKeyDown();
 
-    bool keyUp(int);
+  bool keyUp(int);
 
-    bool keyPressed(int); // key is down now
-    int getKeyDown();
+  bool keyPressed(int); // key is down now
+  int getKeyDown();
 
-private:
-    InputManager();
+ private:
+  InputManager();
 
-    InputManager(InputManager const &) = delete;
+  InputManager(InputManager const &) = delete;
 
-    void operator=(InputManager const &) = delete;
+  void operator=(InputManager const &) = delete;
 };
 
 #endif /* INPUTMANAGER_H_ */

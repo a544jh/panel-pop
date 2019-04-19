@@ -14,38 +14,36 @@
 class GameEventHandler;
 
 class VsGame : public Game {
-public:
+ public:
 
-    VsGame();
+  VsGame();
 
+  static const int MATCH_POINTS = 2;
 
+  virtual ~VsGame();
 
-    static const int MATCH_POINTS = 2;
+  void reset();
+  void tick();
 
-    virtual ~VsGame();
+  int getP1MatchPoints() const;
+  int getP1Points() const;
+  int getP2MatchPoints() const;
+  int getP2Points() const;
+  Board &getBoard(int id);
 
-    void reset();
-    void tick();
+ private:
 
-    int getP1MatchPoints() const;
-    int getP1Points() const;
-    int getP2MatchPoints() const;
-    int getP2Points() const;
-    Board& getBoard(int id);
+  Board _board0;
+  Board _board1;
 
-private:
+  int _p1MatchPoints;
+  int _p2MatchPoints;
+  int _p1Points;
+  int _p2Points;
 
-    Board _board0;
-    Board _board1;
+  void handleEnd();
 
-    int _p1MatchPoints;
-    int _p2MatchPoints;
-    int _p1Points;
-    int _p2Points;
-
-    void handleEnd();
-
-    void handleGarbageSpawning(Board&, Board&);
+  void handleGarbageSpawning(Board &, Board &);
 };
 
 #endif /* GAME_H_ */

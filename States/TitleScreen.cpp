@@ -12,14 +12,13 @@
 #include "DemoGameState.h"
 #include "FadeTransition.h"
 
-TitleScreen::TitleScreen() : _tr(*this)
-, _idleTicks(0) {
+TitleScreen::TitleScreen() : _tr(*this), _idleTicks(0) {
 }
 
 TitleScreen::~TitleScreen() {
 }
 
-SDL_Texture* TitleScreen::render() {
+SDL_Texture *TitleScreen::render() {
     return _tr.render();
 }
 
@@ -29,13 +28,13 @@ void TitleScreen::tick() {
     }
     if (++_idleTicks >= DEMO_TIMEOUT) {
         StateManager::getInstance().switchToState(new FadeTransition([]() {
-            return new DemoGameState;
+          return new DemoGameState;
         }));
     }
     _menu.handleInput();
 }
 
-const MainMenu& TitleScreen::getMenu() const {
+const MainMenu &TitleScreen::getMenu() const {
     return _menu;
 }
 

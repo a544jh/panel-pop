@@ -10,30 +10,30 @@
 #include <sstream>
 
 Popup::Popup() :
-				_value(0) {
+    _value(0) {
 }
 
 Popup::Popup(int x, int y, int value, int lifetime) :
-				Particle(x, y, 0, -1, lifetime),
-				_value(value) {
-	initDigits();
+    Particle(x, y, 0, -1, lifetime),
+    _value(value) {
+    initDigits();
 }
 
 void Popup::tick() {
-	if (_ticksLived <= 5) {
-		_x += _vx;
-		_y += _vy;
-	}
-	++_ticksLived;
-	if (_ticksLived >= _ticksToLive) {
-		_alive = false;
-	}
+    if (_ticksLived <= 5) {
+        _x += _vx;
+        _y += _vy;
+    }
+    ++_ticksLived;
+    if (_ticksLived >= _ticksToLive) {
+        _alive = false;
+    }
 }
 
 void Popup::initDigits() {
-	std::ostringstream os;
-	os << _value;
-	_digits = os.str();
+    std::ostringstream os;
+    os << _value;
+    _digits = os.str();
 }
 
 Popup::~Popup() {

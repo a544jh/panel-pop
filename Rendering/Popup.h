@@ -13,18 +13,18 @@
 #include "Particle.h"
 
 class Popup : public Particle {
-public:
-	Popup();
-	Popup(int x, int y, int value, int lifetime);
+ public:
+  Popup();
+  Popup(int x, int y, int value, int lifetime);
 
-	int _value;
-	std::string _digits;
+  int _value;
+  std::string _digits;
 
-	virtual void tick();
-	virtual void render() =0;
-	virtual ~Popup();
-private:
-	void initDigits();
+  virtual void tick();
+  virtual void render() = 0;
+  virtual ~Popup();
+ private:
+  void initDigits();
 };
 
 #endif /* POPUP_H_ */

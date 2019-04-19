@@ -11,10 +11,10 @@
 #include "GameState.h"
 
 class VsGameState : public GameState {
-public:
-    VsGameState();
-    virtual ~VsGameState();
-private:
+ public:
+  VsGameState();
+  virtual ~VsGameState();
+ private:
 };
 
 #endif /* STATES_VSGAMESTATE_H_ */

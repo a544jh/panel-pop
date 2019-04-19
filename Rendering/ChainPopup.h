@@ -11,11 +11,11 @@
 #include "Popup.h"
 
 class ChainPopup : public Popup {
-public:
-	ChainPopup();
-	virtual ~ChainPopup();
-	ChainPopup(int x, int y, int value, int lifetime);
-	void render();
+ public:
+  ChainPopup();
+  virtual ~ChainPopup();
+  ChainPopup(int x, int y, int value, int lifetime);
+  void render();
 };
 
 #endif /* CHAINPOPUP_H_ */

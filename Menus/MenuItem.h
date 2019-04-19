@@ -13,35 +13,34 @@
 
 class Menu;
 
-typedef std::function<void() > command;
+typedef std::function<void()> command;
 
 class MenuItem {
-public:
+ public:
 
-    enum class OptionType {
-        NONE, SLIDER, TOGGLE, PLAYER
-    };
+  enum class OptionType {
+    NONE, SLIDER, TOGGLE, PLAYER
+  };
 
+  MenuItem(std::string, command);
+  MenuItem(std::string, command, int value, int max, OptionType type);
+  virtual ~MenuItem();
+  command getFn() const;
+  const std::string &getName() const;
+  const std::string getOptionString() const;
+  void increase();
+  void decrease();
+  OptionType getOptionType() const;
+  int getMax() const;
+  int getValue() const;
+  void setValue(int value);
 
-    MenuItem(std::string, command);
-    MenuItem(std::string, command, int value, int max, OptionType type);
-    virtual ~MenuItem();
-    command getFn() const;
-    const std::string& getName() const;
-    const std::string getOptionString() const;
-    void increase();
-    void decrease();
-    OptionType getOptionType() const;
-    int getMax() const;
-    int getValue() const;
-    void setValue(int value);
-
-private:
-    OptionType _optionType;
-    std::string _name;
-    command _fn;
-    int _value;
-    int _max;
+ private:
+  OptionType _optionType;
+  std::string _name;
+  command _fn;
+  int _value;
+  int _max;
 };
 
 #endif /* MENUS_MENUITEM_H_ */

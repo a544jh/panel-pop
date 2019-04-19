@@ -16,10 +16,10 @@
 #include "StateManager.h"
 
 OptionsMenuState::OptionsMenuState() :
-_p1keys(ConfigHandler::getInstance().getKeyConfig(1)),
-_p2keys(ConfigHandler::getInstance().getKeyConfig(2)) {
+    _p1keys(ConfigHandler::getInstance().getKeyConfig(1)),
+    _p2keys(ConfigHandler::getInstance().getKeyConfig(2)) {
     _texture = SDL_CreateTexture(_SDLRenderer, SDL_PIXELFORMAT_RGBA8888,
-            SDL_TEXTUREACCESS_TARGET, 640, 480);
+                                 SDL_TEXTUREACCESS_TARGET, 640, 480);
     _currentMenu = new OptionsMenu(*this);
 }
 
@@ -32,7 +32,7 @@ void OptionsMenuState::tick() {
     _currentMenu->handleInput();
 }
 
-SDL_Texture* OptionsMenuState::render() {
+SDL_Texture *OptionsMenuState::render() {
     SDL_SetRenderTarget(_SDLRenderer, _texture);
     SDL_RenderClear(_SDLRenderer);
     _currentMenu->render();
@@ -54,7 +54,7 @@ void OptionsMenuState::configurePlayerKeys(int player) {
     pushMenu(new KeyConfigMenu(*this, player));
 }
 
-void OptionsMenuState::pushMenu(Menu* menu) {
+void OptionsMenuState::pushMenu(Menu *menu) {
     _menuStack.push_back(_currentMenu);
     _currentMenu = menu;
 }

@@ -22,25 +22,25 @@
 #include "FadeTransition.h"
 
 StateManager::StateManager() :
-_currentState(nullptr),
-_newState(nullptr),
-_switchState(false),
-SDL(SDLContext::getInstance()),
-input(InputManager::getInstance()),
-_lastTick(0),
-_frameTime(16),
-_running(true),
-_framesRun(0),
-_startTime(SDL_GetTicks()),
-_lastFrame(0),
-_avgFps(0),
-_showFps(false) {
+    _currentState(nullptr),
+    _newState(nullptr),
+    _switchState(false),
+    SDL(SDLContext::getInstance()),
+    input(InputManager::getInstance()),
+    _lastTick(0),
+    _frameTime(16),
+    _running(true),
+    _framesRun(0),
+    _startTime(SDL_GetTicks()),
+    _lastFrame(0),
+    _avgFps(0),
+    _showFps(false) {
     _p1keys = ConfigHandler::getInstance().getKeyConfig(1);
     _p2keys = ConfigHandler::getInstance().getKeyConfig(2);
     _currentState = new TitleScreen();
 }
 
-StateManager& StateManager::getInstance() {
+StateManager &StateManager::getInstance() {
     static StateManager instance;
     return instance;
 }
@@ -60,17 +60,17 @@ void StateManager::run() {
                 break;
             }
             if (input.keyPressed(SDL_SCANCODE_LALT)
-                    && input.keyDown(SDL_SCANCODE_RETURN)) {
+                && input.keyDown(SDL_SCANCODE_RETURN)) {
                 SDL.toggleFullscreen();
             }
             if (input.keyPressed(SDL_SCANCODE_LCTRL)
-                    && input.keyDown(SDL_SCANCODE_F)) {
+                && input.keyDown(SDL_SCANCODE_F)) {
                 _showFps = !_showFps;
             }
             _currentState->tick();
         }
         if (render) {
-            SDL_Texture* t = _currentState->render();
+            SDL_Texture *t = _currentState->render();
 
             if (_showFps) {
                 SDL_SetRenderTarget(SDL.getRenderer(), t);
@@ -93,7 +93,7 @@ void StateManager::run() {
     }
 }
 
-void StateManager::switchToState(State* state) {
+void StateManager::switchToState(State *state) {
     _newState = state;
     _switchState = true;
 }
@@ -102,37 +102,34 @@ float StateManager::getAvgFps() const {
     return _avgFps;
 }
 
-State* StateManager::getCurrentState() const {
+State *StateManager::getCurrentState() const {
     return _currentState;
 }
 
 void StateManager::returnToTitle() {
-    if (!dynamic_cast<FadeTransition*>(_currentState)) {
+    if (!dynamic_cast<FadeTransition *>(_currentState)) {
         switchToState(new FadeTransition([]() {
-            return new TitleScreen;
+          return new TitleScreen;
         }));
     }
 }
 
-const KeyConfig& StateManager::getP1keys() const {
+const KeyConfig &StateManager::getP1keys() const {
 
     return _p1keys;
 }
 
 void StateManager::setKeys(KeyConfig keys, int player) {
     switch (player) {
-        case 1:
-            _p1keys = keys;
+        case 1:_p1keys = keys;
             break;
-        case 2:
-            _p2keys = keys;
+        case 2:_p2keys = keys;
 
-        default:
-            break;
+        default:break;
     }
 }
 
-const KeyConfig& StateManager::getP2keys() const {
+const KeyConfig &StateManager::getP2keys() const {
 
     return _p2keys;
 }
@@ -145,7 +142,7 @@ void StateManager::showFps() {
         _avgFps = 0;
     }
     ss << std::setprecision(5) << _avgFps;
-    SDL.renderText(ss.str(),{0, 0, 0}, SDL._fontPs, 0, 0);
+    SDL.renderText(ss.str(), {0, 0, 0}, SDL._fontPs, 0, 0);
 }
 
 void StateManager::goBack() {

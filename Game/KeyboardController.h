@@ -15,18 +15,18 @@
 #include "../Config/KeyConfig.h"
 #include "../InputState.h"
 
-class KeyboardController: public BoardController {
-public:
-	KeyboardController(Board&, const KeyConfig&);
-	void tick();
-	virtual ~KeyboardController();
-	const KeyConfig _config;
-	const uint32_t REPEAT_MS = 200; //until direction starts repeating
+class KeyboardController : public BoardController {
+ public:
+  KeyboardController(Board &, const KeyConfig &);
+  void tick();
+  virtual ~KeyboardController();
+  const KeyConfig _config;
+  const uint32_t REPEAT_MS = 200; //until direction starts repeating
 
-private:
-	Direction _directionHeld;
-	uint32_t _holdBegin;
-	InputState _prevState;
+ private:
+  Direction _directionHeld;
+  uint32_t _holdBegin;
+  InputState _prevState;
 };
 
 #endif /* GAME_KEYBOARDCONTROLLER_H_ */

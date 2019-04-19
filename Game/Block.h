@@ -11,33 +11,33 @@
 #include <list>
 
 enum BlockState {
-	NORMAL, FLOATING, MATCHED, EXPLODING, SWAPPING_LEFT, SWAPPING_RIGHT
+  NORMAL, FLOATING, MATCHED, EXPLODING, SWAPPING_LEFT, SWAPPING_RIGHT
 };
 
 enum BlockColor {
-	PURPLE, YELLOW, RED, CYAN, GREEN,
-	COUNT
+  PURPLE, YELLOW, RED, CYAN, GREEN,
+  COUNT
 };
 
 class Block {
-public:
-	Block();
-	virtual ~Block();
+ public:
+  Block();
+  virtual ~Block();
 
-	static BlockColor getRandomColor(std::list<int>);
+  static BlockColor getRandomColor(std::list<int>);
 
-	BlockState _state;
-	BlockColor _color;
+  BlockState _state;
+  BlockColor _color;
 
-	bool _falling;//to prevent block from getting matched in mid-air
-	int _floatTimer;//the blocks floats for a while after getting swapped
-	int _swapTimer;//for swap delay and animation
-	bool _chain;
-	int _explOrder; //to determine sound effect
+  bool _falling;//to prevent block from getting matched in mid-air
+  int _floatTimer;//the blocks floats for a while after getting swapped
+  int _swapTimer;//for swap delay and animation
+  bool _chain;
+  int _explOrder; //to determine sound effect
 
-	int _explosionTicks; //ticks it takes for block to explode
-	int _explosionAnimTicks; //ticks it takes for the explosion animation to complete
-	int _explosionTimer; //gets increased every tick when block is exploding
+  int _explosionTicks; //ticks it takes for block to explode
+  int _explosionAnimTicks; //ticks it takes for the explosion animation to complete
+  int _explosionTimer; //gets increased every tick when block is exploding
 };
 
 #endif /* BLOCK_H_ */

@@ -13,31 +13,31 @@
 
 class EndlessGame;
 
-class EndlessGameRenderer: public GameRenderer {
-public:
-	EndlessGameRenderer(EndlessGame&);
-	virtual ~EndlessGameRenderer();
+class EndlessGameRenderer : public GameRenderer {
+ public:
+  EndlessGameRenderer(EndlessGame &);
+  virtual ~EndlessGameRenderer();
 
-	void tick();
-	SDL_Texture* renderGame();
+  void tick();
+  SDL_Texture *renderGame();
 
-	static const int BOARD0_X = 58;
-	static const int BOARD0_Y = 43;
+  static const int BOARD0_X = 58;
+  static const int BOARD0_Y = 43;
 
-	void shakeBoard(int id, int duration);
+  void shakeBoard(int id, int duration);
 
-private:
-	EndlessGame& _game;
-	BoardRenderer _boardRenderer;
+ private:
+  EndlessGame &_game;
+  BoardRenderer _boardRenderer;
 
-	SDL_Texture* _bg;
-	SDL_Texture* _1pbg;
+  SDL_Texture *_bg;
+  SDL_Texture *_1pbg;
 
-	int _bShake;
+  int _bShake;
 
-	void renderBoard();
-	void renderStatsText();
-	void handleShake();
+  void renderBoard();
+  void renderStatsText();
+  void handleShake();
 };
 
 #endif /* ENDLESSGAMERENDERER_H_ */

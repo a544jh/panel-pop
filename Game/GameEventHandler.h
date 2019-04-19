@@ -13,22 +13,22 @@
 class SDLContext;
 
 class GameEventHandler {
-public:
-	GameEventHandler();
-	virtual ~GameEventHandler();
+ public:
+  GameEventHandler();
+  virtual ~GameEventHandler();
 
-	void countdown(int countdownState);
-	void gameReset();
-	void gamePause();
-	void gameResume();
-	void panicBegin();
-	void panicEnd();
-	void tickEnd();
+  void countdown(int countdownState);
+  void gameReset();
+  void gamePause();
+  void gameResume();
+  void panicBegin();
+  void panicEnd();
+  void tickEnd();
 
-private:
-	SDLContext& _SDLContext;
-	int _countdownState;
-	bool _songIntro;
+ private:
+  SDLContext &_SDLContext;
+  int _countdownState;
+  bool _songIntro;
 
 };
 

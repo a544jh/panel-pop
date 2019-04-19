@@ -15,10 +15,10 @@
 
 EndlessGameState::EndlessGameState() {
     _game = new EndlessGame();
-    _gameRenderer = new EndlessGameRenderer((EndlessGame &) * _game);
+    _gameRenderer = new EndlessGameRenderer((EndlessGame &) *_game);
     _game->getBoard(0).setEventHandler(new BoardEventHandler(*_gameRenderer, 0));
     _playerBoardController = new KeyboardController(_game->getBoard(0),
-            StateManager::getInstance().getP1keys());
+                                                    StateManager::getInstance().getP1keys());
 }
 
 EndlessGameState::~EndlessGameState() {

@@ -24,26 +24,26 @@
 #include <sstream>
 
 SDLContext::SDLContext() :
-        _fontPs(nullptr),
-        _fontSquare(nullptr),
-        _musicBgIntro(nullptr),
-        _musicBgLoop(nullptr),
-        _musicPanic(nullptr),
-        _sfxCursor(nullptr),
-        _sfxSwap(nullptr),
-        _sfxThump(nullptr),
-        _sfxBigThump(nullptr),
-        _sfxCombo(nullptr),
-        _sfxChain(nullptr),
-        _sfxFanfare1(nullptr),
-        _sfxFanfare2(nullptr),
-        _sfxFanfare3(nullptr),
-        _sfxCountdown(nullptr),
-        _sfxGo(nullptr),
-        _sfxPause(nullptr),
-        _window(nullptr),
-        _renderer(nullptr),
-        _spriteSheet(nullptr) {
+    _fontPs(nullptr),
+    _fontSquare(nullptr),
+    _musicBgIntro(nullptr),
+    _musicBgLoop(nullptr),
+    _musicPanic(nullptr),
+    _sfxCursor(nullptr),
+    _sfxSwap(nullptr),
+    _sfxThump(nullptr),
+    _sfxBigThump(nullptr),
+    _sfxCombo(nullptr),
+    _sfxChain(nullptr),
+    _sfxFanfare1(nullptr),
+    _sfxFanfare2(nullptr),
+    _sfxFanfare3(nullptr),
+    _sfxCountdown(nullptr),
+    _sfxGo(nullptr),
+    _sfxPause(nullptr),
+    _window(nullptr),
+    _renderer(nullptr),
+    _spriteSheet(nullptr) {
 }
 
 SDLContext &SDLContext::getInstance() {
@@ -120,7 +120,6 @@ bool SDLContext::init() {
             SDL_Log("Index \'%i\' is not a compatible controller.", i);
         }
     }
-
 
     Mix_VolumeMusic(ConfigHandler::getInstance().getMusicVolume());
     Mix_Volume(-1, ConfigHandler::getInstance().getSfxVolume());

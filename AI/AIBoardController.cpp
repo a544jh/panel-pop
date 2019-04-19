@@ -3,9 +3,9 @@
 
 #include "AIBoardController.h"
 
-AIBoardController::AIBoardController(Board& board) :
-BoardController(board),
-_scanner(board) {
+AIBoardController::AIBoardController(Board &board) :
+    BoardController(board),
+    _scanner(board) {
 }
 
 void AIBoardController::tick() {
@@ -29,27 +29,20 @@ void AIBoardController::tick() {
 
 void AIBoardController::doInput(InputAction action) {
     switch (action) {
-        case (UP):
-            _board.inputMoveCursor(Direction::UP);
+        case (UP):_board.inputMoveCursor(Direction::UP);
             break;
-        case (RIGHT):
-            _board.inputMoveCursor(Direction::RIGHT);
+        case (RIGHT):_board.inputMoveCursor(Direction::RIGHT);
             break;
-        case (DOWN):
-            _board.inputMoveCursor(Direction::DOWN);
+        case (DOWN):_board.inputMoveCursor(Direction::DOWN);
             break;
-        case (LEFT):
-            _board.inputMoveCursor(Direction::LEFT);
+        case (LEFT):_board.inputMoveCursor(Direction::LEFT);
             break;
-        case (SWAP):
-            _board.inputSwapBlocks();
+        case (SWAP):_board.inputSwapBlocks();
             break;
-        case (RAISE):
-            _board.inputForceStackRaise();
+        case (RAISE):_board.inputForceStackRaise();
             break;
 
-        case (WAIT):
-            break;
+        case (WAIT):break;
     }
 
 }
@@ -139,7 +132,8 @@ void AIBoardController::doChainMatch(BoardScanner::ChainMatch match) {
 
     //upper (offset)
     int col = _scanner.findColorCol(match.color, match.offsetRow);
-    BlockMoveAction action = {col, match.offsetRow, match.col + (match.side == Direction::LEFT ? 1 : -1), match.offsetRow};
+    BlockMoveAction
+        action = {col, match.offsetRow, match.col + (match.side == Direction::LEFT ? 1 : -1), match.offsetRow};
     _blockMoveQueue.push(action);
     //lower
     if (match.side == Direction::LEFT) {

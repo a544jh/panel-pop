@@ -17,18 +17,18 @@
 #include"../Rendering/GameRenderer.h"
 
 class GameState : public State {
-public:
-  
-    void goBack();
-    virtual SDL_Texture* render();
-    virtual void tick();
+ public:
 
-    virtual ~GameState();
-protected:
-    Game* _game;
-    GameRenderer* _gameRenderer;
-    BoardController* _playerBoardController;
-    std::vector<BoardController*> _opponentBoardcontollers;
+  void goBack();
+  virtual SDL_Texture *render();
+  virtual void tick();
+
+  virtual ~GameState();
+ protected:
+  Game *_game;
+  GameRenderer *_gameRenderer;
+  BoardController *_playerBoardController;
+  std::vector<BoardController *> _opponentBoardcontollers;
 };
 #endif /* GAMESTATE_H */
 

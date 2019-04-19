@@ -12,14 +12,14 @@
 #include "GameEventHandler.h"
 
 Game::Game() :
-_eventHandler(new GameEventHandler()),
-_state(State::RUNNING),
-_ticksRun(0),
-_panic(false),
-_startTime(SDL_GetTicks()),
-_pausedTime(0),
-_pauseMenu(*this),
-_lastContdownMS(0) {
+    _eventHandler(new GameEventHandler()),
+    _state(State::RUNNING),
+    _ticksRun(0),
+    _panic(false),
+    _startTime(SDL_GetTicks()),
+    _pausedTime(0),
+    _pauseMenu(*this),
+    _lastContdownMS(0) {
     _eventHandler->gameReset();
 }
 
@@ -68,7 +68,7 @@ Game::State Game::getState() const {
     return _state;
 }
 
-PauseMenu& Game::getPauseMenu() {
+PauseMenu &Game::getPauseMenu() {
     return _pauseMenu;
 }
 

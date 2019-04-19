@@ -10,12 +10,12 @@
 #include "Board.h"
 
 class BoardController {
-public:
-	BoardController(Board&);
-	virtual void tick() =0;
-	virtual ~BoardController();
-protected:
-	Board& _board;
+ public:
+  BoardController(Board &);
+  virtual void tick() = 0;
+  virtual ~BoardController();
+ protected:
+  Board &_board;
 };
 
 #endif /* GAME_BOARDCONTROLLER_H_ */

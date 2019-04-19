@@ -12,17 +12,17 @@
 
 #include "Renderer.h"
 
-class Particle: public Renderer {
-public:
-	Particle();
-	Particle(int x, int y, int vx, int vy, int lifetime);
+class Particle : public Renderer {
+ public:
+  Particle();
+  Particle(int x, int y, int vx, int vy, int lifetime);
 
-	int _x, _y, _vx, _vy, _ticksToLive, _ticksLived;
-	bool _alive;
+  int _x, _y, _vx, _vy, _ticksToLive, _ticksLived;
+  bool _alive;
 
-	virtual void tick();
-	virtual void render();
-	virtual ~Particle();
+  virtual void tick();
+  virtual void render();
+  virtual ~Particle();
 };
 
 #endif /* RENDERING_PARTICLE_H_ */

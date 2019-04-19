@@ -13,15 +13,15 @@
 class TitleScreen;
 
 class TitleScreenRenderer : public Renderer {
-public:
-	TitleScreenRenderer(TitleScreen&);
-	virtual ~TitleScreenRenderer();
-	void tick();
-	SDL_Texture* render();
-private:
-	TitleScreen& _titleScreen;
-	SDL_Texture* _titleImg;
-	SDL_Texture* _versionText;
+ public:
+  TitleScreenRenderer(TitleScreen &);
+  virtual ~TitleScreenRenderer();
+  void tick();
+  SDL_Texture *render();
+ private:
+  TitleScreen &_titleScreen;
+  SDL_Texture *_titleImg;
+  SDL_Texture *_versionText;
 };
 
 #endif /* RENDERING_TITLESCREENRENDERER_H_ */

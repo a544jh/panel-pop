@@ -10,11 +10,11 @@
 #define MOVEACTIONS_H
 
 struct BlockMoveAction {
-    int x, y, dx, dy;
+  int x, y, dx, dy;
 };
 
 struct CursorMoveAction {
-    int x, y;
+  int x, y;
 };
 
 #endif /* MOVEACTIONS_H */

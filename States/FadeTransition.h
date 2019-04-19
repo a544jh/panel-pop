@@ -13,22 +13,22 @@
 #include <functional>
 
 class FadeTransition : public State {
-    typedef std::function<State* () > StateConstructor;
+  typedef std::function<State *()> StateConstructor;
 
-public:
-    FadeTransition(StateConstructor);
-    const int TRANSITION_TICKS = 120;
+ public:
+  FadeTransition(StateConstructor);
+  const int TRANSITION_TICKS = 120;
 
-    SDL_Texture* render() override;
-    void tick() override;
-    void goBack() override;
+  SDL_Texture *render() override;
+  void tick() override;
+  void goBack() override;
 
-    virtual ~FadeTransition();
-private:
-    StateConstructor _nextStateConstr;
-    int _ticksRun;
-    SDL_Texture* _prevTexture;
-    State* _nextState;
+  virtual ~FadeTransition();
+ private:
+  StateConstructor _nextStateConstr;
+  int _ticksRun;
+  SDL_Texture *_prevTexture;
+  State *_nextState;
 };
 
 #endif /* FADETRANSITION_H */

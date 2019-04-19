@@ -1,9 +1,9 @@
- /*
- * EndlessGame.cpp
- *
- *  Created on: 24.2.2016
- *      Author: axelw
- */
+/*
+* EndlessGame.cpp
+*
+*  Created on: 24.2.2016
+*      Author: axelw
+*/
 
 #include "EndlessGame.h"
 
@@ -16,9 +16,9 @@
 class BoardEventHandler;
 
 EndlessGame::EndlessGame() :
-Game(),
-_board(),
-_highScore(ConfigHandler::getInstance().getEndlessHighScore()) {
+    Game(),
+    _board(),
+    _highScore(ConfigHandler::getInstance().getEndlessHighScore()) {
 
 }
 
@@ -72,7 +72,7 @@ void EndlessGame::tick() {
     }
 }
 
-Board& EndlessGame::getBoard(int) {
+Board &EndlessGame::getBoard(int) {
     return _board;
 }
 

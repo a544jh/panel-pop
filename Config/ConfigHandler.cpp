@@ -21,103 +21,103 @@
 ConfigHandler::ConfigHandler() {
 }
 
-ConfigHandler& ConfigHandler::getInstance() {
-	static ConfigHandler instance;
-	return instance;
+ConfigHandler &ConfigHandler::getInstance() {
+    static ConfigHandler instance;
+    return instance;
 }
 
 bool ConfigHandler::loadConfig() {
-	try {
-		boost::property_tree::read_ini(CONFIG_FILENAME, _settingsTree);
-	} catch (std::exception& e) {
-		std::cerr << "error in reading config file, using defaults..."
-				<< std::endl;
-		std::cerr << e.what();
-		return false;
-	}
-	return true;
+    try {
+        boost::property_tree::read_ini(CONFIG_FILENAME, _settingsTree);
+    } catch (std::exception &e) {
+        std::cerr << "error in reading config file, using defaults..."
+                  << std::endl;
+        std::cerr << e.what();
+        return false;
+    }
+    return true;
 }
 
 bool ConfigHandler::saveConfig() {
-	boost::property_tree::write_ini(CONFIG_FILENAME, _settingsTree);
-	return true;
+    boost::property_tree::write_ini(CONFIG_FILENAME, _settingsTree);
+    return true;
 }
 
 KeyConfig ConfigHandler::getKeyConfig(int player) {
-	KeyConfig conf;
-	std::ostringstream confKey;
-	std::string name;
+    KeyConfig conf;
+    std::ostringstream confKey;
+    std::string name;
 
-	try {
+    try {
 
 #define X(key) confKey.clear();\
-	confKey.str("");\
-	confKey << "keys.p" << player << "_" << #key;\
-	name = _settingsTree.get<std::string>(confKey.str());\
-	conf.key = SDL_GetScancodeFromName(name.c_str());
+    confKey.str("");\
+    confKey << "keys.p" << player << "_" << #key;\
+    name = _settingsTree.get<std::string>(confKey.str());\
+    conf.key = SDL_GetScancodeFromName(name.c_str());
 
-		KEYS
+        KEYS
 
 #undef X
 
-	} catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
-		std::cerr << "not all keys defined for player " << player
-				<< ", using defaults\n";
-		return DEFAULT_KEYS;
-	}
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        std::cerr << "not all keys defined for player " << player
+                  << ", using defaults\n";
+        return DEFAULT_KEYS;
+    }
 
-	return conf;
+    return conf;
 }
 
 void ConfigHandler::setKeyConfig(KeyConfig config, int player) {
-	std::ostringstream confKey;
+    std::ostringstream confKey;
 
 #define X(key) confKey.clear();\
-		confKey.str("");\
-		confKey << "keys.p" << player << "_" << #key;\
-		_settingsTree.put(confKey.str(), SDL_GetScancodeName((SDL_Scancode) config.key));
+        confKey.str("");\
+        confKey << "keys.p" << player << "_" << #key;\
+        _settingsTree.put(confKey.str(), SDL_GetScancodeName((SDL_Scancode) config.key));
 
-	KEYS
+    KEYS
 
 #undef X
 
-	StateManager::getInstance().setKeys(config, player);
+    StateManager::getInstance().setKeys(config, player);
 }
 
 void ConfigHandler::setFullscreen(bool fs) {
-	_settingsTree.put("video.fullscreen", fs);
-	if (fs != SDLContext::getInstance().isFullscreen()) {
-		SDLContext::getInstance().toggleFullscreen();
-	}
+    _settingsTree.put("video.fullscreen", fs);
+    if (fs != SDLContext::getInstance().isFullscreen()) {
+        SDLContext::getInstance().toggleFullscreen();
+    }
 }
 
 void ConfigHandler::setMusicVolume(int vol) {
-	_settingsTree.put("audio.music_volume", vol);
-	Mix_VolumeMusic(vol);
+    _settingsTree.put("audio.music_volume", vol);
+    Mix_VolumeMusic(vol);
 }
 
 void ConfigHandler::setSfxVolume(int vol) {
-	_settingsTree.put("audio.sfx_volume", vol);
-	Mix_Volume(-1, vol);
+    _settingsTree.put("audio.sfx_volume", vol);
+    Mix_Volume(-1, vol);
 }
 
 bool ConfigHandler::getFullscreen() {
-	return _settingsTree.get("video.fullscreen", false);
+    return _settingsTree.get("video.fullscreen", false);
 }
 
 int ConfigHandler::getMusicVolume() {
-	return _settingsTree.get("audio.music_volume", MIX_MAX_VOLUME);
+    return _settingsTree.get("audio.music_volume", MIX_MAX_VOLUME);
 }
 
 int ConfigHandler::getSfxVolume() {
-	return _settingsTree.get("audio.sfx_volume", MIX_MAX_VOLUME);
+    return _settingsTree.get("audio.sfx_volume", MIX_MAX_VOLUME);
 }
 
 int ConfigHandler::getEndlessHighScore() {
-	return _settingsTree.get("endless.high_score", 0);
+    return _settingsTree.get("endless.high_score", 0);
 }
 
 void ConfigHandler::setEndlessHighScore(int score) {
-	_settingsTree.put("endless.high_score", score);
+    _settingsTree.put("endless.high_score", score);
 }

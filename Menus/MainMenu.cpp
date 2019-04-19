@@ -22,30 +22,30 @@
 
 MainMenu::MainMenu() {
     addItem(
-            MenuItem("1P Endless",
-            [&]() {
-                StateManager::getInstance().switchToState(new EndlessGameState);
-            }));
+        MenuItem("1P Endless",
+                 [&]() {
+                   StateManager::getInstance().switchToState(new EndlessGameState);
+                 }));
     addItem(
-            MenuItem("VS AI",
-            [&]() {
-                StateManager::getInstance().switchToState(new AIGameState);
-            }));
+        MenuItem("VS AI",
+                 [&]() {
+                   StateManager::getInstance().switchToState(new AIGameState);
+                 }));
     addItem(
-            MenuItem("2P VS",
-            [&]() {
-                StateManager::getInstance().switchToState(new VsGameState);
-            }));
+        MenuItem("2P VS",
+                 [&]() {
+                   StateManager::getInstance().switchToState(new VsGameState);
+                 }));
     addItem(
-            MenuItem("Options",
-            [&]() {
-                StateManager::getInstance().switchToState(new OptionsMenuState);
-            }));
+        MenuItem("Options",
+                 [&]() {
+                   StateManager::getInstance().switchToState(new OptionsMenuState);
+                 }));
     addItem(
-            MenuItem("Quit",
-            [&]() {
-                StateManager::getInstance().quit();
-            }));
+        MenuItem("Quit",
+                 [&]() {
+                   StateManager::getInstance().quit();
+                 }));
 }
 
 MainMenu::~MainMenu() {
@@ -64,7 +64,7 @@ void MainMenu::render() const {
         } else {
             text = " " + text;
         }
-        _SDLContext.renderText(text,{0, 0, 0}, _SDLContext._fontPs, x, y);
+        _SDLContext.renderText(text, {0, 0, 0}, _SDLContext._fontPs, x, y);
 
     }
 }

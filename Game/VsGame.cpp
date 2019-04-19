@@ -14,18 +14,18 @@
 #include "GarbageBlock.h"
 
 VsGame::VsGame() :
-Game(),
-_board0(),
-_board1(),
-_p1MatchPoints(0),
-_p2MatchPoints(0),
-_p1Points(0),
-_p2Points(0) {
+    Game(),
+    _board0(),
+    _board1(),
+    _p1MatchPoints(0),
+    _p2MatchPoints(0),
+    _p1Points(0),
+    _p2Points(0) {
 }
 
 void VsGame::handleEnd() {
     if (_board0.getState() == Board::GAME_OVER
-            || _board1.getState() == Board::GAME_OVER) {
+        || _board1.getState() == Board::GAME_OVER) {
         if (_board0.getState() == Board::RUNNING) {
             _board0.win();
             ++_p1MatchPoints;
@@ -103,18 +103,16 @@ int VsGame::getP2Points() const {
     return _p2Points;
 }
 
-Board& VsGame::getBoard(int id) {
+Board &VsGame::getBoard(int id) {
     switch (id) {
-        case 0:
-            return _board0;
+        case 0:return _board0;
             break;
-        default:
-            return _board1;
+        default:return _board1;
             break;
     }
 }
 
-void VsGame::handleGarbageSpawning(Board& b1, Board& b2) {
+void VsGame::handleGarbageSpawning(Board &b1, Board &b2) {
 
     int combo = b1.getTickMatched();
     int chain = b1.getLastChain() - 1;

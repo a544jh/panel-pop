@@ -14,23 +14,23 @@
 class OptionsMenuState;
 
 class KeyConfigMenu : public Menu {
-public:
-	KeyConfigMenu(OptionsMenuState&, int player);
-	virtual ~KeyConfigMenu();
+ public:
+  KeyConfigMenu(OptionsMenuState &, int player);
+  virtual ~KeyConfigMenu();
 
-	void setActiveKey(int);
+  void setActiveKey(int);
 
-	void render() const;
+  void render() const;
 
-	void handleInput();
+  void handleInput();
 
-private:
-	OptionsMenuState& _state;
-	int _player;
-	int* _activeKey;
-	bool _waitingForKey;
+ private:
+  OptionsMenuState &_state;
+  int _player;
+  int *_activeKey;
+  bool _waitingForKey;
 
-	KeyConfig _newKeyConfig;
+  KeyConfig _newKeyConfig;
 };
 
 #endif /* MENUS_KEYCONFIGMENU_H_ */

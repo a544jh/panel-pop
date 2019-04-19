@@ -7,7 +7,7 @@
 
 #include "BoardController.h"
 
-BoardController::BoardController(Board& b) : _board(b) {
+BoardController::BoardController(Board &b) : _board(b) {
 }
 
 BoardController::~BoardController() {

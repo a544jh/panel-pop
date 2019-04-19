@@ -10,35 +10,35 @@
 #include <iostream>
 
 Board::Board() :
-_state(COUNTDOWN),
-_ticksRun(0),
-_garbageSpawnPositions{0},
-_warnColumns{0},
-_cursorX(2),
-_cursorY(5),
-_tickMatched(0),
-_stackOffset(0),
-_stackRaiseTicks(10),
-_stackRaiseTimer(0),
-_stackRaiseForced(false),
-_graceTimer(0),
-_chainCounter(1),
-_tickChain(false),
-_tickChainEnd(false),
-_lastChain(0),
-_blockOnTopRow(false),
-_panic(false),
-_score(0),
-_countdownState(3){
+    _state(COUNTDOWN),
+    _ticksRun(0),
+    _garbageSpawnPositions{0},
+    _warnColumns{0},
+    _cursorX(2),
+    _cursorY(5),
+    _tickMatched(0),
+    _stackOffset(0),
+    _stackRaiseTicks(10),
+    _stackRaiseTimer(0),
+    _stackRaiseForced(false),
+    _graceTimer(0),
+    _chainCounter(1),
+    _tickChain(false),
+    _tickChainEnd(false),
+    _lastChain(0),
+    _blockOnTopRow(false),
+    _panic(false),
+    _score(0),
+    _countdownState(3) {
     fillRandom();
     fillBufferRow();
 }
 
-void Board::setEventHandler(BoardEventHandler* eh) {
+void Board::setEventHandler(BoardEventHandler *eh) {
     _eventHandler = eh;
 }
 
-BoardEventHandler* Board::getEventHandler() const {
+BoardEventHandler *Board::getEventHandler() const {
     return _eventHandler;
 }
 
@@ -49,8 +49,8 @@ Board Board::reset() {
 }
 
 Board::Tile::Tile() :
-type(AIR),
-g(nullptr) {
+    type(AIR),
+    g(nullptr) {
 }
 
 void Board::fillRandom() {
@@ -105,7 +105,7 @@ void Board::handleGarbageQueue() {
             }
         }
     }
-end:
+    end:
 
     for (auto it = _garbageQueue.begin(); it != _garbageQueue.end(); ++it) {
 
@@ -127,7 +127,7 @@ end:
                     x = _garbageSpawnPositions[0]++ % 2 * 3;
                 } else if (it->size < 6) {
                     x = _garbageSpawnPositions[it->size - 3]++
-                            % (6 - it->size + 1);
+                        % (6 - it->size + 1);
                 }
                 w = it->size;
                 h = 1;
@@ -198,29 +198,28 @@ void Board::inputMoveCursor(Direction d) {
                 _eventHandler->cursorMove();
             }
             break;
-        default:
-            break;
+        default:break;
     }
 }
 
 bool Board::swappable(int row, int col) {
     //prevent block from swapping into empty space with a block above it
-    Tile& t = _tiles[row][col];
+    Tile &t = _tiles[row][col];
     return (((t.type == AIR && _tiles[row + 1][col].type != BLOCK)
-            || t.type == BLOCK) && t.b._state == NORMAL);
+        || t.type == BLOCK) && t.b._state == NORMAL);
 }
 
 bool Board::blockCanFall(int row, int col) {
     if (_tiles[row][col].type != BLOCK || row == 0
-            || _tiles[row][col].b._state != NORMAL) {
+        || _tiles[row][col].b._state != NORMAL) {
         return false;
     } else {
         return (_tiles[row - 1][col].type == AIR
-                && _tiles[row - 1][col].b._state == NORMAL);
+            && _tiles[row - 1][col].b._state == NORMAL);
     }
 }
 
-bool Board::garbageBlockCanFall(GarbageBlock& gb) {
+bool Board::garbageBlockCanFall(GarbageBlock &gb) {
     bool canFall = true;
     int row = gb.getY() - gb.getH();
     int col = gb.getX();
@@ -230,7 +229,7 @@ bool Board::garbageBlockCanFall(GarbageBlock& gb) {
     } else {
         for (int i = col; i <= endCol; ++i) {
             if (_tiles[row][i].type != AIR
-                    || (_tiles[row][i].type == AIR
+                || (_tiles[row][i].type == AIR
                     && _tiles[row][i].b._state != NORMAL)) {
                 canFall = false;
                 break;
@@ -241,12 +240,12 @@ bool Board::garbageBlockCanFall(GarbageBlock& gb) {
 }
 
 bool Board::matchTiles(int r1, int c1, int r2, int c2) {
-    Tile& t1 = _tiles[r1][c1];
-    Tile& t2 = _tiles[r2][c2];
+    Tile &t1 = _tiles[r1][c1];
+    Tile &t2 = _tiles[r2][c2];
     return (t1.type == BLOCK && t2.type == BLOCK
-            && (t1.b._state == NORMAL || t1.b._state == MATCHED)
-            && (t2.b._state == NORMAL || t2.b._state == MATCHED)
-            && !t1.b._falling && !t2.b._falling && t1.b._color == t2.b._color);
+        && (t1.b._state == NORMAL || t1.b._state == MATCHED)
+        && (t2.b._state == NORMAL || t2.b._state == MATCHED)
+        && !t1.b._falling && !t2.b._falling && t1.b._color == t2.b._color);
 }
 
 void Board::inputSwapBlocks() {
@@ -254,7 +253,7 @@ void Board::inputSwapBlocks() {
         return;
     }
     if (!(swappable(_cursorY, _cursorX) && swappable(_cursorY, _cursorX + 1))
-            || !(_tiles[_cursorY][_cursorX].type == BLOCK
+        || !(_tiles[_cursorY][_cursorX].type == BLOCK
             || _tiles[_cursorY][_cursorX + 1].type == BLOCK)) {
         return;
     }
@@ -308,17 +307,17 @@ void Board::initTick() {
 void Board::matchBlocks() {
 
     auto setMatchedHor = [this](int startIndex, int row, int matched) {
-        for (int i = startIndex; i < startIndex + matched; i++) {
-            this->_tiles[row][i].b._state = MATCHED;
-            ++_tickMatched;
-        }
+      for (int i = startIndex; i < startIndex + matched; i++) {
+          this->_tiles[row][i].b._state = MATCHED;
+          ++_tickMatched;
+      }
     };
 
     auto setMatchedVer = [this](int startIndex, int col, int matched) {
-        for (int i = startIndex; i < startIndex + matched; i++) {
-            this->_tiles[i][col].b._state = MATCHED;
-            ++_tickMatched;
-        }
+      for (int i = startIndex; i < startIndex + matched; i++) {
+          this->_tiles[i][col].b._state = MATCHED;
+          ++_tickMatched;
+      }
     };
 
     for (int row = 0; row < BOARD_HEIGHT; row++) {
@@ -368,7 +367,7 @@ void Board::handleMatchedBlocks() {
     bool match = false;
     for (int row = BOARD_HEIGHT - 1; row >= 0; --row) {
         for (int col = 0; col < BOARD_WIDTH; ++col) {
-            Tile& tile = _tiles[row][col];
+            Tile &tile = _tiles[row][col];
 
             if (tile.type == BLOCK && tile.b._state == MATCHED) {
                 tile.b._explOrder = matches - 1;
@@ -383,9 +382,9 @@ void Board::handleMatchedBlocks() {
                 tile.b._state = EXPLODING;
                 tile.b._explosionTimer = 0;
                 tile.b._explosionAnimTicks = BASE_EXPLOSION_TICKS
-                        + matches * ADD_EXPL_TICKS;
+                    + matches * ADD_EXPL_TICKS;
                 tile.b._explosionTicks = BASE_EXPLOSION_TICKS
-                        + _tickMatched * ADD_EXPL_TICKS;
+                    + _tickMatched * ADD_EXPL_TICKS;
                 triggerNeighbors(row, col);
                 ++matches;
             }
@@ -408,9 +407,9 @@ void Board::handleTriggeredBlocks() {
     //lowest blocks starts transforming first
     for (int row = 0; row < BOARD_HEIGHT; ++row) {
         for (int col = BOARD_WIDTH - 1; col >= 0; --col) {
-            Tile& t = _tiles[row][col];
+            Tile &t = _tiles[row][col];
             if (t.type == GARBAGE && t.g->_state == GarbageBlockState::TRIGGERED
-                    && t.g->_transformationTimer != 1) {
+                && t.g->_transformationTimer != 1) {
                 t.g->_transformationTimer = 1; //this is ugly! :P but we need to mark which blocks to transform
                 t.g->_animationStart = animStart;
                 t.g->_explOrder = order;
@@ -422,7 +421,7 @@ void Board::handleTriggeredBlocks() {
     }
     for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end(); ++it) {
         if (it->getState() == GarbageBlockState::TRIGGERED
-                && it->getTransformationTimer() == 1) {
+            && it->getTransformationTimer() == 1) {
             it->_transformationTimer = 0;
             it->_state = GarbageBlockState::TRANSFORMING;
             it->_transformationTicks = animStart;
@@ -430,20 +429,20 @@ void Board::handleTriggeredBlocks() {
     }
 }
 
-void Board::clearTile(Tile& tile) {
+void Board::clearTile(Tile &tile) {
     tile = Tile();
 }
 
 void Board::handleBlockTimers() {
     for (int row = 0; row < BOARD_HEIGHT; ++row) {
         for (int col = 0; col < BOARD_WIDTH; ++col) {
-            Tile& tile = _tiles[row][col];
+            Tile &tile = _tiles[row][col];
             if (tile.type == BLOCK && tile.b._state == EXPLODING) {
                 ++tile.b._explosionTimer;
 
                 if (tile.b._explosionTimer == tile.b._explosionAnimTicks) {
                     _eventHandler->blockExplode(col, row, _stackOffset,
-                            tile.b._explOrder, _chainCounter);
+                                                tile.b._explOrder, _chainCounter);
                     _score += 10;
                 }
 
@@ -451,13 +450,13 @@ void Board::handleBlockTimers() {
                     clearTile(tile);
                     // we need to set the chain flag for the blocks above, and set it on the others above when it's about to fall
                     if (_tiles[row + 1][col].type == BLOCK
-                            && _tiles[row + 1][col].b._state == NORMAL) {
+                        && _tiles[row + 1][col].b._state == NORMAL) {
                         _tiles[row + 1][col].b._chain = true;
                     }
                 }
             }
             if (tile.b._state == SWAPPING_LEFT
-                    || tile.b._state == SWAPPING_RIGHT) {
+                || tile.b._state == SWAPPING_RIGHT) {
                 tile.b._swapTimer++;
                 if (tile.b._swapTimer >= SWAP_DELAY) {
                     if (tile.b._state == SWAPPING_RIGHT) {
@@ -485,7 +484,7 @@ void Board::handleBlockTimers() {
                     int y = it->_y - (it->_h - 1) + ry;
 
                     _eventHandler->blockExplode(x, y, _stackOffset,
-                            it->_explOrder + block, _chainCounter);
+                                                it->_explOrder + block, _chainCounter);
                 }
             }
 
@@ -514,8 +513,8 @@ void Board::handleBlockTimers() {
 }
 
 void Board::swapBlocks(int row, int col) {
-    Tile& swapRight = _tiles[row][col];
-    Tile& swapLeft = _tiles[row][col + 1];
+    Tile &swapRight = _tiles[row][col];
+    Tile &swapLeft = _tiles[row][col + 1];
     if (swapLeft.b._state == SWAPPING_LEFT) {
         Tile tmp = swapLeft;
         swapLeft = swapRight;
@@ -533,7 +532,7 @@ void Board::swapBlocks(int row, int col) {
 
 void Board::setChainAbove(int row, int col) {
     for (int y = row; y < BOARD_HEIGHT; ++y) {
-        Tile& tile = _tiles[y][col];
+        Tile &tile = _tiles[y][col];
         if (tile.type == BLOCK) {
             tile.b._chain = true;
         }
@@ -543,7 +542,7 @@ void Board::setChainAbove(int row, int col) {
 void Board::handleFalling() {
     for (int col = 0; col < BOARD_WIDTH; col++) {
         for (int row = 0; row < BOARD_HEIGHT; row++) {
-            Tile& tile = _tiles[row][col];
+            Tile &tile = _tiles[row][col];
             if (tile.b._state == FLOATING) { //floating->falling
                 if (--tile.b._floatTimer <= 0) {
                     tile.b._state = NORMAL;
@@ -614,10 +613,10 @@ void Board::handleGarbageFalling() {
 
 void Board::triggerNeighbors(int row, int col) {
     int list[][2] = {
-        { 1, 0},
-        { 0, 1},
-        { -1, 0},
-        { 0, -1}
+        {1, 0},
+        {0, 1},
+        {-1, 0},
+        {0, -1}
     };
     for (int n = 0; n < 4; ++n) {
         int y = list[n][0];
@@ -626,7 +625,7 @@ void Board::triggerNeighbors(int row, int col) {
     }
 }
 
-void Board::triggerGarbageNeighbors(GarbageBlock& g, Tile& t) {
+void Board::triggerGarbageNeighbors(GarbageBlock &g, Tile &t) {
     for (int col = g.getX(); col <= g.getX() + (g.getW() - 1); ++col) {
         triggerTile(g.getY() + 1, col, t);
         triggerTile(g.getY() - g.getH(), col, t);
@@ -637,15 +636,15 @@ void Board::triggerGarbageNeighbors(GarbageBlock& g, Tile& t) {
     }
 }
 
-void Board::triggerTile(int row, int col, Tile& triggerer) {
+void Board::triggerTile(int row, int col, Tile &triggerer) {
     if (row < 0 || col < 0 || row >= BOARD_HEIGHT || col >= BOARD_WIDTH) {
         return;
     }
-    Tile& triggered = _tiles[row][col];
+    Tile &triggered = _tiles[row][col];
     if (triggered.type == GARBAGE) {
         if (triggered.g->getState() == GarbageBlockState::NORMAL) {
             if (triggerer.type != GARBAGE
-                    || (triggerer.type == GARBAGE
+                || (triggerer.type == GARBAGE
                     && triggerer.g->getType() == triggered.g->getType())) {
                 triggered.g->trigger();
                 triggerGarbageNeighbors(*triggered.g, triggerer);
@@ -679,7 +678,7 @@ void Board::raiseStack() {
     if (_stackOffset >= STACK_RAISE_STEPS) {
         if (!_blockOnTopRow && !_activeBlocks) {
             for (auto it = _garbageBlocks.begin(); it != _garbageBlocks.end();
-                    ++it) {
+                 ++it) {
                 ++it->_y;
             }
             for (int row = BOARD_HEIGHT - 2; row >= 0; --row) {
@@ -715,8 +714,8 @@ void Board::inputForceStackRaise() {
 }
 
 bool Board::activeBlocks() {
-    for (Tile* it = &_tiles[0][0];
-            it != &_tiles[0][0] + BOARD_WIDTH * BOARD_HEIGHT; ++it) {
+    for (Tile *it = &_tiles[0][0];
+         it != &_tiles[0][0] + BOARD_WIDTH * BOARD_HEIGHT; ++it) {
         if (it->type == BLOCK && (it->b._state != NORMAL || it->b._falling)) {
             return true;
         }
@@ -762,7 +761,7 @@ bool Board::hasActiveBlocks() const {
     return _activeBlocks;
 }
 
-const Board::Tile& Board::getBufferRow(int col) const {
+const Board::Tile &Board::getBufferRow(int col) const {
     return _bufferRow[col];
 }
 
@@ -818,15 +817,15 @@ int Board::getGraceTimer() const {
     return _graceTimer;
 }
 
-const Board::Tile& Board::getTile(int row, int col) const {
+const Board::Tile &Board::getTile(int row, int col) const {
     return _tiles[row][col];
 }
 
-const std::list<GarbageBlock>& Board::getGarbageBlocks() const {
+const std::list<GarbageBlock> &Board::getGarbageBlocks() const {
     return _garbageBlocks;
 }
 
-const std::list<Board::GarbageSpawn>& Board::getGarbageQueue() const {
+const std::list<Board::GarbageSpawn> &Board::getGarbageQueue() const {
     return _garbageQueue;
 }
 
@@ -844,7 +843,7 @@ unsigned int Board::getTicksRun() const {
 
 bool Board::blockOnRow(int row) {
     for (int col = 0; col < BOARD_WIDTH; ++col) {
-        Tile& t = _tiles[row][col];
+        Tile &t = _tiles[row][col];
         if (t.type != AIR && !(t.type == GARBAGE && t.g->_initialFall)) {
             return true;
         }
@@ -871,11 +870,11 @@ void Board::advanceCountdownState() {
 void Board::sendEvents() {
     if (_tickChain) {
         _eventHandler->chain(_chainCounter, _tickMatchCol, _tickMatchRow,
-                _stackOffset);
+                             _stackOffset);
     }
     if (_tickMatched > 3) {
         _eventHandler->combo(_tickMatched, _tickMatchCol, _tickMatchRow,
-                _stackOffset);
+                             _stackOffset);
         chainScoring();
         comboScoring();
     }
@@ -887,22 +886,16 @@ bool Board::isPanic() const {
 
 void Board::chainScoring() {
     switch (_chainCounter) {
-        case 1:
+        case 1:break;
+        case 2:_score += 50;
             break;
-        case 2:
-            _score += 50;
+        case 3:_score += 80;
             break;
-        case 3:
-            _score += 80;
+        case 4:_score += 150;
             break;
-        case 4:
-            _score += 150;
+        case 5:_score += 300;
             break;
-        case 5:
-            _score += 300;
-            break;
-        default:
-            _score += (_chainCounter + 2) * 200;
+        default:_score += (_chainCounter + 2) * 200;
             break;
     }
 }

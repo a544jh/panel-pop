@@ -13,14 +13,14 @@
 class Game;
 
 class PauseMenu : public Menu {
-public:
-	PauseMenu(Game&);
-	virtual ~PauseMenu();
-	void render() const;
-	void inputCancel();
+ public:
+  PauseMenu(Game &);
+  virtual ~PauseMenu();
+  void render() const;
+  void inputCancel();
 
-private:
-	Game& _game;
+ private:
+  Game &_game;
 };
 
 #endif /* MENUS_PAUSEMENU_H_ */

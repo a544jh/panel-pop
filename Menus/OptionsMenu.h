@@ -12,13 +12,13 @@
 
 class OptionsMenuState;
 
-class OptionsMenu: public Menu {
-public:
-	OptionsMenu(OptionsMenuState& _state);
-	virtual ~OptionsMenu();
-	void render() const;
-private:
-	OptionsMenuState& _state;
+class OptionsMenu : public Menu {
+ public:
+  OptionsMenu(OptionsMenuState &_state);
+  virtual ~OptionsMenu();
+  void render() const;
+ private:
+  OptionsMenuState &_state;
 };
 
 #endif /* MENUS_OPTIONSMENU_H_ */

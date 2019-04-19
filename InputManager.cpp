@@ -10,7 +10,7 @@
 #include <string.h>
 
 InputManager::InputManager() :
-        _quit(false) {
+    _quit(false) {
     _keys = SDL_GetKeyboardState(&_keys_len);
     _prevKeys = new uint8_t[_keys_len];
 }

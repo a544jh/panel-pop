@@ -11,16 +11,15 @@
 
 #include "GameState.h"
 
-
 class DemoGameState : public GameState {
-public:
-    DemoGameState();
-    
-    void tick() override;
-    SDL_Texture* render() override;
+ public:
+  DemoGameState();
 
-    virtual ~DemoGameState();
-private:
+  void tick() override;
+  SDL_Texture *render() override;
+
+  virtual ~DemoGameState();
+ private:
 
 };
 

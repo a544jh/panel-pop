@@ -11,12 +11,11 @@
 
 #include "GameState.h"
 
+class AIGameState : public GameState {
+ public:
+  AIGameState();
 
-class AIGameState : public GameState{
-public:
-    AIGameState();
-
-private:
+ private:
 
 };
 
