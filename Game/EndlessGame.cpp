@@ -15,8 +15,8 @@
 
 class BoardEventHandler;
 
-EndlessGame::EndlessGame(GameEventHandler* geh) :
-Game(geh),
+EndlessGame::EndlessGame() :
+Game(),
 _board(),
 _highScore(ConfigHandler::getInstance().getEndlessHighScore()) {
 
@@ -31,6 +31,7 @@ void EndlessGame::reset() {
     _startTime = SDL_GetTicks();
     _board = _board.reset();
     _panic = false;
+    _lastContdownMS = 0;
     _eventHandler->gameReset();
 }
 

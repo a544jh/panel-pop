@@ -17,7 +17,7 @@
 #include "../Rendering/VsGameRenderer.h"
 
 AIGameState::AIGameState() {
-    _game = new VsGame(new GameEventHandler());
+    _game = new VsGame();
 
     _gameRenderer = new VsGameRenderer((VsGame&) * _game);
 

@@ -9,6 +9,7 @@
 #define GAME_GAME_H_
 
 #include <stdint.h>
+#include <memory>
 
 #include "../Menus/PauseMenu.h"
 
@@ -23,7 +24,7 @@ public:
         RUNNING, PAUSED, ENDED
     };
 
-    Game(GameEventHandler*);
+    Game();
     virtual ~Game();
 
     virtual Board& getBoard(int id) = 0;
@@ -42,7 +43,7 @@ public:
     static const int COUNTDOWN_STEP_MS = 1000;
 
 protected:
-    GameEventHandler* _eventHandler;
+    std::unique_ptr<GameEventHandler> _eventHandler;
     State _state;
     int _ticksRun;
     bool _panic;

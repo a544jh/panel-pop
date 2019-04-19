@@ -13,7 +13,7 @@
 
 class EndlessGame: public Game {
 public:
-	EndlessGame(GameEventHandler*);
+	EndlessGame();
 	virtual ~EndlessGame();
 	void reset();
 	void tick();

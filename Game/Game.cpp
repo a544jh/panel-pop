@@ -11,8 +11,8 @@
 
 #include "GameEventHandler.h"
 
-Game::Game(GameEventHandler* geh) :
-_eventHandler(geh),
+Game::Game() :
+_eventHandler(new GameEventHandler()),
 _state(State::RUNNING),
 _ticksRun(0),
 _panic(false),
@@ -24,7 +24,6 @@ _lastContdownMS(0) {
 }
 
 Game::~Game() {
-    delete _eventHandler;
 }
 
 void Game::inputTogglePause() {

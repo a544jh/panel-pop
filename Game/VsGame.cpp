@@ -13,8 +13,8 @@
 #include "GameEventHandler.h"
 #include "GarbageBlock.h"
 
-VsGame::VsGame(GameEventHandler* geh) :
-Game(geh),
+VsGame::VsGame() :
+Game(),
 _board0(),
 _board1(),
 _p1MatchPoints(0),
@@ -149,6 +149,7 @@ void VsGame::reset() {
     _board0 = _board0.reset();
     _board1 = _board1.reset();
     _panic = false;
+    _lastContdownMS = 0;
     _eventHandler->gameReset();
 }
 

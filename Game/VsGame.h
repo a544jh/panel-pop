@@ -16,7 +16,7 @@ class GameEventHandler;
 class VsGame : public Game {
 public:
 
-    VsGame(GameEventHandler*);
+    VsGame();
 
 
 
