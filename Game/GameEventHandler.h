@@ -17,7 +17,7 @@ public:
 	GameEventHandler();
 	virtual ~GameEventHandler();
 
-	void countdown(uint32_t time);
+	void countdown(int countdownState);
 	void gameReset();
 	void gamePause();
 	void gameResume();

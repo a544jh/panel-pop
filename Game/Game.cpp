@@ -18,7 +18,8 @@ _ticksRun(0),
 _panic(false),
 _startTime(SDL_GetTicks()),
 _pausedTime(0),
-_pauseMenu(*this) {
+_pauseMenu(*this),
+_lastContdownMS(0) {
     _eventHandler->gameReset();
 }
 

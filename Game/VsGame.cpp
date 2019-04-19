@@ -52,7 +52,18 @@ void VsGame::handleEnd() {
 void VsGame::tick() {
 
     if (_board0.getState() == Board::COUNTDOWN) {
-        _eventHandler->countdown(getTime());
+        if (_lastContdownMS == 0) {
+            _eventHandler->countdown(3);
+        }
+        uint32_t time = getTime();
+        int timeSinceCountdown = time - _lastContdownMS;
+
+        if (timeSinceCountdown >= COUNTDOWN_STEP_MS) {
+            _board0.advanceCountdownState();
+            _board1.advanceCountdownState();
+            _lastContdownMS = time;
+            _eventHandler->countdown(_board0.getCountdownState());
+        }
     }
 
     if (_state == State::RUNNING) {

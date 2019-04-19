@@ -28,7 +28,8 @@ _tickChainEnd(false),
 _lastChain(0),
 _blockOnTopRow(false),
 _panic(false),
-_score(0) {
+_score(0),
+_countdownState(3){
     fillRandom();
     fillBufferRow();
 }
@@ -730,8 +731,7 @@ bool Board::activeBlocks() {
 
 void Board::tick() {
     if (_state == COUNTDOWN) {
-        // TODO: make this tick based to get rid of Game pointer, it will have effectively the same result anyways...
-        if (_ticksRun > COUNTDOWN_TICKS) {
+        if (_countdownState <= 0) {
             _state = RUNNING;
         }
     } else if (_state == RUNNING) {
@@ -858,6 +858,14 @@ bool Board::getWarnColumn(int col) const {
 
 int Board::getScore() const {
     return _score;
+}
+
+int Board::getCountdownState() const {
+    return _countdownState;
+}
+
+void Board::advanceCountdownState() {
+    _countdownState--;
 }
 
 void Board::sendEvents() {

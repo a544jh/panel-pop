@@ -49,7 +49,8 @@ void BoardRenderer::tick() {
 }
 
 void BoardRenderer::drawCountdown() {
-	unsigned int ticks = _board.getTicksRun();
+    unsigned int ticks = _board.getTicksRun();
+	int state = _board.getCountdownState();
 	if (_board.getState() == Board::COUNTDOWN) {
 		SDL_Rect pos = { 2, 100 };
 		SDL_QueryTexture(_readyText, NULL, NULL, &pos.w, &pos.h);
@@ -57,9 +58,9 @@ void BoardRenderer::drawCountdown() {
 		SDL_RenderCopy(_SDLRenderer, _readyText, NULL, &pos);
 		pos.y += 42;
 		SDL_Texture* digit;
-		if (ticks < Board::COUNTDOWN_TICKS / 3) {
+		if (state >= 3) {
 			digit = _3Text;
-		} else if (ticks < 2 * Board::COUNTDOWN_TICKS / 3) {
+		} else if (state == 2) {
 			digit = _2Text;
 		} else {
 			digit = _1Text;
@@ -68,8 +69,7 @@ void BoardRenderer::drawCountdown() {
 		SDL_QueryTexture(digit, NULL, NULL, &pos.w, &pos.h);
 		pos.x = (BOARD_WIDTH - pos.w) / 2;
 		SDL_RenderCopy(_SDLRenderer, digit, NULL, &pos);
-	}
-	if (ticks < Board::COUNTDOWN_TICKS + Board::COUNTDOWN_TICKS / 3
+	} else if (ticks < Board::COUNTDOWN_TICKS + Board::COUNTDOWN_TICKS / 3
 			&& ticks > Board::COUNTDOWN_TICKS) {
 		SDL_Rect pos = { 0, 142 };
 		SDL_QueryTexture(_goText, NULL, NULL, &pos.w, &pos.h);

@@ -21,16 +21,15 @@ GameEventHandler::GameEventHandler() :
 GameEventHandler::~GameEventHandler() {
 }
 
-void GameEventHandler::countdown(uint32_t time) {
-	int sec = time / 1000;
-	if (sec != _countdownState) {
-		if (sec < 3) {
+void GameEventHandler::countdown(int countdownSate) {
+	if (countdownSate != _countdownState) {
+		if (countdownSate != 0) {
 			Mix_PlayChannel(-1, _SDLContext._sfxCountdown, 0);
 		} else {
 			Mix_PlayChannel(-1, _SDLContext._sfxGo, 0);
 			Mix_PlayMusic(_SDLContext._musicBgIntro, 1);
 		}
-		_countdownState = sec;
+		_countdownState = countdownSate;
 	}
 
 }
@@ -60,7 +59,7 @@ void GameEventHandler::panicEnd() {
 }
 
 void GameEventHandler::tickEnd() {
-	if(_songIntro && !Mix_PlayingMusic() && _countdownState >= 3){
+	if(_songIntro && !Mix_PlayingMusic() && _countdownState == 0){
 		_songIntro = false;
 		Mix_PlayMusic(_SDLContext._musicBgLoop,-1);
 	}

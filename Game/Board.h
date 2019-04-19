@@ -60,6 +60,7 @@ public:
     void inputSwapBlocks();
     void inputForceStackRaise();
     void queueGarbage(bool, int, GarbageBlockType);
+    void advanceCountdownState();
 
     static const int BASE_EXPLOSION_TICKS = 61;
     static const int ADD_EXPL_TICKS = 9; //the total explosion time for a combo is 61 + 9 * n, where n is the  number of blocks
@@ -128,6 +129,11 @@ private:
     bool _blockOnTopRow;
     bool _panic;
     int _score;
+    int _countdownState;
+public:
+    int getCountdownState() const;
+
+private:
 
     void initTick();
     void fillRandom();

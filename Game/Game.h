@@ -39,6 +39,7 @@ public:
     bool isPanic() const;
     uint32_t getPausedTime() const;
     uint32_t getStartTime() const;
+    static const int COUNTDOWN_STEP_MS = 1000;
 
 protected:
     GameEventHandler* _eventHandler;
@@ -48,6 +49,7 @@ protected:
     uint32_t _startTime;
     uint32_t _pausedTime;
     PauseMenu _pauseMenu;
+    int _lastContdownMS;
 
     virtual void handleEnd() = 0;
 };
