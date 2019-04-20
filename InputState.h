@@ -5,8 +5,6 @@
 #ifndef PANEL_POP_INPUTSTATE_H
 #define PANEL_POP_INPUTSTATE_H
 
-#include "Config/InputConfig.h"
-
 class InputConfig;
 
 enum Direction {

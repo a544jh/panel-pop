@@ -6,6 +6,7 @@
 #include <SDL_scancode.h>
 #include "InputState.h"
 #include "InputEvents/KeyboardKey.h"
+#include "Config/InputConfig.h"
 
 InputState::InputState(Direction direction, bool swap, bool raiseStack) : _direction(direction),
                                                                           _swap(swap),

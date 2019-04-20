@@ -53,6 +53,9 @@ void StateManager::run() {
         //200 fps cap
         if (tick) {
             input.poll();
+            for (auto &&config : _inputConfigs) {
+                config.updateState();
+            }
             if (input._quit) {
                 //TODO: State transitions?
                 _running = false;

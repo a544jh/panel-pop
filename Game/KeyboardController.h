@@ -25,7 +25,6 @@ class KeyboardController : public BoardController {
  private:
   Direction _directionHeld;
   uint32_t _holdBegin;
-  InputState _prevState;
 };
 
 #endif /* GAME_KEYBOARDCONTROLLER_H_ */

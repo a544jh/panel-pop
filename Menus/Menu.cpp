@@ -67,25 +67,25 @@ void Menu::resetCursor() {
 
 void Menu::handleInput() {
 
-    InputState state1 = InputState::getCurrentState(StateManager::getInstance().getKeys(1));
-    InputState state2 = InputState::getCurrentState(StateManager::getInstance().getKeys(2));
+    InputConfig& config1 = StateManager::getInstance().getKeys(1);
+    InputConfig& config2 = StateManager::getInstance().getKeys(2);
 
-    if (state1._direction == DOWN || state2._direction == DOWN) {
+    if (config1.getDownDirection() == DOWN || config2.getDownDirection() == DOWN) {
         inputDown();
     }
-    if (state1._direction == UP || state2._direction == UP) {
+    if (config1.getDownDirection() == UP || config2.getDownDirection() == UP) {
         inputUp();
     }
-    if (state1._direction == LEFT || state2._direction == LEFT) {
+    if (config1.getDownDirection() == LEFT || config2.getDownDirection() == LEFT) {
         inputLeft();
     }
-    if (state1._direction == RIGHT || state2._direction == RIGHT) {
+    if (config1.getDownDirection() == RIGHT || config2.getDownDirection() == RIGHT) {
         inputRight();
     }
-    if (state1._swap || state2._swap) {
+    if (config1.swapDown() || config2.swapDown()) {
         inputEnter();
     }
-    if (state1._raiseStack || state2._raiseStack) {
+    if (config1.raiseStackDown() || config2.raiseStackDown()) {
         inputCancel();
     }
 }
