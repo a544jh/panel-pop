@@ -388,6 +388,11 @@ void Board::handleMatchedBlocks() {
                 triggerNeighbors(row, col);
                 ++matches;
             }
+            // TODO: blocks that stopped falling due to a floating "slipped in" block should not have their chain flag removed...
+            // maybe redo the chain detection to something like this:
+            // * put a "chain flag" on a Tile when it explodes
+            // * when a match is detected, check if it has a tile with the chain flag below it
+            // * remove the chain flag when it has a normal, non falling block.
             if (tile.b._state == NORMAL && !tile.b._falling && tile.b._chain) {
                 tile.b._chain = false;
             }
