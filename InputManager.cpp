@@ -10,7 +10,7 @@
 #include <string.h>
 
 InputManager::InputManager() :
-    _quit(false) {
+    _quit(false), _keys_len(0), _joysticks() {
     _keys = SDL_GetKeyboardState(&_keys_len);
     _prevKeys = new uint8_t[_keys_len];
 }
@@ -29,6 +29,10 @@ void InputManager::poll() {
             _quit = true;
         } else if (e.type == SDL_JOYBUTTONDOWN) {
             printf("Joy %d button %d pressed \n", e.jbutton.which, e.jbutton.button);
+        } else if (e.type == SDL_JOYHATMOTION) {
+            printf("Joy %d hat %d pressed \n", e.jhat.which, e.jhat.value);
+        } else if (e.type == SDL_JOYAXISMOTION) {
+            //printf("Joy %d axis %d position %d \n", e.jaxis.which, e.jaxis.axis, e.jaxis.value);
         }
     }
 }
@@ -61,4 +65,17 @@ int InputManager::getKeyDown() {
         }
     }
     return 0;
+}
+void InputManager::detectJoysticks() {
+    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+        _joysticks.push_back(SDL_JoystickOpen(i));
+    }
+}
+
+SDL_Joystick *InputManager::getJoystick(SDL_JoystickID id) {
+    for (auto joystick: _joysticks) {
+        if (SDL_JoystickInstanceID(joystick) == id){
+            return joystick;
+        }
+    }
 }

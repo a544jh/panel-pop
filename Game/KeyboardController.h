@@ -10,7 +10,6 @@
 
 #include "BoardController.h"
 #include "../InputManager.h"
-#include <array>
 
 #include "../InputState.h"
 

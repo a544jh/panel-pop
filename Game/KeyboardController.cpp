@@ -33,7 +33,7 @@ void KeyboardController::tick() {
     if ((_config.swapDown())) {
         _board.inputSwapBlocks();
     }
-    if (_config.raiseStackDown()) {
+    if (_config._currentState._raiseStack) {
         _board.inputForceStackRaise();
     }
 

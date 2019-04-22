@@ -8,6 +8,8 @@
 #include "ConfigHandler.h"
 #include "../SDLContext.h"
 #include "../States/StateManager.h"
+#include "../InputEvents/JoyHat.h"
+#include "../InputEvents/JoyButton.h"
 
 #include <boost/property_tree/detail/ptree_implementation.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -24,6 +26,14 @@ InputConfig ConfigHandler::DEFAULT_KEYS = InputConfig(new KeyboardKey(SDL_SCANCO
                                                       new KeyboardKey(SDL_SCANCODE_RIGHT),
                                                       new KeyboardKey(SDL_SCANCODE_X),
                                                       new KeyboardKey(SDL_SCANCODE_Z)
+);
+
+InputConfig ConfigHandler::DEFAULT_JOYSTICK = InputConfig(new JoyHat(0,0,SDL_HAT_UP),
+                                                      new JoyHat(0,0,SDL_HAT_DOWN),
+                                                      new JoyHat(0,0,SDL_HAT_LEFT),
+                                                      new JoyHat(0,0,SDL_HAT_RIGHT),
+                                                      new JoyButton(0, 0),
+                                                      new JoyButton(0,1)
 );
 
 ConfigHandler::ConfigHandler() {
@@ -53,7 +63,11 @@ bool ConfigHandler::saveConfig() {
 
 InputConfig ConfigHandler::getKeyConfig(int player) {
     // TODO: implement
-    return DEFAULT_KEYS;
+    if (player == 1) {
+        return DEFAULT_KEYS;
+    } else {
+        return DEFAULT_JOYSTICK;
+    }
 }
 
 void ConfigHandler::setKeyConfig(InputConfig config, int player) {

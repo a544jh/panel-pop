@@ -8,13 +8,16 @@
 #ifndef INPUTMANAGER_H_
 #define INPUTMANAGER_H_
 
-#include <array>
+#include <vector>
+#include <SDL_joystick.h>
 
 class InputManager {
  public:
   static InputManager &getInstance();
 
   void poll();
+  void detectJoysticks();
+  SDL_Joystick *getJoystick(SDL_JoystickID id);
 
   bool _quit;
   int _keys_len;
@@ -35,6 +38,8 @@ class InputManager {
   InputManager(InputManager const &) = delete;
 
   void operator=(InputManager const &) = delete;
+
+  std::vector<SDL_Joystick*> _joysticks;
 };
 
 #endif /* INPUTMANAGER_H_ */

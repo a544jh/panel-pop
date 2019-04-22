@@ -14,12 +14,16 @@
 #include <iomanip>
 #include <sstream>
 
+#include "../InputEvents/JoyHat.h"
+#include "../InputEvents/JoyButton.h"
+
 #include "../InputManager.h"
 #include "../SDLContext.h"
 #include "../Config/ConfigHandler.h"
 #include "EndlessGameState.h"
 #include "TitleScreen.h"
 #include "FadeTransition.h"
+#include "../InputEvents/JoyAxisDirection.h"
 
 StateManager::StateManager() :
     _currentState(nullptr),
@@ -35,7 +39,30 @@ StateManager::StateManager() :
     _lastFrame(0),
     _avgFps(0),
     _showFps(false),
-    _inputConfigs{ConfigHandler::getInstance().getKeyConfig(1), ConfigHandler::getInstance().getKeyConfig(2)} {
+    _inputConfigs{/*InputConfig(new KeyboardKey(SDL_SCANCODE_UP),
+                              new KeyboardKey(SDL_SCANCODE_DOWN),
+                              new KeyboardKey(SDL_SCANCODE_LEFT),
+                              new KeyboardKey(SDL_SCANCODE_RIGHT),
+                              new KeyboardKey(SDL_SCANCODE_X),
+                              new KeyboardKey(SDL_SCANCODE_Z)),*/
+        /*InputConfig(new JoyHat(0, 0, SDL_HAT_UP),
+                    new JoyHat(0, 0, SDL_HAT_DOWN),
+                    new JoyHat(0, 0, SDL_HAT_LEFT),
+                    new JoyHat(0, 0, SDL_HAT_RIGHT),
+                    new JoyButton(0, 0),
+                    new JoyButton(0, 1))*/
+        InputConfig(new JoyAxisDirection(0, 1, JoyAxisDirection::NEGATIVE),
+                    new JoyAxisDirection(0, 1, JoyAxisDirection::POSITIVE),
+                    new JoyAxisDirection(0, 0, JoyAxisDirection::NEGATIVE),
+                    new JoyAxisDirection(0, 0, JoyAxisDirection::POSITIVE),
+                    new JoyButton(0, 1),
+                    new JoyButton(0, 2)),
+        InputConfig(new KeyboardKey(SDL_SCANCODE_UP),
+                    new KeyboardKey(SDL_SCANCODE_DOWN),
+                    new KeyboardKey(SDL_SCANCODE_LEFT),
+                    new KeyboardKey(SDL_SCANCODE_RIGHT),
+                    new KeyboardKey(SDL_SCANCODE_X),
+                    new KeyboardKey(SDL_SCANCODE_Z))} {
     _currentState = new TitleScreen();
 }
 

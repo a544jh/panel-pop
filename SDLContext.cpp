@@ -7,6 +7,7 @@
 
 #include "SDLContext.h"
 #include "Config/ConfigHandler.h"
+#include "InputManager.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_error.h>
@@ -91,35 +92,10 @@ bool SDLContext::init() {
 
 // Initialize the joystick subsystem
     SDL_InitSubSystem(SDL_INIT_JOYSTICK);
-    SDL_Joystick *joy;
 
     SDL_Init(SDL_INIT_GAMECONTROLLER);
-    SDL_GameController *ctrl;
 
-// Check for joysticks
-    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-        joy = SDL_JoystickOpen(i);
-        if (joy) {
-            printf("Opened Joystick %d\n", i);
-            printf("Name: %s\n", SDL_JoystickNameForIndex(i));
-            printf("Number of Axes: %d\n", SDL_JoystickNumAxes(joy));
-            printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(joy));
-            printf("Number of Balls: %d\n", SDL_JoystickNumBalls(joy));
-        } else {
-            printf("Couldn't open Joystick 0\n");
-        }
-
-        if (SDL_IsGameController(i)) {
-            char *mapping;
-            SDL_Log("Index \'%i\' is a compatible controller, named \'%s\'", i, SDL_GameControllerNameForIndex(i));
-            ctrl = SDL_GameControllerOpen(i);
-            mapping = SDL_GameControllerMapping(ctrl);
-            SDL_Log("Controller %i is mapped as \"%s\".", i, mapping);
-            SDL_free(mapping);
-        } else {
-            SDL_Log("Index \'%i\' is not a compatible controller.", i);
-        }
-    }
+    InputManager::getInstance().detectJoysticks();
 
     Mix_VolumeMusic(ConfigHandler::getInstance().getMusicVolume());
     Mix_Volume(-1, ConfigHandler::getInstance().getSfxVolume());

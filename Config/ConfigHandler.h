@@ -19,7 +19,7 @@ class ConfigHandler {
   static ConfigHandler &getInstance();
 
   const char *CONFIG_FILENAME = "panelpop.ini";
-  static InputConfig DEFAULT_KEYS;
+  static InputConfig DEFAULT_KEYS, DEFAULT_JOYSTICK;
   bool loadConfig();
   bool saveConfig();
 
