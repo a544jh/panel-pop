@@ -17,6 +17,6 @@ bool JoyButton::isActive() const {
 
 std::string JoyButton::toString() {
     std::ostringstream os;
-    os << "J_" << _joystickId << "_B" << _buttonId;
+    os << "J" << _joystickId << "_B" << _buttonId;
     return os.str();
 }

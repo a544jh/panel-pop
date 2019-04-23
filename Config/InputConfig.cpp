@@ -9,15 +9,15 @@ InputConfig::InputConfig(InputEvent *up,
                          InputEvent *left,
                          InputEvent *right,
                          InputEvent *swap,
-                         InputEvent *raiseStack) :
-        _up(up),
-        _down(down),
-        _left(left),
-        _right(right),
-        _swap(swap),
-        _raiseStack(raiseStack),
-        _currentState(NONE, false, false),
-        _prevState(NONE, false, false) {}
+                         InputEvent *raiseStack,
+                         InputEvent *start) :
+    _up(up),
+    _down(down),
+    _left(left),
+    _right(right),
+    _swap(swap),
+    _raiseStack(raiseStack),
+    _start(start) {}
 
 void InputConfig::updateState() {
     _prevState = _currentState;
@@ -37,6 +37,10 @@ bool InputConfig::raiseStackDown() {
 
 bool InputConfig::swapDown() {
     return !_prevState._swap && _currentState._swap;
+}
+
+bool InputConfig::startDown() {
+    return !_prevState._start && _currentState._start;
 }
 
 

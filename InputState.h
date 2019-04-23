@@ -11,13 +11,16 @@ enum Direction {
   UP, RIGHT, DOWN, LEFT, NONE
 };
 
-class InputState {
+struct InputState {
  public:
   Direction _direction;
   bool _swap;
   bool _raiseStack;
+  bool _start;
 
-  InputState(Direction direction, bool swap, bool raiseStack);
+  InputState();
+
+  InputState(Direction direction, bool swap, bool raise_stack, bool start);
 
   static InputState getCurrentState(InputConfig &);
  private:

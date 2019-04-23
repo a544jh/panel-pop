@@ -19,6 +19,6 @@ bool JoyHat::isActive() const {
 
 std::string JoyHat::toString() {
     std::ostringstream os;
-    os << "J_" << _joystickId << "_H" << _hatDirection;
+    os << "J" << _joystickId << "_H" <<_hatId << "_" << _hatDirection;
     return os.str();
 }

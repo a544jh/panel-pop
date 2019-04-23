@@ -19,7 +19,6 @@ class ConfigHandler {
   static ConfigHandler &getInstance();
 
   const char *CONFIG_FILENAME = "panelpop.ini";
-  static InputConfig DEFAULT_KEYS, DEFAULT_JOYSTICK;
   bool loadConfig();
   bool saveConfig();
 
@@ -42,6 +41,7 @@ class ConfigHandler {
   void operator=(ConfigHandler const &) = delete;
 
   boost::property_tree::ptree _settingsTree;
+  InputEvent *parseInputEvent(const char *configKey);
 };
 
 #endif /* CONFIG_CONFIGHANDLER_H_ */

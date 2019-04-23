@@ -10,6 +10,7 @@
 #include "../States/StateManager.h"
 #include "../InputEvents/JoyHat.h"
 #include "../InputEvents/JoyButton.h"
+#include "../InputEvents/JoyAxisDirection.h"
 
 #include <boost/property_tree/detail/ptree_implementation.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -19,22 +20,6 @@
 #include <exception>
 #include <iostream>
 #include <string>
-
-InputConfig ConfigHandler::DEFAULT_KEYS = InputConfig(new KeyboardKey(SDL_SCANCODE_UP),
-                                                      new KeyboardKey(SDL_SCANCODE_DOWN),
-                                                      new KeyboardKey(SDL_SCANCODE_LEFT),
-                                                      new KeyboardKey(SDL_SCANCODE_RIGHT),
-                                                      new KeyboardKey(SDL_SCANCODE_X),
-                                                      new KeyboardKey(SDL_SCANCODE_Z)
-);
-
-InputConfig ConfigHandler::DEFAULT_JOYSTICK = InputConfig(new JoyHat(0,0,SDL_HAT_UP),
-                                                      new JoyHat(0,0,SDL_HAT_DOWN),
-                                                      new JoyHat(0,0,SDL_HAT_LEFT),
-                                                      new JoyHat(0,0,SDL_HAT_RIGHT),
-                                                      new JoyButton(0, 0),
-                                                      new JoyButton(0,1)
-);
 
 ConfigHandler::ConfigHandler() {
 }
@@ -64,9 +49,50 @@ bool ConfigHandler::saveConfig() {
 InputConfig ConfigHandler::getKeyConfig(int player) {
     // TODO: implement
     if (player == 1) {
-        return DEFAULT_KEYS;
+
+        return InputConfig(parseInputEvent("keys.p1_up"),
+                           parseInputEvent("keys.p1_down"),
+                           parseInputEvent("keys.p1_left"),
+                           parseInputEvent("keys.p1_right"),
+                           parseInputEvent("keys.p1_swap"),
+                           parseInputEvent("keys.p1_raiseStack"),
+                           parseInputEvent("keys.p1_start"));
+
     } else {
-        return DEFAULT_JOYSTICK;
+    }
+}
+
+InputEvent *ConfigHandler::parseInputEvent(const char *configKey) {
+    std::string value = _settingsTree.get<std::string>(configKey);
+
+    char type = value[0];
+    switch (type) {
+        case 'K':return new KeyboardKey(SDL_GetScancodeFromName(value.substr(1).c_str()));
+        case 'J': {
+            auto jidEnd = value.find('_', 1);
+            auto jidStr = value.substr(1, jidEnd - 1);
+            int joystickId = std::stoi(jidStr);
+            char eventType = value[jidEnd + 1];
+            switch (eventType) {
+                case 'B': {
+                    int buttonId = std::stoi(value.substr(jidEnd + 2));
+                    return new JoyButton(joystickId, buttonId);
+                }
+                case 'H': {
+                    int hidEnd = value.find('_', jidEnd + 1);
+                    int hatId = std::stoi(value.substr(jidEnd + 2, (hidEnd - 1 - (jidEnd + 1))));
+                    int hatDir = std::stoi(value.substr(jidEnd + 1));
+                    return new JoyHat(joystickId, hatId, hatDir);
+                }
+                case 'A': {
+                    int aidEnd = value.find('_', jidEnd + 1);
+                    int axisId = std::stoi(value.substr(jidEnd + 2, (aidEnd - 1 - (jidEnd + 1))));
+                    JoyAxisDirection::Direction
+                        axisDir = value[aidEnd + 1] == '+' ? JoyAxisDirection::POSITIVE : JoyAxisDirection::NEGATIVE;
+                    return new JoyAxisDirection(joystickId, axisId, axisDir);
+                }
+            }
+        }
     }
 }
 

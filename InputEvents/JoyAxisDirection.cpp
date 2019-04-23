@@ -24,6 +24,6 @@ std::string JoyAxisDirection::toString() {
     char direction = _direction == POSITIVE ? '+' : '-';
 
     std::ostringstream os;
-    os << "J_" << _joystickId << "_A" << _axisId << "_" << direction;
+    os << "J" << _joystickId << "_A" << _axisId << "_" << direction;
     return os.str();
 }

@@ -16,7 +16,8 @@ public:
                 InputEvent *left,
                 InputEvent *right,
                 InputEvent *swap,
-                InputEvent *raiseStack);
+                InputEvent *raiseStack,
+                InputEvent *start);
 
     std::shared_ptr<InputEvent> _up;
     std::shared_ptr<InputEvent> _down;
@@ -25,6 +26,7 @@ public:
 
     std::shared_ptr<InputEvent> _swap;
     std::shared_ptr<InputEvent> _raiseStack;
+    std::shared_ptr<InputEvent> _start;
 
     void updateState();
 
@@ -32,6 +34,7 @@ public:
     bool raiseStackDown();
 
     bool swapDown();
+    bool startDown();
 
     InputState _currentState;
     InputState _prevState;

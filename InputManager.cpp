@@ -28,9 +28,9 @@ void InputManager::poll() {
         if (e.type == SDL_QUIT) {
             _quit = true;
         } else if (e.type == SDL_JOYBUTTONDOWN) {
-            printf("Joy %d button %d pressed \n", e.jbutton.which, e.jbutton.button);
+            //printf("Joy %d button %d pressed \n", e.jbutton.which, e.jbutton.button);
         } else if (e.type == SDL_JOYHATMOTION) {
-            printf("Joy %d hat %d pressed \n", e.jhat.which, e.jhat.value);
+            //printf("Joy %d hat %d pressed \n", e.jhat.which, e.jhat.value);
         } else if (e.type == SDL_JOYAXISMOTION) {
             //printf("Joy %d axis %d position %d \n", e.jaxis.which, e.jaxis.axis, e.jaxis.value);
         }

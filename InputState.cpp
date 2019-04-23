@@ -8,23 +8,24 @@
 #include "InputEvents/KeyboardKey.h"
 #include "Config/InputConfig.h"
 
-InputState::InputState(Direction direction, bool swap, bool raiseStack) : _direction(direction),
-                                                                          _swap(swap),
-                                                                          _raiseStack(raiseStack) {}
+InputState::InputState() : _direction(NONE),
+                           _swap(false),
+                           _raiseStack(false),
+                           _start(false) {}
+
+InputState::InputState(Direction direction, bool swap, bool raise_stack, bool start)
+    : _direction(direction), _swap(swap), _raiseStack(raise_stack), _start(start) {}
 
 InputState InputState::getCurrentState(InputConfig &inputConfig) {
 
     Direction direction = getDirection(inputConfig);
-
     bool swap = inputConfig._swap->isActive();
-
     bool raise = inputConfig._raiseStack->isActive();
-
-    InputState state = InputState(direction, swap, raise);
+    bool start = inputConfig._start->isActive();
+    InputState state(direction, swap, raise, start);
 
     return state;
 }
-
 Direction InputState::getDirection(InputConfig &config) {
     if (config._up->isActive()) {
         return Direction::UP;

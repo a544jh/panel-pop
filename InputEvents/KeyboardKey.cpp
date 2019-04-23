@@ -14,6 +14,6 @@ bool KeyboardKey::isActive() const {
 
 std::string KeyboardKey::toString() {
     std::ostringstream os;
-    os << "K_" << SDL_GetScancodeFromKey(_scancode);
+    os << "K" << SDL_GetScancodeFromKey(_scancode);
     return os.str();
 }

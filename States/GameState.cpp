@@ -8,13 +8,16 @@
 
 #include "GameState.h"
 #include "../InputManager.h"
+#include "StateManager.h"
 
 void GameState::tick() {
-    InputManager &input = InputManager::getInstance();
-    if (input.keyDown(SDL_SCANCODE_5)) {
+    InputConfig conf1 = StateManager::getInstance().getKeys(1);
+    InputConfig conf2 = StateManager::getInstance().getKeys(2);
+    if (conf1.startDown() || conf2.startDown()) {
         _game->inputTogglePause();
     }
-    if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
+    if (false) {
+        // TODO: enable in debug mode...
         _game->reset();
     }
     if (_game->getState() == Game::State::RUNNING) {
@@ -28,7 +31,7 @@ void GameState::tick() {
         menu.handleInput();
     } else if (_game->getState() == Game::State::ENDED) {
         //TODO: change to any key and add timeout..?
-        if (input.keyDown(SDL_SCANCODE_5)) {
+        if (conf1.startDown() || conf2.startDown()) {
             _game->reset();
         }
     }
