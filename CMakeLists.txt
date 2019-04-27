@@ -67,7 +67,7 @@ find_package(SDL2_mixer REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR}
                     ${SDL2_IMAGE_INCLUDE_DIR}
                     ${SDL2_TTF_INCLUDE_DIR}
-                    ${SDL2_MIXER_LIBRARIES})
+                    ${SDL2_MIXER_INCLUDE_DIR})
 
 target_link_libraries(panel-pop ${SDL2_LIBRARY}
                                 ${SDL2_IMAGE_LIBRARIES}
