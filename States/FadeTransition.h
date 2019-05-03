@@ -27,7 +27,6 @@ class FadeTransition : public State {
  private:
   StateConstructor _nextStateConstr;
   int _ticksRun;
-  SDL_Texture *_prevTexture;
   State *_nextState;
 };
 
