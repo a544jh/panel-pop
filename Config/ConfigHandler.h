@@ -41,7 +41,7 @@ class ConfigHandler {
   void operator=(ConfigHandler const &) = delete;
 
   boost::property_tree::ptree _settingsTree;
-  InputEvent *parseInputEvent(const char *configKey);
+  InputEvent *parseInputEvent(const std::string &configKey);
 };
 
 #endif /* CONFIG_CONFIGHANDLER_H_ */

@@ -23,53 +23,58 @@
 KeyConfigMenu::KeyConfigMenu(OptionsMenuState &state, int player) :
     _state(state),
     _player(player),
-    _activeKey(nullptr),
     _waitingForKey(false),
     _newKeyConfig(ConfigHandler::getInstance().getKeyConfig(player)) {
-    // TODO: implement...
-/*
+
     addItem(
         MenuItem("Up",
                  [&]() {
-                   _activeKey = &_newKeyConfig.up;
+                   _inputToSet = &_newKeyConfig._up;
                    _waitingForKey = true;
                  },
-                 _newKeyConfig.up, 0, MenuItem::OptionType::NONE));
+                 0, 0, MenuItem::OptionType::NONE));
     addItem(
         MenuItem("Down",
                  [&]() {
-                   _activeKey = &_newKeyConfig.down;
+                   _inputToSet = &_newKeyConfig._down;
                    _waitingForKey = true;
                  },
-                 _newKeyConfig.down, 0, MenuItem::OptionType::NONE));
+                 0, 0, MenuItem::OptionType::NONE));
     addItem(
         MenuItem("Left",
                  [&]() {
-                   _activeKey = &_newKeyConfig.left;
+                   _inputToSet = &_newKeyConfig._left;
                    _waitingForKey = true;
                  },
-                 _newKeyConfig.left, 0, MenuItem::OptionType::NONE));
+                 0, 0, MenuItem::OptionType::NONE));
     addItem(
         MenuItem("Right",
                  [&]() {
-                   _activeKey = &_newKeyConfig.right;
+                   _inputToSet = &_newKeyConfig._right;
                    _waitingForKey = true;
                  },
-                 _newKeyConfig.right, 0, MenuItem::OptionType::NONE));
+                 0, 0, MenuItem::OptionType::NONE));
     addItem(
         MenuItem("Swap/Accept",
                  [&]() {
-                   _activeKey = &_newKeyConfig.swap;
+                   _inputToSet = &_newKeyConfig._swap;
                    _waitingForKey = true;
                  },
-                 _newKeyConfig.swap, 0, MenuItem::OptionType::NONE));
+                 0, 0, MenuItem::OptionType::NONE));
     addItem(
         MenuItem("Raise stack/Cancel",
                  [&]() {
-                   _activeKey = &_newKeyConfig.raiseStack;
+                   _inputToSet = &_newKeyConfig._raiseStack;
                    _waitingForKey = true;
                  },
-                 _newKeyConfig.raiseStack, 0, MenuItem::OptionType::NONE));*/
+                 0, 0, MenuItem::OptionType::NONE));
+    addItem(
+        MenuItem("Pause/Start",
+                 [&]() {
+                   _inputToSet = &_newKeyConfig._start;
+                   _waitingForKey = true;
+                 },
+                 0, 0, MenuItem::OptionType::NONE));
 
     addItem(MenuItem("Apply", [&]() {
       ConfigHandler::getInstance().setKeyConfig(_newKeyConfig, _player);
@@ -82,9 +87,8 @@ KeyConfigMenu::KeyConfigMenu(OptionsMenuState &state, int player) :
 KeyConfigMenu::~KeyConfigMenu() {
 }
 
-void KeyConfigMenu::setActiveKey(int scancode) {
-    *_activeKey = scancode;
-    _items.at(_selection).setValue(scancode);
+void KeyConfigMenu::setActiveInput(InputEvent *event) {
+    _inputToSet->reset(event);
 }
 
 void KeyConfigMenu::render() const {
@@ -104,11 +108,24 @@ void KeyConfigMenu::render() const {
 
         if (i != _items.size() - 1 && !(_waitingForKey && _selection == i)) {
             const char *name;
-            if (_items.at(i).getValue() != 0) {
-                name = SDL_GetScancodeName(
-                    (SDL_Scancode) _items.at(i).getValue());
-            } else {
-                name = "--";
+
+            switch (i) {
+                case 0: name = _newKeyConfig._up->toString().c_str();
+                    break;
+                case 1: name = _newKeyConfig._down->toString().c_str();
+                    break;
+                case 2: name = _newKeyConfig._left->toString().c_str();
+                    break;
+                case 3: name = _newKeyConfig._right->toString().c_str();
+                    break;
+                case 4: name = _newKeyConfig._swap->toString().c_str();
+                    break;
+                case 5: name = _newKeyConfig._raiseStack->toString().c_str();
+                    break;
+                case 6: name = _newKeyConfig._start->toString().c_str();
+                    break;
+                default:
+                    name = "";
             }
 
             _SDLContext.renderText(name, {0, 0, 0}, _SDLContext._fontPs,
@@ -124,11 +141,11 @@ void KeyConfigMenu::render() const {
 void KeyConfigMenu::handleInput() {
     InputManager &input = InputManager::getInstance();
     if (_waitingForKey) {
-        int pressed = input.getKeyDown();
+        InputEvent *event = InputManager::getInstance().getInputConfigEvent();
         if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
             _waitingForKey = false;
-        } else if (pressed != 0) {
-            setActiveKey(pressed);
+        } else if (event != nullptr) {
+            setActiveInput(event);
             inputDown();
             inputEnter();
         }

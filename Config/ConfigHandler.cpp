@@ -47,22 +47,19 @@ bool ConfigHandler::saveConfig() {
 }
 
 InputConfig ConfigHandler::getKeyConfig(int player) {
-    // TODO: implement
-    if (player == 1) {
 
-        return InputConfig(parseInputEvent("keys.p1_up"),
-                           parseInputEvent("keys.p1_down"),
-                           parseInputEvent("keys.p1_left"),
-                           parseInputEvent("keys.p1_right"),
-                           parseInputEvent("keys.p1_swap"),
-                           parseInputEvent("keys.p1_raiseStack"),
-                           parseInputEvent("keys.p1_start"));
+    auto prefix = "keys.p" + std::to_string(player) + "_";
+    return InputConfig(parseInputEvent(prefix + "up"),
+                       parseInputEvent(prefix + "down"),
+                       parseInputEvent(prefix + "left"),
+                       parseInputEvent(prefix + "right"),
+                       parseInputEvent(prefix + "swap"),
+                       parseInputEvent(prefix + "raiseStack"),
+                       parseInputEvent(prefix + "start"));
 
-    } else {
-    }
 }
 
-InputEvent *ConfigHandler::parseInputEvent(const char *configKey) {
+InputEvent *ConfigHandler::parseInputEvent(const std::string &configKey) {
     std::string value = _settingsTree.get<std::string>(configKey);
 
     char type = value[0];
@@ -81,7 +78,7 @@ InputEvent *ConfigHandler::parseInputEvent(const char *configKey) {
                 case 'H': {
                     int hidEnd = value.find('_', jidEnd + 1);
                     int hatId = std::stoi(value.substr(jidEnd + 2, (hidEnd - 1 - (jidEnd + 1))));
-                    int hatDir = std::stoi(value.substr(jidEnd + 1));
+                    int hatDir = std::stoi(value.substr(hidEnd + 1));
                     return new JoyHat(joystickId, hatId, hatDir);
                 }
                 case 'A': {
@@ -93,12 +90,21 @@ InputEvent *ConfigHandler::parseInputEvent(const char *configKey) {
                 }
             }
         }
-    }
+    } // TODO: handle errors lol
 }
 
 void ConfigHandler::setKeyConfig(InputConfig config, int player) {
 
     StateManager::getInstance().setKeys(config, player);
+    auto prefix = "keys.p" + std::to_string(player) + "_";
+    _settingsTree.put(prefix + "up", config._up->toString());
+    _settingsTree.put(prefix + "down", config._down->toString());
+    _settingsTree.put(prefix + "left", config._left->toString());
+    _settingsTree.put(prefix + "right", config._right->toString());
+    _settingsTree.put(prefix + "swap", config._swap->toString());
+    _settingsTree.put(prefix + "raiseStack", config._raiseStack->toString());
+    _settingsTree.put(prefix + "start", config._start->toString());
+
 }
 
 void ConfigHandler::setFullscreen(bool fs) {

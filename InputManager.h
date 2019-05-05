@@ -10,6 +10,8 @@
 
 #include <vector>
 #include <SDL_joystick.h>
+#include <SDL_events.h>
+#include "InputEvents/InputEvent.h"
 
 class InputManager {
  public:
@@ -31,6 +33,7 @@ class InputManager {
 
   bool keyPressed(int); // key is down now
   int getKeyDown();
+  InputEvent * getInputConfigEvent() const;
 
  private:
   InputManager();
@@ -39,7 +42,10 @@ class InputManager {
 
   void operator=(InputManager const &) = delete;
 
-  std::vector<SDL_Joystick*> _joysticks;
+  SDL_Event _inputConfigEvent; // stores the last input event on this frame that is relevant for input config
+  std::vector<SDL_Joystick *> _joysticks;
+
+  void filterInputConfigEvent(const SDL_Event &e);
 };
 
 #endif /* INPUTMANAGER_H_ */

@@ -6,6 +6,11 @@
  */
 
 #include "InputManager.h"
+#include "InputEvents/InputEvent.h"
+#include "InputEvents/JoyButton.h"
+#include "InputEvents/KeyboardKey.h"
+#include "InputEvents/JoyHat.h"
+#include "InputEvents/JoyAxisDirection.h"
 #include <SDL2/SDL.h>
 #include <string.h>
 
@@ -23,8 +28,10 @@ InputManager &InputManager::getInstance() {
 void InputManager::poll() {
     _keys = SDL_GetKeyboardState(&_keys_len);
     memcpy(_prevKeys, _keys, sizeof(uint8_t) * _keys_len);
+    _inputConfigEvent.type = SDL_FIRSTEVENT; // effectively set the event to "null"
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
+        filterInputConfigEvent(e);
         if (e.type == SDL_QUIT) {
             _quit = true;
         } else if (e.type == SDL_JOYBUTTONDOWN) {
@@ -35,6 +42,39 @@ void InputManager::poll() {
             //printf("Joy %d axis %d position %d \n", e.jaxis.which, e.jaxis.axis, e.jaxis.value);
         }
     }
+}
+
+void InputManager::filterInputConfigEvent(const SDL_Event &e) {
+    if (e.type == SDL_JOYBUTTONDOWN || e.type == SDL_KEYDOWN || e.type == SDL_JOYHATMOTION
+        || e.type == SDL_JOYAXISMOTION) {
+        _inputConfigEvent = e;
+
+        // TODO: filter to "key down" events: e.g. only when joystick "enters" axis direction...
+        // for hat, filter out center position...
+        // so that this can also be used for "any key down" check
+    }
+}
+
+InputEvent *InputManager::getInputConfigEvent() const {
+    const SDL_Event &e = _inputConfigEvent;
+    if (e.type == SDL_JOYBUTTONDOWN) {
+        return new JoyButton(e.jbutton.which, e.jbutton.button);
+    } else if (e.type == SDL_KEYDOWN) {
+        return new KeyboardKey(e.key.keysym.scancode);
+    } else if (e.type == SDL_JOYHATMOTION) {
+        return new JoyHat(e.jhat.which, e.jhat.hat, e.jhat.value);
+    } else if (e.type == SDL_JOYAXISMOTION) {
+        JoyAxisDirection::Direction d;
+        if (e.jaxis.value > JoyAxisDirection::AXIS_THRESHOLD) {
+            d = JoyAxisDirection::POSITIVE;
+        } else if (e.jaxis.value < -JoyAxisDirection::AXIS_THRESHOLD) {
+            d = JoyAxisDirection::NEGATIVE;
+        } else {
+            return nullptr;
+        }
+        return new JoyAxisDirection(e.jaxis.which, e.jaxis.axis, d);
+    }
+    return nullptr;
 }
 
 bool InputManager::keyDown(int key) {
@@ -57,7 +97,6 @@ bool InputManager::anyKeyDown() {
     }
     return false;
 }
-
 int InputManager::getKeyDown() {
     for (int i = 0; i < _keys_len; ++i) {
         if (!_prevKeys[i] && _keys[i]) {
@@ -66,6 +105,7 @@ int InputManager::getKeyDown() {
     }
     return 0;
 }
+
 void InputManager::detectJoysticks() {
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         _joysticks.push_back(SDL_JoystickOpen(i));
@@ -74,7 +114,7 @@ void InputManager::detectJoysticks() {
 
 SDL_Joystick *InputManager::getJoystick(SDL_JoystickID id) {
     for (auto joystick: _joysticks) {
-        if (SDL_JoystickInstanceID(joystick) == id){
+        if (SDL_JoystickInstanceID(joystick) == id) {
             return joystick;
         }
     }

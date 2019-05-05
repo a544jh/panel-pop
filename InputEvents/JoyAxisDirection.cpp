@@ -13,9 +13,9 @@ JoyAxisDirection::JoyAxisDirection(SDL_JoystickID joystick_id, int axis_id, JoyA
 bool JoyAxisDirection::isActive() const {
     Sint16 value = SDL_JoystickGetAxis(_joystick,_axisId);
     if (_direction == POSITIVE) {
-        return value > AXIS_TRESHOLD;
+        return value > AXIS_THRESHOLD;
     } else {
-        return value < -AXIS_TRESHOLD;
+        return value < -AXIS_THRESHOLD;
     }
 }
 

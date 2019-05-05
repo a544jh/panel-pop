@@ -18,8 +18,6 @@ class KeyConfigMenu : public Menu {
   KeyConfigMenu(OptionsMenuState &, int player);
   virtual ~KeyConfigMenu();
 
-  void setActiveKey(int);
-
   void render() const;
 
   void handleInput();
@@ -27,10 +25,11 @@ class KeyConfigMenu : public Menu {
  private:
   OptionsMenuState &_state;
   int _player;
-  int *_activeKey;
+  std::shared_ptr<InputEvent> *_inputToSet;
   bool _waitingForKey;
 
   InputConfig _newKeyConfig;
+  void setActiveInput(InputEvent *event);
 };
 
 #endif /* MENUS_KEYCONFIGMENU_H_ */

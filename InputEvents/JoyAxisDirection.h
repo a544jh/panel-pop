@@ -17,10 +17,9 @@ class JoyAxisDirection: public InputEvent {
   JoyAxisDirection(SDL_JoystickID joystick_id, int axis_id, Direction direction);
   std::string toString() override;
   bool isActive() const override;
-
+  static const Sint16 AXIS_THRESHOLD = 16383;
 
  private:
-  static const Sint16 AXIS_TRESHOLD = 16383;
   SDL_JoystickID _joystickId;
   int _axisId;
   Direction _direction;

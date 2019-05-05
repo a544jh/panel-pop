@@ -67,6 +67,8 @@ void Menu::resetCursor() {
 
 void Menu::handleInput() {
 
+    // TODO: some default way of handling keys
+
     InputConfig& config1 = StateManager::getInstance().getKeys(1);
     InputConfig& config2 = StateManager::getInstance().getKeys(2);
 
