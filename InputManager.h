@@ -12,6 +12,7 @@
 #include <SDL_joystick.h>
 #include <SDL_events.h>
 #include "InputEvents/InputEvent.h"
+#include "Config/InputConfig.h"
 
 class InputManager {
  public:
@@ -33,7 +34,9 @@ class InputManager {
 
   bool keyPressed(int); // key is down now
   int getKeyDown();
-  InputEvent * getInputConfigEvent() const;
+  InputEvent * getInputDownEvent() const;
+
+  static InputConfig defaultMenuConfig;
 
  private:
   InputManager();
@@ -42,12 +45,13 @@ class InputManager {
 
   void operator=(InputManager const &) = delete;
 
-  SDL_Event _inputConfigEvent; // stores the last input event on this frame that is relevant for input config
+  SDL_Event _inputDownEvent; // stores the last input event on this frame that is relevant for input config
+  SDL_Event _prevInputDownEvent;
   std::vector<SDL_Joystick *> _joysticks;
 
-  void filterInputConfigEvent(const SDL_Event &e);
-  bool _joyWithinDirectionThisFrame;
-  bool _joyWithinDirectionPrevFrame;
+  void filterInputDownEvent(const SDL_Event &e);
+  SDL_JoystickID _joyIdWithinDirection;
+  Uint8 _joyAxisWithinDirection;
 };
 
 #endif /* INPUTMANAGER_H_ */

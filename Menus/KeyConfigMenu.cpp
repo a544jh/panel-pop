@@ -141,7 +141,7 @@ void KeyConfigMenu::render() const {
 void KeyConfigMenu::handleInput() {
     InputManager &input = InputManager::getInstance();
     if (_waitingForKey) {
-        InputEvent *event = InputManager::getInstance().getInputConfigEvent();
+        InputEvent *event = InputManager::getInstance().getInputDownEvent();
         if (input.keyDown(SDL_SCANCODE_ESCAPE)) {
             _waitingForKey = false;
         } else if (event != nullptr) {

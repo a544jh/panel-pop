@@ -17,10 +17,11 @@
 InputManager::InputManager() :
     _quit(false),
     _keys_len(0),
-    _inputConfigEvent(),
+    _inputDownEvent(),
+    _prevInputDownEvent(),
     _joysticks(),
-    _joyWithinDirectionThisFrame(true),
-    _joyWithinDirectionPrevFrame(false) {
+    _joyIdWithinDirection(-1),
+    _joyAxisWithinDirection(-1) {
     _keys = SDL_GetKeyboardState(&_keys_len);
     _prevKeys = new uint8_t[_keys_len];
 }
@@ -30,16 +31,23 @@ InputManager &InputManager::getInstance() {
     return instance;
 }
 
+InputConfig InputManager::defaultMenuConfig = InputConfig(new KeyboardKey(SDL_SCANCODE_UP),
+                                                          new KeyboardKey(SDL_SCANCODE_DOWN),
+                                                          new KeyboardKey(SDL_SCANCODE_LEFT),
+                                                          new KeyboardKey(SDL_SCANCODE_RIGHT),
+                                                          new KeyboardKey(SDL_SCANCODE_X),
+                                                          new KeyboardKey(SDL_SCANCODE_Z),
+                                                          new KeyboardKey(SDL_SCANCODE_ESCAPE));
 void InputManager::poll() {
     _keys = SDL_GetKeyboardState(&_keys_len);
     memcpy(_prevKeys, _keys, sizeof(uint8_t) * _keys_len);
 
-    _inputConfigEvent.type = SDL_FIRSTEVENT; // effectively set the event to "null"
-    _joyWithinDirectionThisFrame = false;
+    _prevInputDownEvent = _inputDownEvent;
+    _inputDownEvent.type = SDL_FIRSTEVENT; // effectively set the event to "null"
 
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
-        filterInputConfigEvent(e);
+        filterInputDownEvent(e);
         if (e.type == SDL_QUIT) {
             _quit = true;
         } else if (e.type == SDL_JOYBUTTONDOWN) {
@@ -51,38 +59,43 @@ void InputManager::poll() {
         }
     }
 
-    _joyWithinDirectionPrevFrame = _joyWithinDirectionThisFrame;
-
+    defaultMenuConfig.updateState();
 }
 
-void InputManager::filterInputConfigEvent(const SDL_Event &e) {
+void InputManager::filterInputDownEvent(const SDL_Event &e) {
     if (e.type == SDL_JOYBUTTONDOWN || e.type == SDL_KEYDOWN) {
-        _inputConfigEvent = e;
+        _inputDownEvent = e;
     }
     // filter to "key down" events: e.g. only when joystick "enters" axis direction...
     if (e.type == SDL_JOYAXISMOTION) {
+
         bool joyWithinDirection =
             (e.jaxis.value > JoyAxisDirection::AXIS_THRESHOLD || e.jaxis.value < -JoyAxisDirection::AXIS_THRESHOLD);
 
         if (joyWithinDirection) {
-            _joyWithinDirectionThisFrame = true;
+            if (_joyIdWithinDirection == -1) {
+                _joyIdWithinDirection = e.jaxis.which;
+                _joyAxisWithinDirection = e.jaxis.axis;
+                _inputDownEvent = e;
+            }
+        } else {
+            if (_joyIdWithinDirection == e.jaxis.which && _joyAxisWithinDirection == e.jaxis.axis) {
+                _joyIdWithinDirection = -1;
+            }
         }
 
-        if (!_joyWithinDirectionPrevFrame && joyWithinDirection) {
-            _inputConfigEvent = e;
-        }
     }
 
     if (e.type == SDL_JOYHATMOTION) {
         if (e.jhat.value != SDL_HAT_CENTERED) {
-            _inputConfigEvent = e;
+            _inputDownEvent = e;
         }
     }
 
 }
 
-InputEvent *InputManager::getInputConfigEvent() const {
-    const SDL_Event &e = _inputConfigEvent;
+InputEvent *InputManager::getInputDownEvent() const {
+    const SDL_Event &e = _inputDownEvent;
     if (e.type == SDL_JOYBUTTONDOWN) {
         return new JoyButton(e.jbutton.which, e.jbutton.button);
     } else if (e.type == SDL_KEYDOWN) {
@@ -121,7 +134,7 @@ bool InputManager::anyKeyDown() {
             return true;
         }
     }
-    return false;
+    return (_prevInputDownEvent.type == SDL_FIRSTEVENT && _inputDownEvent.type != SDL_FIRSTEVENT);
 }
 int InputManager::getKeyDown() {
     for (int i = 0; i < _keys_len; ++i) {

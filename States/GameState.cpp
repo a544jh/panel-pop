@@ -13,7 +13,7 @@
 void GameState::tick() {
     InputConfig conf1 = StateManager::getInstance().getKeys(1);
     InputConfig conf2 = StateManager::getInstance().getKeys(2);
-    if (conf1.startDown() || conf2.startDown()) {
+    if (conf1.startDown() || conf2.startDown() || InputManager::defaultMenuConfig.startDown()) {
         _game->inputTogglePause();
     }
     if (false) {
@@ -31,7 +31,7 @@ void GameState::tick() {
         menu.handleInput();
     } else if (_game->getState() == Game::State::ENDED) {
         //TODO: change to any key and add timeout..?
-        if (conf1.startDown() || conf2.startDown()) {
+        if (conf1.startDown() || conf2.startDown() || InputManager::defaultMenuConfig.startDown()) {
             _game->reset();
         }
     }

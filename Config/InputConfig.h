@@ -30,11 +30,11 @@ public:
 
     void updateState();
 
-    Direction getDownDirection();// get the direction input that started on this tick, otherwise NONE
-    bool raiseStackDown();
+    Direction getDownDirection() const;// get the direction input that started on this tick, otherwise NONE
+    bool raiseStackDown() const;
 
-    bool swapDown();
-    bool startDown();
+    bool swapDown() const;
+    bool startDown() const;
 
     InputState _currentState;
     InputState _prevState;

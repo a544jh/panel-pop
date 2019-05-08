@@ -24,22 +24,22 @@ void InputConfig::updateState() {
     _currentState = InputState::getCurrentState(*this);
 }
 
-Direction InputConfig::getDownDirection() {
+Direction InputConfig::getDownDirection() const {
     if (_prevState._direction != _currentState._direction) {
         return _currentState._direction;
     }
     return NONE;
 }
 
-bool InputConfig::raiseStackDown() {
+bool InputConfig::raiseStackDown() const {
     return !_prevState._raiseStack && _currentState._raiseStack;
 }
 
-bool InputConfig::swapDown() {
+bool InputConfig::swapDown() const {
     return !_prevState._swap && _currentState._swap;
 }
 
-bool InputConfig::startDown() {
+bool InputConfig::startDown() const {
     return !_prevState._start && _currentState._start;
 }
 
