@@ -15,7 +15,12 @@
 #include <string.h>
 
 InputManager::InputManager() :
-    _quit(false), _keys_len(0), _joysticks() {
+    _quit(false),
+    _keys_len(0),
+    _inputConfigEvent(),
+    _joysticks(),
+    _joyWithinDirectionThisFrame(true),
+    _joyWithinDirectionPrevFrame(false) {
     _keys = SDL_GetKeyboardState(&_keys_len);
     _prevKeys = new uint8_t[_keys_len];
 }
@@ -28,7 +33,10 @@ InputManager &InputManager::getInstance() {
 void InputManager::poll() {
     _keys = SDL_GetKeyboardState(&_keys_len);
     memcpy(_prevKeys, _keys, sizeof(uint8_t) * _keys_len);
+
     _inputConfigEvent.type = SDL_FIRSTEVENT; // effectively set the event to "null"
+    _joyWithinDirectionThisFrame = false;
+
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
         filterInputConfigEvent(e);
@@ -42,17 +50,35 @@ void InputManager::poll() {
             //printf("Joy %d axis %d position %d \n", e.jaxis.which, e.jaxis.axis, e.jaxis.value);
         }
     }
+
+    _joyWithinDirectionPrevFrame = _joyWithinDirectionThisFrame;
+
 }
 
 void InputManager::filterInputConfigEvent(const SDL_Event &e) {
-    if (e.type == SDL_JOYBUTTONDOWN || e.type == SDL_KEYDOWN || e.type == SDL_JOYHATMOTION
-        || e.type == SDL_JOYAXISMOTION) {
+    if (e.type == SDL_JOYBUTTONDOWN || e.type == SDL_KEYDOWN) {
         _inputConfigEvent = e;
-
-        // TODO: filter to "key down" events: e.g. only when joystick "enters" axis direction...
-        // for hat, filter out center position...
-        // so that this can also be used for "any key down" check
     }
+    // filter to "key down" events: e.g. only when joystick "enters" axis direction...
+    if (e.type == SDL_JOYAXISMOTION) {
+        bool joyWithinDirection =
+            (e.jaxis.value > JoyAxisDirection::AXIS_THRESHOLD || e.jaxis.value < -JoyAxisDirection::AXIS_THRESHOLD);
+
+        if (joyWithinDirection) {
+            _joyWithinDirectionThisFrame = true;
+        }
+
+        if (!_joyWithinDirectionPrevFrame && joyWithinDirection) {
+            _inputConfigEvent = e;
+        }
+    }
+
+    if (e.type == SDL_JOYHATMOTION) {
+        if (e.jhat.value != SDL_HAT_CENTERED) {
+            _inputConfigEvent = e;
+        }
+    }
+
 }
 
 InputEvent *InputManager::getInputConfigEvent() const {
@@ -118,4 +144,5 @@ SDL_Joystick *InputManager::getJoystick(SDL_JoystickID id) {
             return joystick;
         }
     }
+    return nullptr;
 }

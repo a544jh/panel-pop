@@ -46,6 +46,8 @@ class InputManager {
   std::vector<SDL_Joystick *> _joysticks;
 
   void filterInputConfigEvent(const SDL_Event &e);
+  bool _joyWithinDirectionThisFrame;
+  bool _joyWithinDirectionPrevFrame;
 };
 
 #endif /* INPUTMANAGER_H_ */
