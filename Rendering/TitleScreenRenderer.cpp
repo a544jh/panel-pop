@@ -13,7 +13,7 @@
 #include <SDL2/SDL_timer.h>
 #include <string>
 
-#include "../main.h"
+#include "../Main.h"
 #include "../SDLContext.h"
 #include "../States/TitleScreen.h"
 
