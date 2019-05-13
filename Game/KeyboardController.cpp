@@ -37,8 +37,10 @@ void KeyboardController::tick() {
         _board.inputForceStackRaise();
     }
 
-    /*
+
     //debug stuff...
+    /*
+    InputManager &input = InputManager::getInstance();
     if (input.keyDown(SDL_SCANCODE_1)) {
         _board.queueGarbage(false, 3, GarbageBlockType::NORMAL);
     }

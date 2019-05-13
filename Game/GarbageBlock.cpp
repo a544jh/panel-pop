@@ -34,7 +34,7 @@ void GarbageBlock::fillBufferRow() {
         }
         colors.remove(_bufferRow[i - 1]._color);
         _bufferRow[i]._color = Block::getRandomColor(colors);
-        _bufferRow[i]._chain = true;
+        _bufferRow[i]._gbFallChain = true;
     }
 }
 

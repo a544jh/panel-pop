@@ -130,7 +130,7 @@ void BoardRenderer::drawGrid() {
 }
 
 void BoardRenderer::drawBlocks() {
-    //SDL_SetRenderDrawBlendMode(_SDLRenderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawBlendMode(_SDLRenderer, SDL_BLENDMODE_BLEND);
     if (_board.getState() == Board::COUNTDOWN) {
         SDL_SetTextureAlphaMod(_spriteSheet, 0xa0);
     } else {
@@ -138,15 +138,15 @@ void BoardRenderer::drawBlocks() {
     }
     for (int i = 0; i < Board::BOARD_HEIGHT; i++) {
         for (int j = 0; j < Board::BOARD_WIDTH; j++) {
+            SDL_Rect pos;
+            pos.h = TILE_SIZE;
+            pos.w = TILE_SIZE;
+            pos.x = j * TILE_SIZE;
+            pos.y = (BOARD_HEIGHT - (i + 1) * TILE_SIZE)
+                - _board.getStackOffset();
             if (_board.getTile(i, j).type == BLOCK) {
                 const Block &block = _board.getTile(i, j).b;
 
-                SDL_Rect pos;
-                pos.h = TILE_SIZE;
-                pos.w = TILE_SIZE;
-                pos.x = j * TILE_SIZE;
-                pos.y = (BOARD_HEIGHT - (i + 1) * TILE_SIZE)
-                    - _board.getStackOffset();
                 int xOffset = TILE_SIZE * (double) block._swapTimer
                     / _board.SWAP_DELAY;
                 if (block._state == SWAPPING_RIGHT) {
@@ -199,6 +199,11 @@ void BoardRenderer::drawBlocks() {
                     SDL_RenderCopy(_SDLRenderer, _spriteSheet, &sheet, &pos);
                 }
             }
+            /* TODO: debug mode...
+            if (_board.getTile(i, j).chain) {
+                SDL_SetRenderDrawColor(_SDLRenderer, 0, 0xFF, 0, 0x80);
+                SDL_RenderFillRect(_SDLRenderer, &pos);
+            }*/
         }
     }
     SDL_SetTextureAlphaMod(_spriteSheet, 0xff);

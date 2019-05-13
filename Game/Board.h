@@ -32,9 +32,9 @@ class Board {
 
     TileType type;
     Block b;
-    // TODO: refactor to use lookup from list instead of pointer, so we can copy this object...
+    // TODO: refactor to use lookup from Board's list instead of pointer, so we can copy this object...
     GarbageBlock *g;
-
+    bool chain = false;
   };
 
   struct GarbageSpawn {
@@ -147,7 +147,7 @@ class Board {
   void handleBlockTimers();
   void swapBlocks(int, int);
   void clearTile(Tile &);
-  void setChainAbove(int, int);
+  bool checkChain(int row, int col);
   void handleFalling();
   void handleGarbageFalling();
   void triggerNeighbors(int, int);
@@ -163,6 +163,7 @@ class Board {
   void sendEvents();
   void chainScoring();
   void comboScoring();
+  bool checkAllAirAbove(int row, int col);
 };
 
 #endif /* BOARD_H_ */

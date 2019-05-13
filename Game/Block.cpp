@@ -14,7 +14,7 @@ Block::Block() :
     _falling(false),
     _floatTimer(0),
     _swapTimer(0),
-    _chain(false),
+    _gbFallChain(false),
     _explOrder(0),
     _explosionTicks(0),
     _explosionAnimTicks(0),

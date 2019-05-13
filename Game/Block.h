@@ -32,7 +32,7 @@ class Block {
   bool _falling;//to prevent block from getting matched in mid-air
   int _floatTimer;//the blocks floats for a while after getting swapped
   int _swapTimer;//for swap delay and animation
-  bool _chain;
+  bool _gbFallChain; //falling block from transformed garbage, to trigger chains
   int _explOrder; //to determine sound effect
 
   int _explosionTicks; //ticks it takes for block to explode

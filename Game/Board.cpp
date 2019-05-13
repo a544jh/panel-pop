@@ -363,19 +363,18 @@ void Board::matchBlocks() {
 
 void Board::handleMatchedBlocks() {
     int matches = 1;
-    bool chain = false;
-    bool match = false;
+    bool tickMatch = false;
     for (int row = BOARD_HEIGHT - 1; row >= 0; --row) {
         for (int col = 0; col < BOARD_WIDTH; ++col) {
             Tile &tile = _tiles[row][col];
 
             if (tile.type == BLOCK && tile.b._state == MATCHED) {
                 tile.b._explOrder = matches - 1;
-                if (tile.b._chain && !chain) {
-                    chain = true;
+                if (checkChain(row, col) || tile.b._gbFallChain) {
+                    _tickChain = true;
                 }
-                if (!match) {
-                    match = true;
+                if (!tickMatch) {
+                    tickMatch = true;
                     _tickMatchCol = col;
                     _tickMatchRow = row;
                 }
@@ -388,21 +387,39 @@ void Board::handleMatchedBlocks() {
                 triggerNeighbors(row, col);
                 ++matches;
             }
-            // TODO: blocks that stopped falling due to a floating "slipped in" block should not have their chain flag removed...
-            // maybe redo the chain detection to something like this:
-            // * put a "chain flag" on a Tile when it explodes
-            // * when a match is detected, check if it has a tile with the chain flag below it
-            // * remove the chain flag when it has a normal, non falling block.
-            if (tile.b._state == NORMAL && !tile.b._falling && tile.b._chain) {
-                tile.b._chain = false;
+
+            if ((tile.type == BLOCK && tile.b._state == NORMAL && !tile.b._falling)
+                || (tile.type == AIR && checkAllAirAbove(row, col))) {
+                tile.chain = false;
+                tile.b._gbFallChain = false;
             }
         }
     }
-    if (chain) {
+    if (_tickChain) {
         ++_chainCounter;
-        _tickChain = true;
         chainScoring();
     }
+}
+
+// check if exploded tile is in a chain by looking for chain flag below it.
+bool Board::checkChain(int row, int col) {
+    for (int i = row; i >= 0; --i) {
+        Tile &t = _tiles[i][col];
+        if (t.chain) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Board::checkAllAirAbove(int row, int col) {
+    for (int i = row; i < BOARD_HEIGHT; ++i) {
+        Tile &t = _tiles[i][col];
+        if (t.type == AIR || t.type == GARBAGE || (t.type == BLOCK && t.b._state == NORMAL && !t.b._falling))
+            continue; // gb as well because it's not going to cause any chains...
+        return false;
+    }
+    return true;
 }
 
 void Board::handleTriggeredBlocks() {
@@ -453,11 +470,7 @@ void Board::handleBlockTimers() {
 
                 if (tile.b._explosionTicks == tile.b._explosionTimer) {
                     clearTile(tile);
-                    // we need to set the chain flag for the blocks above, and set it on the others above when it's about to fall
-                    if (_tiles[row + 1][col].type == BLOCK
-                        && _tiles[row + 1][col].b._state == NORMAL) {
-                        _tiles[row + 1][col].b._chain = true;
-                    }
+                    tile.chain = true;
                 }
             }
             if (tile.b._state == SWAPPING_LEFT
@@ -521,9 +534,13 @@ void Board::swapBlocks(int row, int col) {
     Tile &swapRight = _tiles[row][col];
     Tile &swapLeft = _tiles[row][col + 1];
     if (swapLeft.b._state == SWAPPING_LEFT) {
+        bool srChain = swapRight.chain; // should've maybe put chain flags in their own matrix...
+        bool slChain = swapLeft.chain;
         Tile tmp = swapLeft;
         swapLeft = swapRight;
         swapRight = tmp;
+        swapRight.chain = srChain;
+        swapLeft.chain = slChain;
     } else {
         std::cout << "CAN'T SWAP!!\n";
     }
@@ -531,17 +548,6 @@ void Board::swapBlocks(int row, int col) {
     swapRight.b._state = NORMAL;
     swapLeft.b._swapTimer = 0;
     swapLeft.b._state = NORMAL;
-}
-
-//sets the chain flag for the block and the ones above it
-
-void Board::setChainAbove(int row, int col) {
-    for (int y = row; y < BOARD_HEIGHT; ++y) {
-        Tile &tile = _tiles[y][col];
-        if (tile.type == BLOCK) {
-            tile.b._chain = true;
-        }
-    }
 }
 
 void Board::handleFalling() {
@@ -557,9 +563,6 @@ void Board::handleFalling() {
                             _tiles[y][col].b._falling = true;
                         }
                     }
-                    if (tile.b._chain) {
-                        setChainAbove(row, col);
-                    }
                 }
             }
             if (blockCanFall(row, col)) {
@@ -567,8 +570,12 @@ void Board::handleFalling() {
                     tile.b._state = FLOATING;
                     tile.b._floatTimer = FLOAT_TICKS;
                 } else { //actual falling
+                    bool chain1 = _tiles[row - 1][col].chain;
+                    bool chain = _tiles[row][col].chain;
                     _tiles[row - 1][col] = _tiles[row][col];
+                    _tiles[row - 1][col].chain = chain1; // prevent chain flag from clearing...
                     clearTile(_tiles[row][col]);
+                    _tiles[row][col].chain = chain;
                 }
             } else if (tile.b._falling) {
                 tile.b._falling = false;
@@ -745,8 +752,8 @@ void Board::tick() {
         handleBlockTimers();
         handleFalling();
         handleGarbageFalling();
-        matchBlocks();
-        handleMatchedBlocks();
+        matchBlocks(); // chain -> true
+        handleMatchedBlocks(); // check chain
         handleTriggeredBlocks();
 
         sendEvents();
