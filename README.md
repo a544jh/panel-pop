@@ -50,5 +50,9 @@ Misc:
 
 #### Windows (MinGW)
 
+Install https://nuwen.net/mingw.htm and then overwrite/copy ALL files from each
+SDL dependency's 64-bit MinGW development distribution's `lib` and `include`
+folders into the MinGW installation's respective folders.
+
 1. `cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"`
-2. `mingw32-make.exe`
+2. `make`
