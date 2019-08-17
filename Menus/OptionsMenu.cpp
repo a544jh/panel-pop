@@ -32,7 +32,7 @@ OptionsMenu::OptionsMenu(OptionsMenuState &state) :
     addItem(
         MenuItem("SFX volume", [&]() {}, cf.getSfxVolume(), MIX_MAX_VOLUME,
                  MenuItem::OptionType::SLIDER));
-    addItem(MenuItem("Configure keys", [&]() {
+    addItem(MenuItem("Configure controls", [&]() {
       _state.configurePlayerKeys(_items.at(_selection).getValue() + 1);
     }, 0, 1, MenuItem::OptionType::PLAYER));
     addItem(MenuItem("Apply", [&]() {

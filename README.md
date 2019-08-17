@@ -16,19 +16,21 @@ A Panel de Pon / Tetris Attack / Puzzle League clone made with C++ and SDL
 
 ## Controls
 
-Default gameplay keys:
+Default gameplay and menu keys:
 * Arrow keys - move cursor
 * `X` - accept/swap blocks
 * `Z` - cancel/raise stack
-* `5` - pause/start
-
-Debug keys:
-* `Esc` - reset boards
-* `1`,`2`,`3`,`4`,`6`,`7`,`8` - drop garbage block
+* `Esc` - pause/start
 
 Misc:
 * `Ctrl`+`F` - toggle fps diplay
 * `Alt`+`Return` - toggle fullscreen
+
+### How to configure gamepads
+
+Plug in gamepads before launching the game.
+Controls can be configured individually for P1/P2 in the options menu.
+The default keyboard controls will always work in the menus.
 
 
 ## How to build
