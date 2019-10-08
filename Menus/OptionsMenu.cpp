@@ -61,7 +61,7 @@ void OptionsMenu::render() const {
         } else {
             text = " " + text;
         }
-        _SDLContext.renderText(text, {0, 0, 0}, _SDLContext._fontPs, x, y);
+        _SDLContext.renderText(text, {0, 0, 0, 255}, _SDLContext._fontPs, x, y);
 
         std::string option = _items.at(i).getOptionString();
         std::ostringstream os;
@@ -73,8 +73,7 @@ void OptionsMenu::render() const {
                 os << " " << option << " ";
             }
 
-            _SDLContext.renderText(os.str(), {0, 0, 0}, _SDLContext._fontPs,
-                                   x + 300, y);
+            _SDLContext.renderText(os.str(), {0, 0, 0, 255}, _SDLContext._fontPs, x + 300, y);
         }
     }
 }

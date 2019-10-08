@@ -56,7 +56,7 @@ SDL_Texture *DemoGameState::render() {
     SDL_SetRenderTarget(SDLContext::getInstance().getRenderer(), texture);
     if (SDL_GetTicks() % 1000 < 500) {
         SDLContext::getInstance().renderText("PUSH ANY KEY",
-                                             {255, 255, 255},
+                                             {255, 255, 255, 255},
                                              SDLContext::getInstance()._fontPs,
                                              440,
                                              450);

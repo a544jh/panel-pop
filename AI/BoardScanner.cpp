@@ -1,8 +1,7 @@
-
-/* 
+/*
  * File:   BoardScanner.cpp
  * Author: axel
- * 
+ *
  * Created on September 30, 2016, 10:22 PM
  */
 
@@ -66,7 +65,7 @@ BoardScanner::VerticalMatch BoardScanner::findVerticalMatch() {
             return match;
         }
     }
-    VerticalMatch match = {false};
+    VerticalMatch match = {false, COUNT, 0, 0};
     return match;
 }
 

@@ -1,8 +1,7 @@
-
-/* 
+/*
  * File:   FadeTransition.cpp
  * Author: axel
- * 
+ *
  * Created on October 9, 2016, 10:33 PM
  */
 
@@ -13,7 +12,7 @@
 
 FadeTransition::FadeTransition(StateConstructor constr) : _nextStateConstr(constr),
                                                           _ticksRun(0), _nextState(nullptr) {
-    StateManager &manager = StateManager::getInstance();
+  //    StateManager &manager = StateManager::getInstance();
 }
 
 void FadeTransition::tick() {

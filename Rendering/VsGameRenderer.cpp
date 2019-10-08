@@ -85,7 +85,7 @@ SDL_Texture *VsGameRenderer::renderGame() {
     //TODO: make this state more fancy
     if (_game.getState() == Game::State::ENDED
         && SDL_GetTicks() % 1000 >= 500) {
-        _SDLContext.renderText("PUSH START", {255, 255, 255},
+      _SDLContext.renderText("PUSH START", {255, 255, 255, 255},
                                _SDLContext._fontSquare, 134, 342);
     }
 
@@ -102,7 +102,7 @@ void VsGameRenderer::renderStatsText() {
     os << "\u25c0" << std::setw(2) << std::setfill('0') << _game.getP1Points()
        << ' ' << std::setw(2) << std::setfill('0') << _game.getP2Points()
        << "\u25b6";
-    _SDLContext.renderText(os.str(), {255, 255, 255}, _SDLContext._fontPs,
+    _SDLContext.renderText(os.str(), {255, 255, 255, 255}, _SDLContext._fontPs,
                            264, 180);
 }
 
