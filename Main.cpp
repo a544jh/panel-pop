@@ -16,7 +16,7 @@
 #include "SDLContext.h"
 #include "States/StateManager.h"
 
-int main(int argc, char *args[]) {
+int main() {
     srand(time(NULL));
     SDLContext &SDL = SDLContext::getInstance();
     ConfigHandler &configHandler = ConfigHandler::getInstance();

@@ -91,6 +91,7 @@ InputEvent *ConfigHandler::parseInputEvent(const std::string &configKey) {
             }
         }
     } // TODO: handle errors lol
+    return 0;
 }
 
 void ConfigHandler::setKeyConfig(InputConfig config, int player) {

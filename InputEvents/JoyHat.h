@@ -6,7 +6,8 @@
 #define PANEL_POP_INPUTEVENTS_JOYHAT_H_
 
 #include "InputEvent.h"
-#import "SDL.h"
+#include "SDL2/SDL.h"
+
 class JoyHat: public InputEvent {
  public:
   JoyHat(SDL_JoystickID joystick_id, int hat_id, Uint8 hat_direction);
@@ -16,8 +17,8 @@ class JoyHat: public InputEvent {
  private:
   SDL_JoystickID _joystickId;
   int _hatId;
-  Uint8 _hatDirection;
   SDL_Joystick *_joystick;
+  Uint8 _hatDirection;
 };
 
 #endif //PANEL_POP_INPUTEVENTS_JOYHAT_H_

@@ -104,7 +104,7 @@ void KeyConfigMenu::render() const {
         } else {
             text = " " + text;
         }
-        _SDLContext.renderText(text, {0, 0, 0}, _SDLContext._fontPs, x, y);
+        _SDLContext.renderText(text, {0, 0, 0, 255}, _SDLContext._fontPs, x, y);
 
         if (i != _items.size() - 1 && !(_waitingForKey && _selection == i)) {
             const char *name;
@@ -128,10 +128,10 @@ void KeyConfigMenu::render() const {
                     name = "";
             }
 
-            _SDLContext.renderText(name, {0, 0, 0}, _SDLContext._fontPs,
+            _SDLContext.renderText(name, {0, 0, 0, 255}, _SDLContext._fontPs,
                                    x + 350, y);
         } else if (_selection == i && _waitingForKey && (SDL_GetTicks() - _time) % 1000 < 500) {
-            _SDLContext.renderText("--press key--", {0, 0, 0},
+          _SDLContext.renderText("--press key--", {0, 0, 0, 255},
                                    _SDLContext._fontPs, x + 350, y);
         }
     }

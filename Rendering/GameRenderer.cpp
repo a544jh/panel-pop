@@ -59,6 +59,6 @@ void GameRenderer::renderGameTime(int x, int y) {
     }
     os << (time / 1000 / 60) << "\u2019" << std::setw(2) << std::setfill('0')
        << ((time / 1000) % 60) << "\u201d";
-    _SDLContext.renderText(os.str(), {255, 255, 255}, _SDLContext._fontPs, x,
+    _SDLContext.renderText(os.str(), {255, 255, 255, 255}, _SDLContext._fontPs, x,
                            y);
 }

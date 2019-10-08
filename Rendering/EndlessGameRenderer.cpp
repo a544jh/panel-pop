@@ -68,7 +68,7 @@ SDL_Texture *EndlessGameRenderer::renderGame() {
 
     if (_game.getState() == Game::State::ENDED
         && SDL_GetTicks() % 1000 >= 500) {
-        _SDLContext.renderText("PUSH START", {255, 255, 255},
+      _SDLContext.renderText("PUSH START", {255, 255, 255, 255},
                                _SDLContext._fontSquare, 134, 342);
     }
 
@@ -110,19 +110,19 @@ void EndlessGameRenderer::renderStatsText() {
     //speed
     std::ostringstream os;
     os << 11 - _game.getBoard(0).getStackRaiseTicks();
-    _SDLContext.renderText(os.str(), {255, 255, 255}, _SDLContext._fontPs,
+    _SDLContext.renderText(os.str(), {255, 255, 255, 255}, _SDLContext._fontPs,
                            260, 156);
     //score
     os.str("");
     os.clear();
     os << _game.getBoard(0).getScore();
-    _SDLContext.renderText(os.str(), {255, 255, 255}, _SDLContext._fontPs,
+    _SDLContext.renderText(os.str(), {255, 255, 255, 255}, _SDLContext._fontPs,
                            260, 116);
     //high score
     os.str("");
     os.clear();
     os << _game.getHighScore();
-    _SDLContext.renderText(os.str(), {255, 255, 255}, _SDLContext._fontPs,
+    _SDLContext.renderText(os.str(), {255, 255, 255, 255}, _SDLContext._fontPs,
                            260, 76);
 }
 
