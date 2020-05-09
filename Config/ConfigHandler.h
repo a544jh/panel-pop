@@ -8,7 +8,7 @@
 #ifndef CONFIG_CONFIGHANDLER_H_
 #define CONFIG_CONFIGHANDLER_H_
 
-#include <boost/property_tree/ptree.hpp>
+#include <json/json.h>
 #include <SDL2/SDL_scancode.h>
 #include "InputConfig.h"
 #include "../InputEvents/KeyboardKey.h"
@@ -40,7 +40,8 @@ class ConfigHandler {
   ConfigHandler(ConfigHandler const &) = delete;
   void operator=(ConfigHandler const &) = delete;
 
-  boost::property_tree::ptree _settingsTree;
+  Json::Value _settingsTree;
+
   InputEvent *parseInputEvent(const std::string &configKey);
 };
 

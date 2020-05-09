@@ -12,6 +12,8 @@
 #include <SDL2/SDL_timer.h>
 #include <string>
 #include <vector>
+#include <sstream>
+
 
 #include "../Config/ConfigHandler.h"
 #include "../SDLContext.h"
