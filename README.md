@@ -40,7 +40,7 @@ The default keyboard controls will always work in the menus.
 * SDL2_image
 * SDL2_ttf
 * SDL2_mixer
-* boost
+* jsoncpp
 
 #### Linux
 1. `cmake`
