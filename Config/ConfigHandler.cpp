@@ -35,7 +35,8 @@ bool ConfigHandler::loadConfig() {
     Json::CharReaderBuilder builder;
     JSONCPP_STRING errs;
     if (!parseFromStream(builder, configFile, &_settingsTree, &errs)) {
-        std::cout << errs << std::endl;
+        std::cerr << "error in reading config file, using defaults..." << std::endl;
+        std::cerr << errs;
         configFile.close();
         return false;
     }
