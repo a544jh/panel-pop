@@ -31,16 +31,16 @@ ConfigHandler &ConfigHandler::getInstance() {
 }
 
 bool ConfigHandler::loadConfig() {
-    try {
-        std::ifstream configFile(CONFIG_FILENAME, std::ios::binary);
-        configFile >> _settingsTree;
+    std::ifstream configFile(CONFIG_FILENAME);
+    Json::CharReaderBuilder builder;
+    JSONCPP_STRING errs;
+    if (!parseFromStream(builder, configFile, &_settingsTree, &errs)) {
+        std::cout << errs << std::endl;
         configFile.close();
-    } catch (std::exception &e) {
-        std::cerr << "error in reading config file, using defaults..."
-                  << std::endl;
-        std::cerr << e.what();
         return false;
     }
+    std::cout << _settingsTree << std::endl;
+    configFile.close();
     return true;
 }
 
@@ -53,7 +53,7 @@ bool ConfigHandler::saveConfig() {
 
 InputConfig ConfigHandler::getKeyConfig(int player) {
 
-    auto prefix = "keys.p" + std::to_string(player) + "_";
+    auto prefix = "p" + std::to_string(player) + "_";
     return InputConfig(parseInputEvent(prefix + "up"),
                        parseInputEvent(prefix + "down"),
                        parseInputEvent(prefix + "left"),
@@ -65,7 +65,7 @@ InputConfig ConfigHandler::getKeyConfig(int player) {
 }
 
 InputEvent *ConfigHandler::parseInputEvent(const std::string &configKey) {
-    std::string value = _settingsTree.get(configKey, "").asString();
+    std::string value = _settingsTree["keys"].get(configKey, "").asString();
 
     char type = value[0];
     switch (type) {
@@ -99,9 +99,8 @@ InputEvent *ConfigHandler::parseInputEvent(const std::string &configKey) {
 }
 
 void ConfigHandler::setKeyConfig(InputConfig config, int player) {
-
     StateManager::getInstance().setKeys(config, player);
-    auto prefix = "keys.p" + std::to_string(player) + "_";
+    auto prefix = "p" + std::to_string(player) + "_";
     _settingsTree[prefix + "up"] = config._up->toString();
     _settingsTree[prefix + "down"] = config._down->toString();
     _settingsTree[prefix + "left"] = config._left->toString();
@@ -113,38 +112,38 @@ void ConfigHandler::setKeyConfig(InputConfig config, int player) {
 }
 
 void ConfigHandler::setFullscreen(bool fs) {
-    _settingsTree["video.fullscreen"] = fs;
+    _settingsTree["video"]["fullscreen"] = fs;
     if (fs != SDLContext::getInstance().isFullscreen()) {
         SDLContext::getInstance().toggleFullscreen();
     }
 }
 
 void ConfigHandler::setMusicVolume(int vol) {
-    _settingsTree["audio.music_volume"] = vol;
+    _settingsTree["audio"]["music_volume"] = vol;
     Mix_VolumeMusic(vol);
 }
 
 void ConfigHandler::setSfxVolume(int vol) {
-    _settingsTree["audio.sfx_volume"] = vol;
+    _settingsTree["audio"]["sfx_volume"] = vol;
     Mix_Volume(-1, vol);
 }
 
 bool ConfigHandler::getFullscreen() {
-    return _settingsTree.get("video.fullscreen", false).asBool();
+    return _settingsTree["video"].get("fullscreen", false).asBool();
 }
 
 int ConfigHandler::getMusicVolume() {
-    return _settingsTree.get("audio.music_volume", MIX_MAX_VOLUME).asInt();
+    return _settingsTree["audio"].get("music_volume", MIX_MAX_VOLUME).asInt();
 }
 
 int ConfigHandler::getSfxVolume() {
-    return _settingsTree.get("audio.sfx_volume", MIX_MAX_VOLUME).asInt();
+    return _settingsTree["audio"].get("sfx_volume", MIX_MAX_VOLUME).asInt();
 }
 
 int ConfigHandler::getEndlessHighScore() {
-    return _settingsTree.get("endless.high_score", 0).asInt();
+    return _settingsTree["endless"].get("high_score", 0).asInt();
 }
 
 void ConfigHandler::setEndlessHighScore(int score) {
-    _settingsTree["endless.high_score"] = score;
+    _settingsTree["endless"]["high_score"] = score;
 }
