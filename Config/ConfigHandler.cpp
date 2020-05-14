@@ -102,13 +102,13 @@ InputEvent *ConfigHandler::parseInputEvent(const std::string &configKey) {
 void ConfigHandler::setKeyConfig(InputConfig config, int player) {
     StateManager::getInstance().setKeys(config, player);
     auto prefix = "p" + std::to_string(player) + "_";
-    _settingsTree[prefix + "up"] = config._up->toString();
-    _settingsTree[prefix + "down"] = config._down->toString();
-    _settingsTree[prefix + "left"] = config._left->toString();
-    _settingsTree[prefix + "right"] = config._right->toString();
-    _settingsTree[prefix + "swap"] = config._swap->toString();
-    _settingsTree[prefix + "raiseStack"] = config._raiseStack->toString();
-    _settingsTree[prefix + "start"] = config._start->toString();
+    _settingsTree["keys"][prefix + "up"] = config._up->toString();
+    _settingsTree["keys"][prefix + "down"] = config._down->toString();
+    _settingsTree["keys"][prefix + "left"] = config._left->toString();
+    _settingsTree["keys"][prefix + "right"] = config._right->toString();
+    _settingsTree["keys"][prefix + "swap"] = config._swap->toString();
+    _settingsTree["keys"][prefix + "raiseStack"] = config._raiseStack->toString();
+    _settingsTree["keys"][prefix + "start"] = config._start->toString();
 
 }
 
