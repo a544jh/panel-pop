@@ -98,7 +98,9 @@ target_link_libraries(panel-pop
         SDL2_ttf
         SDL2_mixer
         jsoncpp
+        stdc++
         vita2d
+        pthread
         png16
         freetype
         vorbisfile
@@ -125,72 +127,14 @@ vita_create_self(panel-pop.self panel-pop)
 vita_create_vpk(panel-pop.vpk ${VITA_TITLEID} panel-pop.self
         VERSION ${VITA_VERSION}
         NAME ${VITA_APPNAME}
-        FILE sce_sys/icon0.png sce_sys/icon0.png
-        FILE sce_sys/livearea/contents/bg.png sce_sys/livearea/contents/bg.png
-        FILE sce_sys/livearea/contents/startup.png sce_sys/livearea/contents/startup.png
-        FILE sce_sys/livearea/contents/template.xml sce_sys/livearea/contents/template.xml
-        FILE panelpop.json
-        FILE assets/1p.png
-        FILE assets/2p.png
-        FILE assets/bg1.png
-        FILE assets/sprites.png
-        FILE assets/title.png
-        FILE assets/fonts/square_sans_serif_7.ttf
-        FILE assets/fonts/PressStart2P.ttf
-        FILE assets/music/battle1_loop.ogg
-        FILE assets/music/battle1_panic.ogg
-        FILE assets/music/panelpop_intro.ogg
-        FILE assets/music/panelpop_loop.ogg
-        FILE assets/sfx/1x10.wav
-        FILE assets/sfx/1x1.wav
-        FILE assets/sfx/1x2.wav
-        FILE assets/sfx/1x3.wav
-        FILE assets/sfx/1x4.wav
-        FILE assets/sfx/1x5.wav
-        FILE assets/sfx/1x6.wav
-        FILE assets/sfx/1x7.wav
-        FILE assets/sfx/1x8.wav
-        FILE assets/sfx/1x9.wav
-        FILE assets/sfx/2x10.wav
-        FILE assets/sfx/2x1.wav
-        FILE assets/sfx/2x2.wav
-        FILE assets/sfx/2x3.wav
-        FILE assets/sfx/2x4.wav
-        FILE assets/sfx/2x5.wav
-        FILE assets/sfx/2x6.wav
-        FILE assets/sfx/2x7.wav
-        FILE assets/sfx/2x8.wav
-        FILE assets/sfx/2x9.wav
-        FILE assets/sfx/3x10.wav
-        FILE assets/sfx/3x1.wav
-        FILE assets/sfx/3x2.wav
-        FILE assets/sfx/3x3.wav
-        FILE assets/sfx/3x4.wav
-        FILE assets/sfx/3x5.wav
-        FILE assets/sfx/3x6.wav
-        FILE assets/sfx/3x7.wav
-        FILE assets/sfx/3x8.wav
-        FILE assets/sfx/3x9.wav
-        FILE assets/sfx/4x10.wav
-        FILE assets/sfx/4x1.wav
-        FILE assets/sfx/4x2.wav
-        FILE assets/sfx/4x3.wav
-        FILE assets/sfx/4x4.wav
-        FILE assets/sfx/4x5.wav
-        FILE assets/sfx/4x6.wav
-        FILE assets/sfx/4x7.wav
-        FILE assets/sfx/4x8.wav
-        FILE assets/sfx/4x9.wav
-        FILE assets/sfx/bigthump.wav
-        FILE assets/sfx/chain.wav
-        FILE assets/sfx/combo.wav
-        FILE assets/sfx/countdown.wav
-        FILE assets/sfx/cursor.wav
-        FILE assets/sfx/fanfare1.wav
-        FILE assets/sfx/fanfare2.wav
-        FILE assets/sfx/fanfare3.wav
-        FILE assets/sfx/go.wav
-        FILE assets/sfx/pause.wav
-        FILE assets/sfx/swap.wav
-        FILE assets/sfx/thump.wav
+        FILE platform/vita/sce_sys sce_sys
+        FILE platform/vita/panelpop.json panelpop.json
+        FILE assets/fonts assets/fonts
+        FILE assets/music assets/music
+        FILE assets/sfx assets/sfx
+        FILE assets/1p.png assets/1p.png
+        FILE assets/2p.png assets/2p.png
+        FILE assets/bg1.png assets/bg1.png
+        FILE assets/sprites.png assets/sprites.png
+        FILE assets/title.png assets/title.png
 )
