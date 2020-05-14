@@ -78,5 +78,5 @@ target_link_libraries(panel-pop ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARIES}
         ${SDL2_TTF_LIBRARIES}
         ${SDL2_MIXER_LIBRARIES}
-        -ljsoncpp
+        jsoncpp
         )
