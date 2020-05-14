@@ -6,24 +6,24 @@
 	},
 	"endless" : 
 	{
-		"high_score" : 20201
+		"high_score" : 0
 	},
 	"keys" : 
 	{
-		"p1_down" : "KDown",
-		"p1_left" : "KLeft",
-		"p1_raiseStack" : "KZ",
-		"p1_right" : "KRight",
-		"p1_start" : "KReturn",
-		"p1_swap" : "KX",
-		"p1_up" : "KUp",
-		"p2_down" : "J0_A1_+",
-		"p2_left" : "J0_A0_-",
-		"p2_raiseStack" : "J0_B2",
-		"p2_right" : "J0_A0_+",
-		"p2_start" : "J0_B9",
-		"p2_swap" : "J0_B1",
-		"p2_up" : "J0_A1_-"
+		"p1_down" : "J0_B6",
+		"p1_left" : "J0_B7",
+		"p1_raiseStack" : "J0_B3",
+		"p1_right" : "J0_B9",
+		"p1_start" : "J0_B10",
+		"p1_swap" : "J0_B2",
+		"p1_up" : "J0_B8",
+		"p2_down" : "J0_B6",
+		"p2_left" : "J1_B7",
+		"p2_raiseStack" : "J1_B3",
+		"p2_right" : "J1_B9",
+		"p2_start" : "J1_B10",
+		"p2_swap" : "J1_B2",
+		"p2_up" : "J1_B8",
 	},
 	"video" : 
 	{
