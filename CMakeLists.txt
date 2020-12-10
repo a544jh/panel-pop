@@ -64,12 +64,19 @@ find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 
+find_package(jsoncpp REQUIRED)
+get_target_property(JSON_INC_PATH jsoncpp_lib INTERFACE_INCLUDE_DIRECTORIES)
+
 include_directories(${SDL2_INCLUDE_DIR}
         ${SDL2_IMAGE_INCLUDE_DIR}
         ${SDL2_TTF_INCLUDE_DIR}
-        ${SDL2_MIXER_INCLUDE_DIR})
+        ${SDL2_MIXER_INCLUDE_DIR}
+        ${JSON_INC_PATH}
+        )
 
 target_link_libraries(panel-pop ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARIES}
         ${SDL2_TTF_LIBRARIES}
-        ${SDL2_MIXER_LIBRARIES})
+        ${SDL2_MIXER_LIBRARIES}
+        jsoncpp
+        )
