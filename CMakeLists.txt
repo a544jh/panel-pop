@@ -6,16 +6,16 @@ cmake_minimum_required(VERSION 3.5.0)
 
 project(panel-pop)
 
-# VitaSDK defines
+# DOLCESDK defines
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-        if(DEFINED ENV{VITASDK})
-                set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake" CACHE PATH "toolchain file")
+	if(DEFINED ENV{DOLCESDK})
+		set(CMAKE_TOOLCHAIN_FILE "$ENV{DOLCESDK}/share/dolce.toolchain.cmake" CACHE PATH "toolchain file")
         else()
-                message(FATAL_ERROR "Please define VITASDK to point to your SDK path!")
+		message(FATAL_ERROR "Please define DOLCESDK to point to your SDK path!")
         endif()
 endif()
 
-include("$ENV{VITASDK}/share/vita.cmake" REQUIRED)
+include("$ENV{DOLCESDK}/share/dolce.cmake" REQUIRED)
 
 # Project start
 set(VITA_APPNAME panel-pop)
@@ -78,11 +78,11 @@ set(SRCS
 
 add_executable(panel-pop ${SRCS})
 
-set(VITA_INCLUDE_DIR "$ENV{VITASDK}/arm-vita-eabi/include/")
-set(SDL2_INCLUDE_DIR "$ENV{VITASDK}/arm-vita-eabi/include/SDL2")
-set(JSON_INCLUDE_DIR "$ENV{VITASDK}/arm-vita-eabi/include/jsoncpp")
-set(PNG_INCLUDE_DIR "$ENV{VITASDK}/arm-vita-eabi/include/libpng16")
-set(FLAC_INCLUDE_DIR "$ENV{VITASDK}/arm-vita-eabi/include/FLAC")
+set(VITA_INCLUDE_DIR "$ENV{DOLCESDK}/arm-dolce-eabi/include/")
+set(SDL2_INCLUDE_DIR "$ENV{DOLCESDK}/arm-dolce-eabi/include/SDL2")
+set(JSON_INCLUDE_DIR "$ENV{DOLCESDK}/arm-dolce-eabi/include/jsoncpp")
+set(PNG_INCLUDE_DIR "$ENV{DOLCESDK}/arm-dolce-eabi/include/libpng16")
+set(FLAC_INCLUDE_DIR "$ENV{DOLCESDK}/arm-dolce-eabi/include/FLAC")
 
 include_directories(${INCLUDE_DIRECTORIES}
         ${VITA_INCLUDE_DIR}
@@ -93,13 +93,12 @@ include_directories(${INCLUDE_DIRECTORIES}
 )
 
 target_link_libraries(panel-pop
-        SDL2
         SDL2_image
         SDL2_ttf
         SDL2_mixer
+        SDL2
         jsoncpp
         stdc++
-        vita2d
         pthread
         png16
         freetype
@@ -112,19 +111,22 @@ target_link_libraries(panel-pop
         mikmod
         mpg123
         FLAC
+	pib
         SceAppUtil_stub
         SceAudio_stub
         SceCommonDialog_stub
         SceCtrl_stub
         SceDisplay_stub
+        SceDisplayUser_stub
         SceGxm_stub
         SceHid_stub
         SceSysmodule_stub
         SceTouch_stub
+	SceMotion_stub
 )
-vita_create_self(panel-pop.self panel-pop)
+dolce_create_self(panel-pop.self panel-pop)
 
-vita_create_vpk(panel-pop.vpk ${VITA_TITLEID} panel-pop.self
+dolce_create_vpk(panel-pop.vpk ${VITA_TITLEID} panel-pop.self
         VERSION ${VITA_VERSION}
         NAME ${VITA_APPNAME}
         FILE platform/vita/sce_sys sce_sys
