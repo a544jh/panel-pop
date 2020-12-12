@@ -1,7 +1,7 @@
 {
 	"audio" : 
 	{
-		"music_volume" : 0,
+		"music_volume" : 128,
 		"sfx_volume" : 128
 	},
 	"endless" : 
@@ -14,7 +14,7 @@
 		"p1_left" : "J0_B7",
 		"p1_raiseStack" : "J0_B3",
 		"p1_right" : "J0_B9",
-		"p1_start" : "J0_B10",
+		"p1_start" : "J0_B11",
 		"p1_swap" : "J0_B2",
 		"p1_up" : "J0_B8",
 		"p2_down" : "J0_B6",
@@ -27,6 +27,6 @@
 	},
 	"video" : 
 	{
-		"fullscreen" : false
+		"fullscreen" : true
 	}
 }
