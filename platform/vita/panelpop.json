@@ -1,14 +1,14 @@
 {
-	"audio" : 
+	"audio" :
 	{
 		"music_volume" : 128,
 		"sfx_volume" : 128
 	},
-	"endless" : 
+	"endless" :
 	{
 		"high_score" : 0
 	},
-	"keys" : 
+	"keys" :
 	{
 		"p1_down" : "J0_B6",
 		"p1_left" : "J0_B7",
@@ -25,7 +25,7 @@
 		"p2_swap" : "J1_B2",
 		"p2_up" : "J1_B8",
 	},
-	"video" : 
+	"video" :
 	{
 		"fullscreen" : true
 	}
