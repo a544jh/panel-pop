@@ -58,8 +58,6 @@ set(SRCS
 add_executable(panel-pop ${SRCS})
 
 if (VITA)
-	set(ASSET_PREFIX "app0:/")
-
 	# DOLCESDK defines
 	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
 		if(DEFINED ENV{DOLCESDK})
@@ -72,9 +70,9 @@ if (VITA)
 	include("$ENV{DOLCESDK}/share/dolce.cmake" REQUIRED)
 
 	# Project start
-	set(VITA_APPNAME panel-pop)
+	set(VITA_APPNAME PanelPop)
 	set(VITA_TITLEID "PPOP00001")
-	set(VITA_VERSION "01.00")
+	set(VITA_VERSION "0.0.3")
 
 	# Optional. You can specify more param.sfo flags this way.
 	set(VITA_MKSFOEX_FLAGS "${VITA_MKSFOEX_FLAGS} -d PARENTAL_LEVEL=1")
@@ -142,7 +140,6 @@ if (VITA)
 		    FILE assets/title.png assets/title.png
 	)
 ELSE()
-	set(ASSET_PREFIX "")
 	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMake")
 
 	find_package(SDL2 REQUIRED)
