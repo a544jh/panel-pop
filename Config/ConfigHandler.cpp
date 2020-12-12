@@ -39,7 +39,6 @@ bool ConfigHandler::loadConfig() {
         configFile.close();
         return false;
     }
-    std::cout << _settingsTree << std::endl;
     configFile.close();
     return true;
 }
