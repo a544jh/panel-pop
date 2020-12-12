@@ -31,11 +31,15 @@ MainMenu::MainMenu() {
                  [&]() {
                    StateManager::getInstance().switchToState(new AIGameState);
                  }));
-    addItem(
-        MenuItem("2P VS",
-                 [&]() {
-                   StateManager::getInstance().switchToState(new VsGameState);
-                 }));
+
+    #ifndef __vita__
+      addItem(
+          MenuItem("2P VS",
+                  [&]() {
+                    StateManager::getInstance().switchToState(new VsGameState);
+                  }));
+    #endif
+
     addItem(
         MenuItem("Options",
                  [&]() {
