@@ -18,7 +18,11 @@ class ConfigHandler {
 
   static ConfigHandler &getInstance();
 
+#ifdef __vita__
   const char *CONFIG_FILENAME = "app0:/panelpop.json";
+#else
+  const char *CONFIG_FILENAME = "panelpop.json";
+#endif
   bool loadConfig();
   bool saveConfig();
 
