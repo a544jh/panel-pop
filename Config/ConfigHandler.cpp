@@ -21,7 +21,6 @@
 #include <json/json.h>
 #include <fstream>
 
-
 ConfigHandler::ConfigHandler() {
 }
 

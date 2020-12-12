@@ -58,6 +58,8 @@ set(SRCS
 add_executable(panel-pop ${SRCS})
 
 if (VITA)
+	set(ASSET_PREFIX "app0:/")
+
 	# DOLCESDK defines
 	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
 		if(DEFINED ENV{DOLCESDK})
@@ -140,6 +142,7 @@ if (VITA)
 		    FILE assets/title.png assets/title.png
 	)
 ELSE()
+	set(ASSET_PREFIX "")
 	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMake")
 
 	find_package(SDL2 REQUIRED)
