@@ -94,35 +94,35 @@ if (VITA)
 	)
 
 	target_link_libraries(panel-pop
-		    SDL2_image
-		    SDL2_ttf
-		    SDL2_mixer
-		    SDL2
-		    jsoncpp
-		    stdc++
-		    pthread
-		    png16
-		    freetype
-		    vorbisfile
-		    vorbis
-		    ogg
-		    jpeg
-		    z
-		    m
-		    mikmod
-		    mpg123
-		    FLAC
-			pib
-		    SceAppUtil_stub
-		    SceAudio_stub
-		    SceCommonDialog_stub
-		    SceCtrl_stub
-		    SceDisplay_stub
-		    SceDisplayUser_stub
-		    SceGxm_stub
-		    SceHid_stub
-		    SceSysmodule_stub
-		    SceTouch_stub
+		SDL2_image
+		SDL2_ttf
+		SDL2_mixer
+		SDL2
+		jsoncpp
+		stdc++
+		pthread
+		png16
+		freetype
+		vorbisfile
+		vorbis
+		ogg
+		jpeg
+		z
+		m
+		mikmod
+		mpg123
+		FLAC
+		pib
+		SceAppUtil_stub
+		SceAudio_stub
+		SceCommonDialog_stub
+		SceCtrl_stub
+		SceDisplay_stub
+		SceDisplayUser_stub
+		SceGxm_stub
+		SceHid_stub
+		SceSysmodule_stub
+		SceTouch_stub
 		SceMotion_stub
 	)
 	dolce_create_self(panel-pop.self panel-pop)
