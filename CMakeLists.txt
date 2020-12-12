@@ -72,7 +72,7 @@ if (VITA)
 	# Project start
 	set(VITA_APPNAME PanelPop)
 	set(VITA_TITLEID "PPOP00001")
-	set(VITA_VERSION "0.0.3")
+	set(VITA_VERSION "00.03")
 
 	# Optional. You can specify more param.sfo flags this way.
 	set(VITA_MKSFOEX_FLAGS "${VITA_MKSFOEX_FLAGS} -d PARENTAL_LEVEL=1")
