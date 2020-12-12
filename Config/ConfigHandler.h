@@ -18,7 +18,7 @@ class ConfigHandler {
 
   static ConfigHandler &getInstance();
 
-  const char *CONFIG_FILENAME = "panelpop.json";
+  const char *CONFIG_FILENAME = "app0:/panelpop.json";
   bool loadConfig();
   bool saveConfig();
 
