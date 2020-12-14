@@ -59,7 +59,7 @@ folders into the MinGW installation's respective folders.
 1. `cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"`
 2. `make`
 
-## Playstation Vita
+### Playstation Vita
 
 Install the [DolceSDK](https://github.com/DolceSDK/doc) and [this SDL2 fork](https://github.com/isage/SDL-mirror). Then Playstation Vita version can be build.
 
