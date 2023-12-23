@@ -10,6 +10,7 @@
 
 #include <json/json.h>
 #include <SDL2/SDL_scancode.h>
+#include <SDL2/SDL.h>
 #include "InputConfig.h"
 #include "../InputEvents/KeyboardKey.h"
 
@@ -20,7 +21,7 @@ class ConfigHandler {
 
   const std::string CONFIG_FILENAME = "panelpop.json";
   #ifdef __vita__
-    const std::string CONFIG_DIR = "ux0:/data/panel-pop/";
+    const std::string CONFIG_DIR = SDL_GetPrefPath(NULL,"panel-pop");;
   #else
     const std::string CONFIG_DIR = "./";
   #endif
