@@ -8,8 +8,9 @@
 #ifndef CONFIG_CONFIGHANDLER_H_
 #define CONFIG_CONFIGHANDLER_H_
 
-#include <boost/property_tree/ptree.hpp>
+#include <json/json.h>
 #include <SDL2/SDL_scancode.h>
+#include <SDL2/SDL.h>
 #include "InputConfig.h"
 #include "../InputEvents/KeyboardKey.h"
 
@@ -18,7 +19,12 @@ class ConfigHandler {
 
   static ConfigHandler &getInstance();
 
-  const char *CONFIG_FILENAME = "panelpop.ini";
+  const std::string CONFIG_FILENAME = "panelpop.json";
+  #ifdef __vita__
+    const std::string CONFIG_DIR = SDL_GetPrefPath(NULL,"panel-pop");;
+  #else
+    const std::string CONFIG_DIR = "./";
+  #endif
   bool loadConfig();
   bool saveConfig();
 
@@ -40,7 +46,8 @@ class ConfigHandler {
   ConfigHandler(ConfigHandler const &) = delete;
   void operator=(ConfigHandler const &) = delete;
 
-  boost::property_tree::ptree _settingsTree;
+  Json::Value _settingsTree;
+
   InputEvent *parseInputEvent(const std::string &configKey);
 };
 

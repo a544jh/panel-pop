@@ -12,6 +12,8 @@
 #include <SDL2/SDL_timer.h>
 #include <string>
 #include <vector>
+#include <sstream>
+
 
 #include "../Config/ConfigHandler.h"
 #include "../SDLContext.h"
@@ -23,22 +25,34 @@ OptionsMenu::OptionsMenu(OptionsMenuState &state) :
 
     ConfigHandler &cf = ConfigHandler::getInstance();
 
-    addItem(
-        MenuItem("Fullscreen", [&]() {}, cf.getFullscreen(), 1,
-                 MenuItem::OptionType::TOGGLE));
+    #ifndef __vita__
+        addItem(
+            MenuItem("Fullscreen", [&]() {}, cf.getFullscreen(), 1,
+                    MenuItem::OptionType::TOGGLE));
+    #endif
+
     addItem(
         MenuItem("Music volume", [&]() {}, cf.getMusicVolume(),
                  MIX_MAX_VOLUME, MenuItem::OptionType::SLIDER));
     addItem(
         MenuItem("SFX volume", [&]() {}, cf.getSfxVolume(), MIX_MAX_VOLUME,
                  MenuItem::OptionType::SLIDER));
-    addItem(MenuItem("Configure controls", [&]() {
-      _state.configurePlayerKeys(_items.at(_selection).getValue() + 1);
-    }, 0, 1, MenuItem::OptionType::PLAYER));
+
+    #ifndef __vita__
+        addItem(MenuItem("Configure controls", [&]() {
+        _state.configurePlayerKeys(_items.at(_selection).getValue() + 1);
+        }, 0, 1, MenuItem::OptionType::PLAYER));
+    #endif
+
     addItem(MenuItem("Apply", [&]() {
-      cf.setFullscreen(_items.at(0).getValue());
-      cf.setMusicVolume(_items.at(1).getValue());
-      cf.setSfxVolume(_items.at(2).getValue());
+      #ifdef __vita__
+        cf.setMusicVolume(_items.at(0).getValue());
+        cf.setSfxVolume(_items.at(1).getValue());
+      #else
+        cf.setFullscreen(_items.at(0).getValue());
+        cf.setMusicVolume(_items.at(1).getValue());
+        cf.setSfxVolume(_items.at(2).getValue());
+      #endif
       cf.saveConfig();
       _state.goBack();
     }));

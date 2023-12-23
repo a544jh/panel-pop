@@ -40,7 +40,7 @@ The default keyboard controls will always work in the menus.
 * SDL2_image
 * SDL2_ttf
 * SDL2_mixer
-* boost
+* jsoncpp
 
 #### Linux
 1. `cmake`
@@ -58,3 +58,10 @@ folders into the MinGW installation's respective folders.
 
 1. `cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"`
 2. `make`
+
+#### Playstation Vita
+
+Install the [DolceSDK](https://github.com/DolceSDK/doc) and [this SDL2 fork](https://github.com/isage/SDL-mirror). Then Playstation Vita version can be build.
+
+1. ``cmake -DCMAKE_TOOLCHAIN_FILE="${DOLCESDK}/share/dolce.toolchain.cmake" ..``
+2. ``make``
