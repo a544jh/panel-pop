@@ -58,74 +58,40 @@ set(SRCS
 add_executable(panel-pop ${SRCS})
 
 if (VITA)
-	# DOLCESDK defines
-	if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-		if(DEFINED ENV{DOLCESDK})
-			set(CMAKE_TOOLCHAIN_FILE "$ENV{DOLCESDK}/share/dolce.toolchain.cmake" CACHE PATH "toolchain file")
-		    else()
-			message(FATAL_ERROR "Please define DOLCESDK to point to your SDK path!")
-		    endif()
-	endif()
-
-	include("$ENV{DOLCESDK}/share/dolce.cmake" REQUIRED)
-
 	# Project start
 	set(VITA_APPNAME PanelPop)
 	set(VITA_TITLEID "PPOP00001")
 	set(VITA_VERSION "00.03")
 
-	# Optional. You can specify more param.sfo flags this way.
-	set(VITA_MKSFOEX_FLAGS "${VITA_MKSFOEX_FLAGS} -d PARENTAL_LEVEL=1")
+	# Find libraries
+	include(FindPkgConfig)
+	pkg_search_module(SDL2 REQUIRED sdl2)
+	pkg_search_module(SDL2_IMAGE REQUIRED SDL2_image)
+	pkg_search_module(SDL2_MIXER REQUIRED SDL2_mixer)
+	pkg_search_module(SDL2_TTF REQUIRED SDL2_ttf)
+	pkg_search_module(JSONCPP REQUIRED jsoncpp)
 
-	set(VITA_INCLUDE_DIR "$ENV{DOLCESDK}/arm-dolce-eabi/include/")
-	set(SDL2_INCLUDE_DIR "$ENV{DOLCESDK}/arm-dolce-eabi/include/SDL2")
-	set(JSON_INCLUDE_DIR "$ENV{DOLCESDK}/arm-dolce-eabi/include/jsoncpp")
-	set(PNG_INCLUDE_DIR "$ENV{DOLCESDK}/arm-dolce-eabi/include/libpng16")
-	set(FLAC_INCLUDE_DIR "$ENV{DOLCESDK}/arm-dolce-eabi/include/FLAC")
-
-	include_directories(${INCLUDE_DIRECTORIES}
-		    ${VITA_INCLUDE_DIR}
-		    ${SDL2_INCLUDE_DIR}
-		    ${JSON_INCLUDE_DIR}
-		    ${PNG_INCLUDE_DIR}
-		    ${FLAC_INCLUDE_DIR}
+	target_link_libraries(${PROJECT_NAME} PRIVATE
+		${SDL2_LIBRARIES}
+		${SDL2_IMAGE_LIBRARIES}
+		${SDL2_MIXER_LIBRARIES}
+		${SDL2_TTF_LIBRARIES}
+		${JSONCPP_LIBRARIES}
 	)
 
-	target_link_libraries(panel-pop
-		SDL2_image
-		SDL2_ttf
-		SDL2_mixer
-		SDL2
-		jsoncpp
-		stdc++
-		pthread
-		png16
-		freetype
-		vorbisfile
-		vorbis
-		ogg
-		jpeg
-		z
-		m
-		mikmod
-		mpg123
-		FLAC
-		pib
-		SceAppUtil_stub
-		SceAudio_stub
-		SceCommonDialog_stub
-		SceCtrl_stub
-		SceDisplay_stub
-		SceDisplayUser_stub
-		SceGxm_stub
-		SceHid_stub
-		SceSysmodule_stub
-		SceTouch_stub
-		SceMotion_stub
+	include_directories(
+		${PROJECT_SOURCE_DIR}/include
+		${SDL2_INCLUDE_DIRS}
+		${SDL2_IMAGE_INCLUDE_DIRS}
+		${SDL2_MIXER_INCLUDE_DIRS}
+		${SDL2_TTF_INCLUDE_DIRS}
+		${JSONCPP_INCLUDE_DIRS}
 	)
-	dolce_create_self(panel-pop.self panel-pop)
 
-	dolce_create_vpk(panel-pop.vpk ${VITA_TITLEID} panel-pop.self
+	include("$ENV{VITASDK}/share/vita.cmake" REQUIRED)
+	vita_create_self(panel-pop.self panel-pop)
+
+	vita_create_vpk(panel-pop.vpk ${VITA_TITLEID} panel-pop.self
 		    VERSION ${VITA_VERSION}
 		    NAME ${VITA_APPNAME}
 		    FILE platform/vita/sce_sys sce_sys
