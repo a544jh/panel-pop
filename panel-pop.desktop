@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Panel Pop
+Comment=A Panel de Pon / Tetris Attack / Puzzle League clone
+Exec=panel-pop
+Icon=panel-pop
+Terminal=false
+Categories=Game;ArcadeGame;
+Keywords=puzzle;tetris;panel;pop;

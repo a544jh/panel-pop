@@ -43,8 +43,29 @@ The default keyboard controls will always work in the menus.
 * boost
 
 #### Linux
-1. `cmake`
+1. `cmake .`
 2. `make`
+
+You can run the resulting `panel-pop` binary straight from the source tree (it
+finds `assets/` and reads/writes `panelpop.ini` in the current directory).
+
+To install system-wide:
+
+```
+cmake -B build -DCMAKE_INSTALL_PREFIX=/usr
+cmake --build build
+sudo cmake --install build
+```
+
+This installs the assets under `/usr/share/panel-pop`, a desktop entry and an
+icon. When installed, the config file lives in `$XDG_CONFIG_HOME/panel-pop`
+(typically `~/.config/panel-pop/panelpop.ini`); a `panelpop.ini` in the working
+directory still takes precedence if present.
+
+##### Arch Linux
+
+A `PKGBUILD` is provided. Run `makepkg -si` to build and install the
+`panel-pop-git` package.
 
 #### MacOS
 1. `cmake`

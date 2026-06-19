@@ -47,6 +47,7 @@ set(SRCS
         AI/BoardScanner.cpp
         AI/AIBoardController.cpp
         InputManager.cpp
+        Util/Paths.cpp
         Menus/KeyConfigMenu.cpp
         Menus/OptionsMenu.cpp
         Menus/MainMenu.cpp
@@ -73,3 +74,32 @@ target_link_libraries(panel-pop ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARIES}
         ${SDL2_TTF_LIBRARIES}
         ${SDL2_MIXER_LIBRARIES})
+
+########################################
+# Installation
+#
+# PANELPOP_DATADIR is baked into the binary so it can find its bundled assets
+# after a system install. When run from the source tree (a ./assets directory
+# is present in the working dir) that location takes precedence instead.
+
+include(GNUInstallDirs)
+
+set(PANELPOP_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/panel-pop"
+        CACHE PATH "Directory where panel-pop's assets are installed")
+
+target_compile_definitions(panel-pop PRIVATE "PANELPOP_DATADIR=\"${PANELPOP_DATADIR}\"")
+
+install(TARGETS panel-pop RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+# Install the runtime assets, skipping editable source art (GIMP/FamiTracker).
+install(DIRECTORY assets DESTINATION ${PANELPOP_DATADIR}
+        PATTERN "*.xcf" EXCLUDE
+        PATTERN "*.ftm" EXCLUDE
+        PATTERN "*.ico" EXCLUDE)
+
+# Desktop entry and icon for menu integration.
+install(FILES panel-pop.desktop
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+install(FILES assets/icon.png
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/64x64/apps
+        RENAME panel-pop.png)

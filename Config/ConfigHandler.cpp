@@ -7,6 +7,7 @@
 
 #include "ConfigHandler.h"
 #include "../SDLContext.h"
+#include "../Util/Paths.h"
 #include "../States/StateManager.h"
 #include "../InputEvents/JoyHat.h"
 #include "../InputEvents/JoyButton.h"
@@ -31,7 +32,7 @@ ConfigHandler &ConfigHandler::getInstance() {
 
 bool ConfigHandler::loadConfig() {
     try {
-        boost::property_tree::read_ini(CONFIG_FILENAME, _settingsTree);
+        boost::property_tree::read_ini(Paths::configFile(), _settingsTree);
     } catch (std::exception &e) {
         std::cerr << "error in reading config file, using defaults..."
                   << std::endl;
@@ -42,7 +43,7 @@ bool ConfigHandler::loadConfig() {
 }
 
 bool ConfigHandler::saveConfig() {
-    boost::property_tree::write_ini(CONFIG_FILENAME, _settingsTree);
+    boost::property_tree::write_ini(Paths::configFile(), _settingsTree);
     return true;
 }
 

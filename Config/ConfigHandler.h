@@ -18,7 +18,6 @@ class ConfigHandler {
 
   static ConfigHandler &getInstance();
 
-  const char *CONFIG_FILENAME = "panelpop.ini";
   bool loadConfig();
   bool saveConfig();
 
