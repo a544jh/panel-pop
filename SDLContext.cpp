@@ -61,7 +61,7 @@ bool SDLContext::init() {
         success = false;
     }
 
-    _window = SDL_CreateWindow("Panel pop", SDL_WINDOWPOS_UNDEFINED,
+    _window = SDL_CreateWindow("panel-pop", SDL_WINDOWPOS_UNDEFINED,
                                SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
     if (_window == NULL) {
         std::cout << SDL_GetError();
