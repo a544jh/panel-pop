@@ -64,8 +64,15 @@ directory still takes precedence if present.
 
 ##### Arch Linux
 
-A `PKGBUILD` is provided. Run `makepkg -si` to build and install the
-`panel-pop-git` package.
+The `panel-pop-git` package is maintained in a separate repository:
+
+```
+git clone https://github.com/a544jh/panel-pop-git.git
+cd panel-pop-git
+makepkg -si
+```
+
+It is not on the AUR yet.
 
 #### MacOS
 1. `cmake`
