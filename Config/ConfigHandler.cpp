@@ -7,6 +7,7 @@
 
 #include "ConfigHandler.h"
 #include "../SDLContext.h"
+#include "../Util/Paths.h"
 #include "../States/StateManager.h"
 #include "../InputEvents/JoyHat.h"
 #include "../InputEvents/JoyButton.h"
@@ -21,6 +22,38 @@
 #include <iostream>
 #include <string>
 
+namespace {
+
+struct KeyBindingDefault {
+    const char *action;
+    const char *p1;
+    const char *p2;
+};
+
+// Bindings used when the config file is absent or incomplete: P1 on the
+// keyboard, P2 on the first gamepad. Without these a fresh install has no key
+// config at all, since the config file is only created on first run.
+const KeyBindingDefault DEFAULT_BINDINGS[] = {
+    {"up", "KUp", "J0_A1_-"},
+    {"down", "KDown", "J0_A1_+"},
+    {"left", "KLeft", "J0_A0_-"},
+    {"right", "KRight", "J0_A0_+"},
+    {"swap", "KX", "J0_B1"},
+    {"raiseStack", "KZ", "J0_B2"},
+    {"start", "KReturn", "J0_B9"},
+};
+
+std::string defaultBinding(int player, const std::string &action) {
+    for (const KeyBindingDefault &binding : DEFAULT_BINDINGS) {
+        if (action == binding.action) {
+            return player == 2 ? binding.p2 : binding.p1;
+        }
+    }
+    return "";
+}
+
+} // namespace
+
 ConfigHandler::ConfigHandler() {
 }
 
@@ -31,66 +64,111 @@ ConfigHandler &ConfigHandler::getInstance() {
 
 bool ConfigHandler::loadConfig() {
     try {
-        boost::property_tree::read_ini(CONFIG_FILENAME, _settingsTree);
+        boost::property_tree::read_ini(Paths::configFile(), _settingsTree);
     } catch (std::exception &e) {
         std::cerr << "error in reading config file, using defaults..."
                   << std::endl;
-        std::cerr << e.what();
+        std::cerr << e.what() << std::endl;
+        // Seed the defaults and write them out, so a fresh install both starts
+        // up and leaves the user a config file to edit.
+        applyDefaultKeyConfig();
+        saveConfig();
         return false;
     }
     return true;
 }
 
 bool ConfigHandler::saveConfig() {
-    boost::property_tree::write_ini(CONFIG_FILENAME, _settingsTree);
+    try {
+        boost::property_tree::write_ini(Paths::configFile(), _settingsTree);
+    } catch (std::exception &e) {
+        std::cerr << "error writing config file: " << e.what() << std::endl;
+        return false;
+    }
     return true;
+}
+
+void ConfigHandler::applyDefaultKeyConfig() {
+    for (const KeyBindingDefault &binding : DEFAULT_BINDINGS) {
+        _settingsTree.put(std::string("keys.p1_") + binding.action, binding.p1);
+        _settingsTree.put(std::string("keys.p2_") + binding.action, binding.p2);
+    }
 }
 
 InputConfig ConfigHandler::getKeyConfig(int player) {
 
-    auto prefix = "keys.p" + std::to_string(player) + "_";
-    return InputConfig(parseInputEvent(prefix + "up"),
-                       parseInputEvent(prefix + "down"),
-                       parseInputEvent(prefix + "left"),
-                       parseInputEvent(prefix + "right"),
-                       parseInputEvent(prefix + "swap"),
-                       parseInputEvent(prefix + "raiseStack"),
-                       parseInputEvent(prefix + "start"));
+    return InputConfig(parseInputEvent(player, "up"),
+                       parseInputEvent(player, "down"),
+                       parseInputEvent(player, "left"),
+                       parseInputEvent(player, "right"),
+                       parseInputEvent(player, "swap"),
+                       parseInputEvent(player, "raiseStack"),
+                       parseInputEvent(player, "start"));
 
 }
 
-InputEvent *ConfigHandler::parseInputEvent(const std::string &configKey) {
-    std::string value = _settingsTree.get<std::string>(configKey);
+InputEvent *ConfigHandler::parseInputEvent(int player, const std::string &action) {
+    auto configKey = "keys.p" + std::to_string(player) + "_" + action;
+    auto fallback = defaultBinding(player, action);
 
-    char type = value[0];
-    switch (type) {
-        case 'K':return new KeyboardKey(SDL_GetScancodeFromName(value.substr(1).c_str()));
-        case 'J': {
-            auto jidEnd = value.find('_', 1);
-            auto jidStr = value.substr(1, jidEnd - 1);
-            int joystickId = std::stoi(jidStr);
-            char eventType = value[jidEnd + 1];
-            switch (eventType) {
-                case 'B': {
-                    int buttonId = std::stoi(value.substr(jidEnd + 2));
-                    return new JoyButton(joystickId, buttonId);
+    InputEvent *event = parseBinding(_settingsTree.get<std::string>(configKey, fallback));
+    if (event == nullptr) {
+        // Configured value was unparseable; fall back to the built-in binding.
+        event = parseBinding(fallback);
+    }
+    if (event == nullptr) {
+        // Nothing usable at all: an unbound key that simply never fires.
+        event = new KeyboardKey(SDL_SCANCODE_UNKNOWN);
+    }
+    return event;
+}
+
+InputEvent *ConfigHandler::parseBinding(const std::string &value) {
+    if (value.empty()) {
+        return nullptr;
+    }
+
+    try {
+        switch (value[0]) {
+            case 'K':return new KeyboardKey(SDL_GetScancodeFromName(value.substr(1).c_str()));
+            case 'J': {
+                auto jidEnd = value.find('_', 1);
+                if (jidEnd == std::string::npos) {
+                    break;
                 }
-                case 'H': {
-                    int hidEnd = value.find('_', jidEnd + 1);
-                    int hatId = std::stoi(value.substr(jidEnd + 2, (hidEnd - 1 - (jidEnd + 1))));
-                    int hatDir = std::stoi(value.substr(hidEnd + 1));
-                    return new JoyHat(joystickId, hatId, hatDir);
-                }
-                case 'A': {
-                    int aidEnd = value.find('_', jidEnd + 1);
-                    int axisId = std::stoi(value.substr(jidEnd + 2, (aidEnd - 1 - (jidEnd + 1))));
-                    JoyAxisDirection::Direction
-                        axisDir = value[aidEnd + 1] == '+' ? JoyAxisDirection::POSITIVE : JoyAxisDirection::NEGATIVE;
-                    return new JoyAxisDirection(joystickId, axisId, axisDir);
+                int joystickId = std::stoi(value.substr(1, jidEnd - 1));
+                switch (value[jidEnd + 1]) {
+                    case 'B': {
+                        int buttonId = std::stoi(value.substr(jidEnd + 2));
+                        return new JoyButton(joystickId, buttonId);
+                    }
+                    case 'H': {
+                        auto hidEnd = value.find('_', jidEnd + 1);
+                        if (hidEnd == std::string::npos) {
+                            break;
+                        }
+                        int hatId = std::stoi(value.substr(jidEnd + 2, hidEnd - jidEnd - 2));
+                        int hatDir = std::stoi(value.substr(hidEnd + 1));
+                        return new JoyHat(joystickId, hatId, hatDir);
+                    }
+                    case 'A': {
+                        auto aidEnd = value.find('_', jidEnd + 1);
+                        if (aidEnd == std::string::npos) {
+                            break;
+                        }
+                        int axisId = std::stoi(value.substr(jidEnd + 2, aidEnd - jidEnd - 2));
+                        JoyAxisDirection::Direction
+                            axisDir = value[aidEnd + 1] == '+' ? JoyAxisDirection::POSITIVE : JoyAxisDirection::NEGATIVE;
+                        return new JoyAxisDirection(joystickId, axisId, axisDir);
+                    }
                 }
             }
         }
-    } // TODO: handle errors lol
+    } catch (std::exception &) {
+        // Malformed numeric field; handled as an unparseable binding.
+    }
+
+    return nullptr;
 }
 
 void ConfigHandler::setKeyConfig(InputConfig config, int player) {

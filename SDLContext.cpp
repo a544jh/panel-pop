@@ -8,6 +8,7 @@
 #include "SDLContext.h"
 #include "Config/ConfigHandler.h"
 #include "InputManager.h"
+#include "Util/Paths.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_error.h>
@@ -60,7 +61,7 @@ bool SDLContext::init() {
         success = false;
     }
 
-    _window = SDL_CreateWindow("Panel pop", SDL_WINDOWPOS_UNDEFINED,
+    _window = SDL_CreateWindow("panel-pop", SDL_WINDOWPOS_UNDEFINED,
                                SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
     if (_window == NULL) {
         std::cout << SDL_GetError();
@@ -125,8 +126,8 @@ bool SDLContext::loadSpriteSheet() {
 }
 
 bool SDLContext::loadFonts() {
-    _fontPs = TTF_OpenFont("assets/fonts/PressStart2P.ttf", 16);
-    _fontSquare = TTF_OpenFont("assets/fonts/square_sans_serif_7.ttf", 48);
+    _fontPs = TTF_OpenFont(Paths::asset("assets/fonts/PressStart2P.ttf").c_str(), 16);
+    _fontSquare = TTF_OpenFont(Paths::asset("assets/fonts/square_sans_serif_7.ttf").c_str(), 48);
     if (_fontPs == NULL || _fontSquare == NULL) {
         std::cout << TTF_GetError();
         return false;
@@ -147,7 +148,7 @@ SDL_Texture *SDLContext::makeTextureFromFont(std::string text, SDL_Color color,
 }
 
 SDL_Texture *SDLContext::makeTextureFromImage(std::string path) {
-    SDL_Surface *surface = IMG_Load(path.c_str());
+    SDL_Surface *surface = IMG_Load(Paths::asset(path).c_str());
     if (surface == NULL) {
         std::cout << IMG_GetError();
         return nullptr;
@@ -194,30 +195,30 @@ bool SDLContext::isFullscreen() {
 }
 
 bool SDLContext::loadAudio() {
-    _musicBgIntro = Mix_LoadMUS("assets/music/panelpop_intro.ogg");
-    _musicBgLoop = Mix_LoadMUS("assets/music/panelpop_loop.ogg");
-    _musicPanic = Mix_LoadMUS("assets/music/battle1_panic.ogg");
+    _musicBgIntro = Mix_LoadMUS(Paths::asset("assets/music/panelpop_intro.ogg").c_str());
+    _musicBgLoop = Mix_LoadMUS(Paths::asset("assets/music/panelpop_loop.ogg").c_str());
+    _musicPanic = Mix_LoadMUS(Paths::asset("assets/music/battle1_panic.ogg").c_str());
     std::cout << Mix_GetError();
 
     for (int i = 0; i < 40; ++i) {
         std::ostringstream os;
         os << "assets/sfx/" << (i / 10) + 1 << "x" << ((i % 10) + 1) << ".wav";
         //std::cout << os.str() << std::endl;
-        _sfxPop[i] = Mix_LoadWAV(os.str().c_str());
+        _sfxPop[i] = Mix_LoadWAV(Paths::asset(os.str()).c_str());
     }
 
-    _sfxCursor = Mix_LoadWAV("assets/sfx/cursor.wav");
-    _sfxSwap = Mix_LoadWAV("assets/sfx/swap.wav");
-    _sfxThump = Mix_LoadWAV("assets/sfx/thump.wav");
-    _sfxBigThump = Mix_LoadWAV("assets/sfx/bigthump.wav");
-    _sfxChain = Mix_LoadWAV("assets/sfx/chain.wav");
-    _sfxCombo = Mix_LoadWAV("assets/sfx/combo.wav");
-    _sfxFanfare1 = Mix_LoadWAV("assets/sfx/fanfare1.wav");
-    _sfxFanfare2 = Mix_LoadWAV("assets/sfx/fanfare2.wav");
-    _sfxFanfare3 = Mix_LoadWAV("assets/sfx/fanfare3.wav");
-    _sfxCountdown = Mix_LoadWAV("assets/sfx/countdown.wav");
-    _sfxGo = Mix_LoadWAV("assets/sfx/go.wav");
-    _sfxPause = Mix_LoadWAV("assets/sfx/pause.wav");
+    _sfxCursor = Mix_LoadWAV(Paths::asset("assets/sfx/cursor.wav").c_str());
+    _sfxSwap = Mix_LoadWAV(Paths::asset("assets/sfx/swap.wav").c_str());
+    _sfxThump = Mix_LoadWAV(Paths::asset("assets/sfx/thump.wav").c_str());
+    _sfxBigThump = Mix_LoadWAV(Paths::asset("assets/sfx/bigthump.wav").c_str());
+    _sfxChain = Mix_LoadWAV(Paths::asset("assets/sfx/chain.wav").c_str());
+    _sfxCombo = Mix_LoadWAV(Paths::asset("assets/sfx/combo.wav").c_str());
+    _sfxFanfare1 = Mix_LoadWAV(Paths::asset("assets/sfx/fanfare1.wav").c_str());
+    _sfxFanfare2 = Mix_LoadWAV(Paths::asset("assets/sfx/fanfare2.wav").c_str());
+    _sfxFanfare3 = Mix_LoadWAV(Paths::asset("assets/sfx/fanfare3.wav").c_str());
+    _sfxCountdown = Mix_LoadWAV(Paths::asset("assets/sfx/countdown.wav").c_str());
+    _sfxGo = Mix_LoadWAV(Paths::asset("assets/sfx/go.wav").c_str());
+    _sfxPause = Mix_LoadWAV(Paths::asset("assets/sfx/pause.wav").c_str());
 
     std::cout << Mix_GetError();
     return _musicBgLoop != NULL;

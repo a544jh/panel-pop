@@ -43,8 +43,36 @@ The default keyboard controls will always work in the menus.
 * boost
 
 #### Linux
-1. `cmake`
+1. `cmake .`
 2. `make`
+
+You can run the resulting `panel-pop` binary straight from the source tree (it
+finds `assets/` and reads/writes `panelpop.ini` in the current directory).
+
+To install system-wide:
+
+```
+cmake -B build -DCMAKE_INSTALL_PREFIX=/usr
+cmake --build build
+sudo cmake --install build
+```
+
+This installs the assets under `/usr/share/panel-pop`, a desktop entry and an
+icon. When installed, the config file lives in `$XDG_CONFIG_HOME/panel-pop`
+(typically `~/.config/panel-pop/panelpop.ini`); a `panelpop.ini` in the working
+directory still takes precedence if present.
+
+##### Arch Linux
+
+The `panel-pop-git` package is maintained in a separate repository:
+
+```
+git clone https://github.com/a544jh/panel-pop-git.git
+cd panel-pop-git
+makepkg -si
+```
+
+It is not on the AUR yet.
 
 #### MacOS
 1. `cmake`
@@ -58,3 +86,10 @@ folders into the MinGW installation's respective folders.
 
 1. `cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"`
 2. `make`
+
+## Third-party assets
+
+panel-pop is MIT licensed, but the two bundled fonts are not covered by that
+grant. Press Start 2P is under the SIL Open Font License; Square Sans Serif 7
+is distributed as "Freeware". See [THIRD-PARTY.md](THIRD-PARTY.md) before
+redistributing.

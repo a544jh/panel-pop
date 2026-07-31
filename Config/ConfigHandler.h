@@ -18,7 +18,6 @@ class ConfigHandler {
 
   static ConfigHandler &getInstance();
 
-  const char *CONFIG_FILENAME = "panelpop.ini";
   bool loadConfig();
   bool saveConfig();
 
@@ -41,7 +40,14 @@ class ConfigHandler {
   void operator=(ConfigHandler const &) = delete;
 
   boost::property_tree::ptree _settingsTree;
-  InputEvent *parseInputEvent(const std::string &configKey);
+
+  // Populate the tree with the built-in bindings (see DEFAULT_BINDINGS).
+  void applyDefaultKeyConfig();
+  // Binding for one action, falling back to the built-in default when the
+  // config is missing the key or holds an unparseable value. Never null.
+  InputEvent *parseInputEvent(int player, const std::string &action);
+  // Parse a serialized binding ("KUp", "J0_B1", ...); null if unparseable.
+  static InputEvent *parseBinding(const std::string &value);
 };
 
 #endif /* CONFIG_CONFIGHANDLER_H_ */
