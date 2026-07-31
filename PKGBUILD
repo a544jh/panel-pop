@@ -7,7 +7,9 @@ pkgrel=1
 pkgdesc="A Panel de Pon / Tetris Attack / Puzzle League clone made with C++ and SDL"
 arch=('x86_64')
 url="https://github.com/a544jh/panel-pop"
-license=('MIT')
+# MIT covers panel-pop itself; the bundled fonts have their own terms, see
+# THIRD-PARTY.md.
+license=('MIT' 'OFL-1.1' 'LicenseRef-Freeware')
 depends=('sdl2' 'sdl2_image' 'sdl2_ttf' 'sdl2_mixer')
 makedepends=('git' 'cmake' 'boost')
 provides=("$_pkgname")
@@ -33,4 +35,7 @@ build() {
 package() {
 	DESTDIR="$pkgdir" cmake --install build
 	install -Dm644 "$_pkgname/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+	# The bundled fonts are not MIT; ship their notices alongside it.
+	install -Dm644 "$_pkgname/THIRD-PARTY.md" "$pkgdir/usr/share/licenses/$pkgname/THIRD-PARTY.md"
+	install -Dm644 "$_pkgname/OFL.txt" "$pkgdir/usr/share/licenses/$pkgname/OFL.txt"
 }

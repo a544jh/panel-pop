@@ -79,3 +79,10 @@ folders into the MinGW installation's respective folders.
 
 1. `cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"`
 2. `make`
+
+## Third-party assets
+
+panel-pop is MIT licensed, but the two bundled fonts are not covered by that
+grant. Press Start 2P is under the SIL Open Font License; Square Sans Serif 7
+is distributed as "Freeware". See [THIRD-PARTY.md](THIRD-PARTY.md) before
+redistributing.
