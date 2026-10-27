@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <array>
+#include <memory>
 
 #include "../Config/InputConfig.h"
 
@@ -21,7 +22,7 @@ class StateManager {
  public:
   static StateManager &getInstance();
   void run();
-  void switchToState(State *);
+  void switchToState(std::unique_ptr<State>);
   void returnToTitle();
   float getAvgFps() const;
   State *getCurrentState() const;
@@ -34,8 +35,8 @@ class StateManager {
   StateManager();
   StateManager(StateManager const &) = delete;
   void operator=(StateManager const &) = delete;
-  State *_currentState;
-  State *_newState;
+  std::unique_ptr<State> _currentState;
+  std::unique_ptr<State> _newState;
   bool _switchState;
   SDLContext &SDL;
   InputManager &input;

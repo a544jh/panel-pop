@@ -17,8 +17,6 @@ class DemoGameState : public GameState {
 
   void tick() override;
   SDL_Texture *render() override;
-
-  virtual ~DemoGameState();
  private:
 
 };

@@ -40,7 +40,7 @@ StateManager::StateManager() :
     _avgFps(0),
     _showFps(false),
     _inputConfigs{ConfigHandler::getInstance().getKeyConfig(1), ConfigHandler::getInstance().getKeyConfig(2)} {
-    _currentState = new TitleScreen();
+    _currentState = std::make_unique<TitleScreen>();
 }
 
 StateManager &StateManager::getInstance() {
@@ -91,16 +91,15 @@ void StateManager::run() {
             _lastTick = SDL_GetTicks();
         }
         if (_switchState) {
-            delete _currentState;
-            _currentState = _newState;
+            _currentState = std::move(_newState);
             _switchState = false;
         }
 
     }
 }
 
-void StateManager::switchToState(State *state) {
-    _newState = state;
+void StateManager::switchToState(std::unique_ptr<State> state) {
+    _newState = std::move(state);
     _switchState = true;
 }
 
@@ -109,13 +108,13 @@ float StateManager::getAvgFps() const {
 }
 
 State *StateManager::getCurrentState() const {
-    return _currentState;
+    return _currentState.get();
 }
 
 void StateManager::returnToTitle() {
-    if (!dynamic_cast<FadeTransition *>(_currentState)) {
-        switchToState(new FadeTransition([]() {
-          return new TitleScreen;
+    if (!dynamic_cast<FadeTransition *>(_currentState.get())) {
+        switchToState(std::make_unique<FadeTransition>([]() {
+          return std::unique_ptr<State>(new TitleScreen);
         }));
     }
 }

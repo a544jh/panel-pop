@@ -22,7 +22,7 @@ void GameState::tick() {
     }
     if (_game->getState() == Game::State::RUNNING) {
         _playerBoardController->tick();
-        for (BoardController *controller : _opponentBoardcontollers) {
+        for (auto &controller : _opponentBoardcontollers) {
             controller->tick();
         }
     } else if (_game->getState() == Game::State::PAUSED) {
@@ -41,15 +41,6 @@ void GameState::tick() {
 
 SDL_Texture *GameState::render() {
     return _gameRenderer->renderGame();
-}
-
-GameState::~GameState() {
-    delete _game;
-    delete _gameRenderer;
-    delete _playerBoardController;
-    for (BoardController *bc : _opponentBoardcontollers) {
-        delete bc;
-    }
 }
 
 void GameState::goBack() {

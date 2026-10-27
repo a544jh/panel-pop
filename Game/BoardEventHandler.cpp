@@ -69,14 +69,14 @@ void BoardEventHandler::blockExplode(int x, int y, int stackOffset, int order,
             + 14;
         int lifetime = 15;
 
-        _gameRenderer.addParticle(new Particle(posx, posy, -2, -2, lifetime));
-        _gameRenderer.addParticle(new Particle(posx, posy, -2, 0, lifetime));
-        _gameRenderer.addParticle(new Particle(posx, posy, -2, 2, lifetime));
-        _gameRenderer.addParticle(new Particle(posx, posy, 0, -2, lifetime));
-        _gameRenderer.addParticle(new Particle(posx, posy, 0, 2, lifetime));
-        _gameRenderer.addParticle(new Particle(posx, posy, 2, -2, lifetime));
-        _gameRenderer.addParticle(new Particle(posx, posy, 2, 0, lifetime));
-        _gameRenderer.addParticle(new Particle(posx, posy, 2, 2, lifetime));
+        _gameRenderer.addParticle(std::make_unique<Particle>(posx, posy, -2, -2, lifetime));
+        _gameRenderer.addParticle(std::make_unique<Particle>(posx, posy, -2, 0, lifetime));
+        _gameRenderer.addParticle(std::make_unique<Particle>(posx, posy, -2, 2, lifetime));
+        _gameRenderer.addParticle(std::make_unique<Particle>(posx, posy, 0, -2, lifetime));
+        _gameRenderer.addParticle(std::make_unique<Particle>(posx, posy, 0, 2, lifetime));
+        _gameRenderer.addParticle(std::make_unique<Particle>(posx, posy, 2, -2, lifetime));
+        _gameRenderer.addParticle(std::make_unique<Particle>(posx, posy, 2, 0, lifetime));
+        _gameRenderer.addParticle(std::make_unique<Particle>(posx, posy, 2, 2, lifetime));
     }
 
     int soundOrder = order;
@@ -121,7 +121,7 @@ void BoardEventHandler::gbFall(bool big) {
 void BoardEventHandler::combo(int value, int col, int row, int stackOffset) {
     _combo = true;
     _gameRenderer.addParticle(
-        new ComboPopup((col * BoardRenderer::TILE_SIZE + 5) + _boardXPos,
+        std::make_unique<ComboPopup>((col * BoardRenderer::TILE_SIZE + 5) + _boardXPos,
                        ((BoardRenderer::BOARD_HEIGHT
                            - (row + 1) * BoardRenderer::TILE_SIZE - stackOffset)
                            + 30) + _boardYPos, value, 60));
@@ -130,7 +130,7 @@ void BoardEventHandler::combo(int value, int col, int row, int stackOffset) {
 void BoardEventHandler::chain(int value, int col, int row, int stackOffset) {
     _chain = true;
     _gameRenderer.addParticle(
-        new ChainPopup(col * BoardRenderer::TILE_SIZE + 5 + _boardXPos,
+        std::make_unique<ChainPopup>(col * BoardRenderer::TILE_SIZE + 5 + _boardXPos,
                        (BoardRenderer::BOARD_HEIGHT
                            - (row + 1) * BoardRenderer::TILE_SIZE - stackOffset
                            + _boardYPos), value, 60));

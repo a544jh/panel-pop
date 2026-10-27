@@ -27,8 +27,8 @@ void TitleScreen::tick() {
         _idleTicks = 0;
     }
     if (++_idleTicks >= DEMO_TIMEOUT) {
-        StateManager::getInstance().switchToState(new FadeTransition([]() {
-          return new DemoGameState;
+        StateManager::getInstance().switchToState(std::make_unique<FadeTransition>([]() {
+          return std::unique_ptr<State>(new DemoGameState);
         }));
     }
     _menu.handleInput();

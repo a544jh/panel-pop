@@ -16,19 +16,16 @@
 
 VsGameState::VsGameState() {
 
-    _game = new VsGame();
+    _game = std::make_unique<VsGame>();
 
-    _gameRenderer = new VsGameRenderer((VsGame &) *_game);
+    _gameRenderer = std::make_unique<VsGameRenderer>((VsGame &) *_game);
 
-    _game->getBoard(0).setEventHandler(new BoardEventHandler(*_gameRenderer, 0));
-    _game->getBoard(1).setEventHandler(new BoardEventHandler(*_gameRenderer, 1));
+    _game->getBoard(0).setEventHandler(std::make_unique<BoardEventHandler>(*_gameRenderer, 0));
+    _game->getBoard(1).setEventHandler(std::make_unique<BoardEventHandler>(*_gameRenderer, 1));
 
-    _playerBoardController = new KeyboardController(_game->getBoard(0), StateManager::getInstance().getKeys(1));
+    _playerBoardController = std::make_unique<KeyboardController>(_game->getBoard(0), StateManager::getInstance().getKeys(1));
 
-    _opponentBoardcontollers.push_back(new KeyboardController(_game->getBoard(1),
-                                                              StateManager::getInstance().getKeys(2)));
-}
-
-VsGameState::~VsGameState() {
+    _opponentBoardcontollers.push_back(std::make_unique<KeyboardController>(_game->getBoard(1),
+                                                                            StateManager::getInstance().getKeys(2)));
 }
 

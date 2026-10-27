@@ -24,22 +24,22 @@ MainMenu::MainMenu() {
     addItem(
         MenuItem("1P Endless",
                  [&]() {
-                   StateManager::getInstance().switchToState(new EndlessGameState);
+                   StateManager::getInstance().switchToState(std::make_unique<EndlessGameState>());
                  }));
     addItem(
         MenuItem("VS AI",
                  [&]() {
-                   StateManager::getInstance().switchToState(new AIGameState);
+                   StateManager::getInstance().switchToState(std::make_unique<AIGameState>());
                  }));
     addItem(
         MenuItem("2P VS",
                  [&]() {
-                   StateManager::getInstance().switchToState(new VsGameState);
+                   StateManager::getInstance().switchToState(std::make_unique<VsGameState>());
                  }));
     addItem(
         MenuItem("Options",
                  [&]() {
-                   StateManager::getInstance().switchToState(new OptionsMenuState);
+                   StateManager::getInstance().switchToState(std::make_unique<OptionsMenuState>());
                  }));
     addItem(
         MenuItem("Quit",

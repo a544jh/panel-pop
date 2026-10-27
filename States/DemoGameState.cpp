@@ -16,16 +16,16 @@
 
 DemoGameState::DemoGameState() {
 
-    _game = new VsGame();
+    _game = std::make_unique<VsGame>();
 
-    _gameRenderer = new VsGameRenderer((VsGame &) *_game);
+    _gameRenderer = std::make_unique<VsGameRenderer>((VsGame &) *_game);
 
-    _game->getBoard(0).setEventHandler(new BoardEventHandler(*_gameRenderer, 0));
-    _game->getBoard(1).setEventHandler(new BoardEventHandler(*_gameRenderer, 1));
+    _game->getBoard(0).setEventHandler(std::make_unique<BoardEventHandler>(*_gameRenderer, 0));
+    _game->getBoard(1).setEventHandler(std::make_unique<BoardEventHandler>(*_gameRenderer, 1));
 
-    _playerBoardController = new AIBoardController(_game->getBoard(0));
+    _playerBoardController = std::make_unique<AIBoardController>(_game->getBoard(0));
 
-    _opponentBoardcontollers.push_back(new AIBoardController(_game->getBoard(1)));
+    _opponentBoardcontollers.push_back(std::make_unique<AIBoardController>(_game->getBoard(1)));
 }
 
 void DemoGameState::tick() {
@@ -38,7 +38,7 @@ void DemoGameState::tick() {
     }
     if (_game->getState() == Game::State::RUNNING) {
         _playerBoardController->tick();
-        for (BoardController *controller : _opponentBoardcontollers) {
+        for (auto &controller : _opponentBoardcontollers) {
             controller->tick();
         }
     } else if (_game->getState() == Game::State::ENDED) {
@@ -62,8 +62,5 @@ SDL_Texture *DemoGameState::render() {
                                              450);
     }
     return texture;
-}
-
-DemoGameState::~DemoGameState() {
 }
 

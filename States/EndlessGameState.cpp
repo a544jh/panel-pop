@@ -14,14 +14,11 @@
 #include "StateManager.h"
 
 EndlessGameState::EndlessGameState() {
-    _game = new EndlessGame();
-    _gameRenderer = new EndlessGameRenderer((EndlessGame &) *_game);
-    _game->getBoard(0).setEventHandler(new BoardEventHandler(*_gameRenderer, 0));
-    _playerBoardController = new KeyboardController(_game->getBoard(0),
-                                                    StateManager::getInstance().getKeys(1));
-}
-
-EndlessGameState::~EndlessGameState() {
+    _game = std::make_unique<EndlessGame>();
+    _gameRenderer = std::make_unique<EndlessGameRenderer>((EndlessGame &) *_game);
+    _game->getBoard(0).setEventHandler(std::make_unique<BoardEventHandler>(*_gameRenderer, 0));
+    _playerBoardController = std::make_unique<KeyboardController>(_game->getBoard(0),
+                                                                  StateManager::getInstance().getKeys(1));
 }
 
 

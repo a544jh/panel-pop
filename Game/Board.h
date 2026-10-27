@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <list>
+#include <memory>
 
 #include "Block.h"
 #include "GarbageBlock.h"
@@ -49,8 +50,15 @@ class Board {
   };
 
   Board();
+  //move-only: owns its BoardEventHandler (unique_ptr); the GarbageBlock pointers
+  //in the tiles stay valid on move because std::list transfers its nodes
+  Board(Board &&) = default;
+  Board &operator=(Board &&) = default;
+  Board(Board const &) = delete;
+  Board &operator=(Board const &) = delete;
+
   Board reset();
-  void setEventHandler(BoardEventHandler *);
+  void setEventHandler(std::unique_ptr<BoardEventHandler>);
   BoardEventHandler *getEventHandler() const;
 
   virtual ~Board();
@@ -108,7 +116,7 @@ class Board {
   std::list<GarbageSpawn> _garbageQueue;
 
   BoardState _state;
-  BoardEventHandler *_eventHandler;
+  std::unique_ptr<BoardEventHandler> _eventHandler;
   unsigned int _ticksRun;
   // TODO: replace unneccesary variables with derived data, for easier copying....
   int _garbageSpawnPositions[3];

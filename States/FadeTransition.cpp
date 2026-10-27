@@ -12,7 +12,7 @@
 #include "../SDLContext.h"
 
 FadeTransition::FadeTransition(StateConstructor constr) : _nextStateConstr(constr),
-                                                          _ticksRun(0), _nextState(nullptr) {
+                                                          _ticksRun(0), _nextState(nullptr), _lastTarget(nullptr) {
     StateManager &manager = StateManager::getInstance();
 }
 
@@ -21,11 +21,16 @@ void FadeTransition::tick() {
         _nextState->tick();
     }
     if (++_ticksRun >= TRANSITION_TICKS) {
-        StateManager::getInstance().switchToState(_nextState);
+        StateManager::getInstance().switchToState(std::move(_nextState));
     }
 }
 
 SDL_Texture *FadeTransition::render() {
+    if (_nextState == nullptr && _ticksRun >= TRANSITION_TICKS) {
+        //the state was already handed off to StateManager (the swap happens after
+        //rendering); keep showing its last frame, the fade overlay is fully transparent anyway
+        return _lastTarget;
+    }
     SDL_Renderer *renderer = SDLContext::getInstance().getRenderer();
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     double fadeout;
@@ -46,6 +51,7 @@ SDL_Texture *FadeTransition::render() {
     SDL_Rect rect = {0, 0, INT_MAX, INT_MAX};
     SDL_RenderFillRect(renderer, &rect);
 
+    _lastTarget = target;
     return target;
 }
 

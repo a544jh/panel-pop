@@ -13,7 +13,6 @@
 class VsGameState : public GameState {
  public:
   VsGameState();
-  virtual ~VsGameState();
  private:
 };
 

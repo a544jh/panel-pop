@@ -9,6 +9,7 @@
 #define GAMERENDERER_H_
 
 #include <list>
+#include <memory>
 
 #include "../Game/Game.h"
 #include "Particle.h"
@@ -27,12 +28,12 @@ class GameRenderer : public Renderer {
   virtual void tick() = 0;
   virtual SDL_Texture *renderGame() = 0;
 
-  void addParticle(Particle *);
+  void addParticle(std::unique_ptr<Particle>);
 
   virtual void shakeBoard(int id, int duration) = 0;
  protected:
   Game &_game;
-  std::list<Particle *> _particles;
+  std::list<std::unique_ptr<Particle>> _particles;
   void handleParticles();
   void renderParticles();
   void renderGameTime(int, int);

@@ -23,7 +23,6 @@ EndlessGame::EndlessGame() :
 }
 
 EndlessGame::~EndlessGame() {
-    delete _board.getEventHandler();
 }
 
 void EndlessGame::reset() {

@@ -26,8 +26,8 @@ GameRenderer::GameRenderer(Game &game) :
 GameRenderer::~GameRenderer() {
 }
 
-void GameRenderer::addParticle(Particle *p) {
-    _particles.push_back(p);
+void GameRenderer::addParticle(std::unique_ptr<Particle> p) {
+    _particles.push_back(std::move(p));
 }
 
 void GameRenderer::handleParticles() {
@@ -37,7 +37,6 @@ void GameRenderer::handleParticles() {
             (*it)->tick();
             ++it;
         } else {
-            delete *it;
             it = _particles.erase(it);
         }
     }

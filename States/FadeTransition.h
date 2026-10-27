@@ -11,9 +11,10 @@
 
 #include "State.h"
 #include <functional>
+#include <memory>
 
 class FadeTransition : public State {
-  typedef std::function<State *()> StateConstructor;
+  typedef std::function<std::unique_ptr<State>()> StateConstructor;
 
  public:
   FadeTransition(StateConstructor);
@@ -27,7 +28,8 @@ class FadeTransition : public State {
  private:
   StateConstructor _nextStateConstr;
   int _ticksRun;
-  State *_nextState;
+  std::unique_ptr<State> _nextState;
+  SDL_Texture *_lastTarget; //kept so render() still works after the state was handed off to StateManager
 };
 
 #endif /* FADETRANSITION_H */

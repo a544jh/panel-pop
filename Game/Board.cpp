@@ -34,17 +34,17 @@ Board::Board() :
     fillBufferRow();
 }
 
-void Board::setEventHandler(BoardEventHandler *eh) {
-    _eventHandler = eh;
+void Board::setEventHandler(std::unique_ptr<BoardEventHandler> eh) {
+    _eventHandler = std::move(eh);
 }
 
 BoardEventHandler *Board::getEventHandler() const {
-    return _eventHandler;
+    return _eventHandler.get();
 }
 
 Board Board::reset() {
-    Board reset = Board();
-    reset._eventHandler = _eventHandler;
+    Board reset;
+    reset._eventHandler = std::move(_eventHandler);
     return reset;
 }
 

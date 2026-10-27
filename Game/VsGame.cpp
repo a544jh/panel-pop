@@ -152,6 +152,4 @@ void VsGame::reset() {
 }
 
 VsGame::~VsGame() {
-    delete _board0.getEventHandler();
-    delete _board1.getEventHandler();
 }

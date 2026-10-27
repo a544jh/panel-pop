@@ -17,7 +17,6 @@
 class EndlessGameState : public GameState {
  public:
   EndlessGameState();
-  virtual ~EndlessGameState();
 
  private:
 

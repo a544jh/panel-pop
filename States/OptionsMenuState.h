@@ -11,6 +11,7 @@
 #include "../Rendering/Renderer.h"
 #include "State.h"
 #include <list>
+#include <memory>
 
 class Menu;
 
@@ -24,9 +25,9 @@ class OptionsMenuState : public State, public Renderer {
   void configurePlayerKeys(int);
 
  private:
-  std::list<Menu *> _menuStack;
-  Menu *_currentMenu;
-  void pushMenu(Menu *);
+  std::list<std::unique_ptr<Menu>> _menuStack;
+  std::unique_ptr<Menu> _currentMenu;
+  void pushMenu(std::unique_ptr<Menu>);
 };
 
 #endif /* STATES_OPTIONSMENUSTATE_H_ */
