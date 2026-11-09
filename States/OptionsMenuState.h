@@ -22,6 +22,8 @@ class OptionsMenuState : public State, public Renderer {
   SDL_Texture *render();
   void goBack();
   void configurePlayerKeys(int);
+  // The innermost menu; used by the headless debug console (see AGENTS.md).
+  Menu *getCurrentMenu() const;
 
  private:
   std::list<Menu *> _menuStack;

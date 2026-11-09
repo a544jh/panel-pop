@@ -48,6 +48,10 @@ class InputManager {
   SDL_Event _inputDownEvent; // stores the last input event on this frame that is relevant for input config
   SDL_Event _prevInputDownEvent;
   std::vector<SDL_Joystick *> _joysticks;
+  // Key state with the debug console's injected keys merged in; only used in
+  // --debug-stdin mode, where _keys points into this (SDL's own array is
+  // read-only). See AGENTS.md.
+  std::vector<uint8_t> _debugKeys;
 
   void filterInputDownEvent(const SDL_Event &e);
   SDL_JoystickID _joyIdWithinDirection;

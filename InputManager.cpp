@@ -6,6 +6,7 @@
  */
 
 #include "InputManager.h"
+#include "Debug/DebugInput.h"
 #include "InputEvents/InputEvent.h"
 #include "InputEvents/JoyButton.h"
 #include "InputEvents/KeyboardKey.h"
@@ -39,8 +40,8 @@ InputConfig InputManager::defaultMenuConfig = InputConfig(new KeyboardKey(SDL_SC
                                                           new KeyboardKey(SDL_SCANCODE_Z),
                                                           new KeyboardKey(SDL_SCANCODE_ESCAPE));
 void InputManager::poll() {
-    _keys = SDL_GetKeyboardState(&_keys_len);
-    memcpy(_prevKeys, _keys, sizeof(uint8_t) * _keys_len);
+    const uint8_t *sdlKeys = SDL_GetKeyboardState(&_keys_len);
+    memcpy(_prevKeys, sdlKeys, sizeof(uint8_t) * _keys_len);
 
     _prevInputDownEvent = _inputDownEvent;
     _inputDownEvent.type = SDL_FIRSTEVENT; // effectively set the event to "null"
@@ -57,6 +58,15 @@ void InputManager::poll() {
         } else if (e.type == SDL_JOYAXISMOTION) {
             //printf("Joy %d axis %d position %d \n", e.jaxis.which, e.jaxis.axis, e.jaxis.value);
         }
+    }
+
+    if (DebugInput::enabled()) {
+        // SDL's keyboard state array is read-only, so injected keys are merged
+        // into a copy for the duration of this tick.
+        DebugInput::applyTo(sdlKeys, _keys_len, _debugKeys);
+        _keys = _debugKeys.data();
+    } else {
+        _keys = sdlKeys;
     }
 
     defaultMenuConfig.updateState();

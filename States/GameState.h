@@ -22,6 +22,8 @@ class GameState : public State {
   void goBack();
   virtual SDL_Texture *render();
   virtual void tick();
+  // The running game; used by the headless debug console (see AGENTS.md).
+  Game *getGame() const;
 
   virtual ~GameState();
  protected:

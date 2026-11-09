@@ -93,3 +93,11 @@ void Menu::handleInput() {
         inputCancel();
     }
 }
+
+unsigned Menu::getSelection() const {
+    return _selection;
+}
+
+const std::vector<MenuItem> &Menu::getItems() const {
+    return _items;
+}

@@ -7,6 +7,7 @@
 
 #include "SDLContext.h"
 #include "Config/ConfigHandler.h"
+#include "Debug/DebugOptions.h"
 #include "InputManager.h"
 #include "Util/Paths.h"
 
@@ -54,40 +55,45 @@ SDLContext &SDLContext::getInstance() {
 }
 
 bool SDLContext::init() {
-    bool success = true;
-
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        std::cout << SDL_GetError();
-        success = false;
+        std::cout << "SDL_Init: " << SDL_GetError() << std::endl;
+        return false;
     }
 
     _window = SDL_CreateWindow("panel-pop", SDL_WINDOWPOS_UNDEFINED,
                                SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
     if (_window == NULL) {
-        std::cout << SDL_GetError();
-        success = false;
+        std::cout << "SDL_CreateWindow: " << SDL_GetError() << std::endl;
+        return false;
     }
 
     _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
     if (_renderer == NULL) {
-        std::cout << SDL_GetError();
-        success = false;
+        // No hardware acceleration (dummy driver, software GL): fall back
+        // instead of running on with a null renderer.
+        std::cout << "SDL_CreateRenderer: " << SDL_GetError()
+                  << ", retrying with SDL_RENDERER_SOFTWARE" << std::endl;
+        _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_SOFTWARE);
+    }
+    if (_renderer == NULL) {
+        std::cout << "SDL_CreateRenderer: " << SDL_GetError() << std::endl;
+        return false;
     }
 
     int imgFlags = IMG_INIT_PNG;
     if (!(IMG_Init(imgFlags) & imgFlags)) {
-        std::cout << IMG_GetError();
-        success = false;
+        std::cout << "IMG_Init: " << IMG_GetError() << std::endl;
+        return false;
     }
 
     if (TTF_Init() == -1) {
-        std::cout << TTF_GetError();
-        success = false;
+        std::cout << "TTF_Init: " << TTF_GetError() << std::endl;
+        return false;
     }
 
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) < 0) {
-        std::cout << Mix_GetError();
-        success = false;
+        // Not fatal: the game simply runs without sound.
+        std::cout << "Mix_OpenAudio: " << Mix_GetError() << std::endl;
     }
 
 
@@ -101,15 +107,24 @@ bool SDLContext::init() {
     Mix_VolumeMusic(ConfigHandler::getInstance().getMusicVolume());
     Mix_Volume(-1, ConfigHandler::getInstance().getSfxVolume());
 
-    if (ConfigHandler::getInstance().getFullscreen()) {
+    if (ConfigHandler::getInstance().getFullscreen() && !DebugOptions::get().headless()) {
         toggleFullscreen();
     }
 
-    success = loadSpriteSheet();
-    success = loadFonts();
-    success = loadAudio();
+    if (!loadSpriteSheet()) {
+        std::cout << "failed to load " << Paths::asset("assets/sprites.png") << std::endl;
+        return false;
+    }
+    if (!loadFonts()) {
+        return false;
+    }
+    if (!loadAudio()) {
+        std::cout << "failed to load audio from " << Paths::asset("assets/") << ": "
+                  << Mix_GetError() << std::endl;
+        return false;
+    }
 
-    return success;
+    return true;
 }
 
 SDL_Renderer *SDLContext::getRenderer() {

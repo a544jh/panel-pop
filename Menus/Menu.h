@@ -30,6 +30,10 @@ class Menu : public Renderer {
 
   virtual void render() const = 0;
 
+  // Read-only accessors for the headless debug console (see AGENTS.md).
+  unsigned getSelection() const;
+  const std::vector<MenuItem> &getItems() const;
+
  protected:
   std::vector<MenuItem> _items;
   unsigned _selection;

@@ -5,11 +5,15 @@
 #include <SDL_keyboard.h>
 #include <sstream>
 #include "KeyboardKey.h"
+#include "../Debug/DebugInput.h"
 
 KeyboardKey::KeyboardKey(int scancode) : _scancode(scancode) {}
 
 bool KeyboardKey::isActive() const {
-    return SDL_GetKeyboardState(NULL)[_scancode];
+    // DebugInput lets the headless debug console inject keys; it is inert
+    // unless --debug-stdin is active (see AGENTS.md).
+    return DebugInput::active(_scancode)
+        || SDL_GetKeyboardState(NULL)[_scancode];
 }
 
 std::string KeyboardKey::toString() {

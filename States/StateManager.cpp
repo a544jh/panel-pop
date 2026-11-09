@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <sstream>
 
+#include "../Debug/DebugOptions.h"
 #include "../InputEvents/JoyHat.h"
 #include "../InputEvents/JoyButton.h"
 
@@ -33,6 +34,7 @@ StateManager::StateManager() :
     input(InputManager::getInstance()),
     _lastTick(0),
     _frameTime(16),
+    _logicTicks(0),
     _running(true),
     _framesRun(0),
     _startTime(SDL_GetTicks()),
@@ -49,54 +51,84 @@ StateManager &StateManager::getInstance() {
 }
 
 void StateManager::run() {
-    bool tick;
-    bool render;
+    const DebugOptions &opts = DebugOptions::get();
+    const int maxTicks = opts.maxTicks();
     while (_running) {
-        tick = (SDL_GetTicks() - _lastTick >= _frameTime);
-        render = (SDL_GetTicks() - _lastFrame >= 5);
+        bool tick = (SDL_GetTicks() - _lastTick >= _frameTime);
+        bool render = (SDL_GetTicks() - _lastFrame >= 5) && opts.render();
         //200 fps cap
         if (tick) {
-            input.poll();
-            for (auto &&config : _inputConfigs) {
-                config.updateState();
-            }
-            if (input._quit) {
-                //TODO: State transitions?
-                _running = false;
-                break;
-            }
-            if (input.keyPressed(SDL_SCANCODE_LALT)
-                && input.keyDown(SDL_SCANCODE_RETURN)) {
-                SDL.toggleFullscreen();
-            }
-            if (input.keyPressed(SDL_SCANCODE_LCTRL)
-                && input.keyDown(SDL_SCANCODE_F)) {
-                _showFps = !_showFps;
-            }
-            _currentState->tick();
-        }
-        if (render) {
-            SDL_Texture *t = _currentState->render();
-
-            if (_showFps) {
-                SDL_SetRenderTarget(SDL.getRenderer(), t);
-                showFps();
-            }
-
-            SDL.renderTextureToWindow(t);
-            _lastFrame = SDL_GetTicks();
-            ++_framesRun;
-        }
-        if (tick) {
+            stepLogic();
             _lastTick = SDL_GetTicks();
         }
-        if (_switchState) {
-            delete _currentState;
-            _currentState = _newState;
-            _switchState = false;
+        if (render) {
+            stepRender();
+            _lastFrame = SDL_GetTicks();
         }
-
+        applyPendingStateSwitch();
+        if (maxTicks > 0 && _logicTicks >= maxTicks) {
+            _running = false;
+        }
     }
+}
+
+bool StateManager::stepLogic() {
+    input.poll();
+    for (auto &&config : _inputConfigs) {
+        config.updateState();
+    }
+    if (input._quit) {
+        //TODO: State transitions?
+        _running = false;
+        return false;
+    }
+    if (input.keyPressed(SDL_SCANCODE_LALT)
+        && input.keyDown(SDL_SCANCODE_RETURN)) {
+        SDL.toggleFullscreen();
+    }
+    if (input.keyPressed(SDL_SCANCODE_LCTRL)
+        && input.keyDown(SDL_SCANCODE_F)) {
+        _showFps = !_showFps;
+    }
+    _currentState->tick();
+    ++_logicTicks;
+    return _running;
+}
+
+void StateManager::stepRender() {
+    SDL_Texture *t = _currentState->render();
+
+    if (_showFps) {
+        SDL_SetRenderTarget(SDL.getRenderer(), t);
+        showFps();
+    }
+
+    SDL.renderTextureToWindow(t);
+    ++_framesRun;
+}
+
+void StateManager::applyPendingStateSwitch() {
+    if (_switchState) {
+        delete _currentState;
+        _currentState = _newState;
+        _switchState = false;
+    }
+}
+
+bool StateManager::step(bool render) {
+    if (stepLogic() && render) {
+        stepRender();
+    }
+    applyPendingStateSwitch();
+    return _running;
+}
+
+bool StateManager::running() const {
+    return _running;
+}
+
+int StateManager::logicTicks() const {
+    return _logicTicks;
 }
 
 void StateManager::switchToState(State *state) {

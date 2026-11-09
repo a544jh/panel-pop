@@ -21,6 +21,11 @@ class StateManager {
  public:
   static StateManager &getInstance();
   void run();
+  // Advance exactly one logic tick (and optionally render it) without waiting
+  // for wall-clock pacing. Used by the headless debug console.
+  bool step(bool render);
+  bool running() const;
+  int logicTicks() const;
   void switchToState(State *);
   void returnToTitle();
   float getAvgFps() const;
@@ -34,6 +39,9 @@ class StateManager {
   StateManager();
   StateManager(StateManager const &) = delete;
   void operator=(StateManager const &) = delete;
+  bool stepLogic();
+  void stepRender();
+  void applyPendingStateSwitch();
   State *_currentState;
   State *_newState;
   bool _switchState;
@@ -41,6 +49,7 @@ class StateManager {
   InputManager &input;
   uint32_t _lastTick;
   uint32_t _frameTime;
+  int _logicTicks;
   bool _running;
   uint32_t _framesRun;
   uint32_t _startTime;

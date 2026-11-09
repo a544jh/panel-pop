@@ -26,6 +26,14 @@ Misc:
 * `Ctrl`+`F` - toggle fps diplay
 * `Alt`+`Return` - toggle fullscreen
 
+## Debugging / running without a display
+
+`panel-pop --help` lists headless options: `--headless` runs on SDL's dummy
+drivers, `--debug-stdin` opens a console on stdin that prints the board/game
+state as text or JSON and injects key presses one logic tick at a time, and
+`--frames <n>` stops after n ticks. `AGENTS.md` documents the commands and some
+build/debug recipes.
+
 ### How to configure gamepads
 
 Plug in gamepads before launching the game.

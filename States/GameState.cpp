@@ -39,6 +39,10 @@ void GameState::tick() {
     _gameRenderer->tick();
 }
 
+Game *GameState::getGame() const {
+    return _game;
+}
+
 SDL_Texture *GameState::render() {
     return _gameRenderer->renderGame();
 }

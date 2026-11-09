@@ -52,6 +52,10 @@ void OptionsMenuState::configurePlayerKeys(int player) {
     pushMenu(new KeyConfigMenu(*this, player));
 }
 
+Menu *OptionsMenuState::getCurrentMenu() const {
+    return _currentMenu;
+}
+
 void OptionsMenuState::pushMenu(Menu *menu) {
     _menuStack.push_back(_currentMenu);
     _currentMenu = menu;
