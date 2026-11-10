@@ -14,6 +14,7 @@ DebugOptions::DebugOptions() :
     _console(false),
     _render(true),
     _maxTicks(0),
+    _seed(0),
     _usage(false) {
 }
 
@@ -43,6 +44,7 @@ void DebugOptions::parse(int argc, char *argv[]) {
     _console = envFlag("PANELPOP_DEBUG_STDIN", false);
     _render = envFlag("PANELPOP_RENDER", true);
     _maxTicks = envInt("PANELPOP_MAX_TICKS", 0);
+    _seed = envInt("PANELPOP_SEED", 0);
 
     int kept = 1;
     for (int i = 1; i < argc; ++i) {
@@ -59,6 +61,10 @@ void DebugOptions::parse(int argc, char *argv[]) {
             _maxTicks = atoi(arg + 9);
         } else if (!strcmp(arg, "--frames") && i + 1 < argc) {
             _maxTicks = atoi(argv[++i]);
+        } else if (!strncmp(arg, "--seed=", 7)) {
+            _seed = atoi(arg + 7);
+        } else if (!strcmp(arg, "--seed") && i + 1 < argc) {
+            _seed = atoi(argv[++i]);
         } else {
             argv[kept++] = argv[i];
         }
@@ -88,6 +94,10 @@ int DebugOptions::maxTicks() const {
     return _maxTicks;
 }
 
+int DebugOptions::seed() const {
+    return _seed;
+}
+
 bool DebugOptions::usageRequested() const {
     return _usage;
 }
@@ -102,6 +112,8 @@ std::string DebugOptions::usage() {
         "                      (implies --headless; type 'help' at the prompt)\n"
         "  --frames=<n>        stop after n logic ticks (default: run until quit)\n"
         "  --no-render         skip State::render() while stepping (faster, no render coverage)\n"
+        "  --seed=<n>          seed rand() with n instead of the clock, so a\n"
+        "                      scripted session deals the same blocks every run\n"
         "  -h, --help          show this help\n"
         "\n"
         "the same options exist as environment variables: PANELPOP_HEADLESS,\n"

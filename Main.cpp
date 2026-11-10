@@ -34,7 +34,10 @@ int main(int argc, char *args[]) {
         SDL_setenv("SDL_AUDIODRIVER", "dummy", 1);
     }
 
-    srand(time(NULL));
+    // A fixed seed (debug option) makes a scripted session reproducible: the
+    // same blocks get dealt, so two AI runs can be compared fairly.
+    const int seed = DebugOptions::get().seed();
+    srand(seed != 0 ? static_cast<unsigned>(seed) : static_cast<unsigned>(time(NULL)));
     SDLContext &SDL = SDLContext::getInstance();
     ConfigHandler &configHandler = ConfigHandler::getInstance();
 

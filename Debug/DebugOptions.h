@@ -25,6 +25,9 @@ class DebugOptions {
   bool render() const;
   // stop after this many logic ticks; 0 = no limit.
   int maxTicks() const;
+  // seed for rand(); 0 = seed from the clock. A fixed seed makes a scripted
+  // session deal the same blocks, which is what makes AI comparisons fair.
+  int seed() const;
   // --help was given: main() prints usage and exits.
   bool usageRequested() const;
 
@@ -37,6 +40,7 @@ class DebugOptions {
   bool _console;
   bool _render;
   int _maxTicks;
+  int _seed;
   bool _usage;
 
   static bool envFlag(const char *name, bool fallback);
