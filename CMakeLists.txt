@@ -64,11 +64,31 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_mixer REQUIRED)
+# Use Boost's own BoostConfig.cmake (Boost >= 1.70) rather than the FindBoost
+# module, which newer CMake versions have deprecated.
+if (POLICY CMP0167)
+    cmake_policy(SET CMP0167 NEW)
+endif ()
+find_package(Boost REQUIRED) # header-only use (property_tree)
 
-include_directories(${SDL2_INCLUDE_DIR}
+# The sources include SDL headers both as <SDL_foo.h> and <SDL2/SDL_foo.h>, so
+# besides the .../include/SDL2 dirs found above we also need their parent dirs.
+# On Linux and Intel Macs the parent (/usr/include, /usr/local/include) is a
+# default compiler search path, but e.g. /opt/homebrew/include is not.
+set(SDL2_ALL_INCLUDE_DIRS ${SDL2_INCLUDE_DIR}
         ${SDL2_IMAGE_INCLUDE_DIR}
         ${SDL2_TTF_INCLUDE_DIR}
         ${SDL2_MIXER_INCLUDE_DIR})
+foreach (dir ${SDL2_ALL_INCLUDE_DIRS})
+    get_filename_component(dir_name ${dir} NAME)
+    if (dir_name STREQUAL "SDL2")
+        get_filename_component(parent_dir ${dir} DIRECTORY)
+        list(APPEND SDL2_ALL_INCLUDE_DIRS ${parent_dir})
+    endif ()
+endforeach ()
+list(REMOVE_DUPLICATES SDL2_ALL_INCLUDE_DIRS)
+
+include_directories(${SDL2_ALL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 target_link_libraries(panel-pop ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARIES}
