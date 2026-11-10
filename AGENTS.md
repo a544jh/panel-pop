@@ -244,39 +244,53 @@ Two consequences worth knowing:
 
 ### AI benchmarks (`tools/aibench`)
 
-`bench.py` measures one strategy; `match.py` plays two strategies against each
-other with both boards driven by the AI, which is far more sensitive than "who
-tops out first" (an AI board never tops out while it clears its own matches).
+`bench.py` measures one strategy over a *range of seeds*; `match.py` plays two
+strategies against each other with both boards driven by the AI, which is far
+more sensitive than "who tops out first".
 
 ```
-tools/aibench/bench.py  qwen,budget=30 qwen --games 4 --frames 6000 --seed 400
-tools/aibench/match.py  qwen qwen,followup=0 16 2000 --jobs 4 --frames 6000
+tools/aibench/bench.py  qwen,budget=16 1000 1015 --jobs 8 --frames 6000
+tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
 ```
 
-- One game = one `--debug-stdin` process: `goto ai`, the countdown is cleared
-  with four `wait 1100; tick` pairs (see Gotchas), then `tick` chunks.
-- Determinism: pass `--seed` (`srand()` in `Main.cpp`; `0` means "seed from the
-  clock", so never benchmark with 0). Both halves of a match use the same seed,
-  and `--frames` is a *total* budget over all `tick` commands, so use about
-  `2*(GAME_TICKS + 2400)`.
-- A 6000-tick AI game is a few seconds of CPU (`budget` is a wall-clock budget
-  per plan, so the deeper you let it look, the slower the game runs); use
-  `--jobs N` to play several games at once, but note that the shared CPU makes
-  the anytime search shallower for every game. Games end on top-out, so the
-  metric is the score gap when both finish, with `decided-by-top-out` reported.
-- Measured here (this machine, 8 jobs, 6000 frames, 16 games/match, each pair
-  played with the seats swapped): **`qwen` beats `basic` 16-0** (seeds
-  5000-5007, 11 of the 16 by the opponent topping out; mean score 4901 vs
-  1422), `qwen` beats `qwen,followup=0` 10-6 (seeds 5000-5007) and
-  `qwen,budget=10` 9-7 (seeds 6000-6007). Averages over 12 games (seeds
-  1000-1005): `budget=3` 2313, `budget=10` 2631, `budget=45` (default) 2745,
-  `budget=30` 3100, `budget=100` 3154 - the default is not obviously the right
-  budget, but the spread is inside the +-600 game-to-game noise, so treat these
-  as weak. Score differences are much more stable than win counts, because a
-  match usually ends with both boards alive.
-- The `chain=` column `bench.py` prints is the AI board's live `chainCounter`
-  when the game ends (usually 1) - it is not a chain-quality metric. Use the
-  score, or the `lastChain` field of `json`.
+- One game = one `--debug-stdin --no-render --seed S` process: `goto ai`, the
+  countdown cleared with three `wait 1100`/`tick` pairs (see Gotchas), then
+  `tick 100` chunks (`--frames`/`--json-every`). `bench.py` drives board 2 and
+  leaves board 1 to a keyboard controller that never plays, so what usually
+  ends a bench game is *board 1* topping out - `ticks` is not a clean survival
+  measure, the `stack` and `gq` columns are. `match.py` seeds are
+  `seed-from + game/2` and the seats swap every game, so a pair's record is
+  directly comparable between runs.
+- Determinism: always pass real seeds (never 0, which means "from the clock").
+  Even then the search is only *conditionally* deterministic: `budget` is wall
+  clock per plan, so a loaded machine (high `--jobs`) makes every game look
+  less deep. Pin `budget` and keep the machine otherwise idle when a number has
+  to be reproducible.
+- Cost, measured on this machine (`--jobs 1`): a `bench.py` game takes ~10 s of
+  single-core CPU - note that it ends after only ~1200 ticks, because board 1
+  (idle) tops out - and a `match.py` game (both boards searched, up to the full
+  6000 ticks) takes ~2 min, so a 16-game match at 8 jobs is 5-10 minutes.
+  In *live* play the AI costs about 1.4x real time (~87 ticks/s instead of the
+  62.5 of a 16 ms tick), which is acceptable. Dropping `budget` from 45 to 6
+  changes neither the wall time (the ~60-candidate first-ply pass at
+  `ticks=420` is the floor, not the follow-up refinements) nor the strength.
+  `PANELPOP_AI_DEBUG=1` prints one line per plan on stdout; typical plans see
+  ~30 candidates, run 4-6 refinements and take 12-47 ms, one plan every 6-8
+  ticks.
+- Measured on this machine with `match.py` (8 jobs, 6000 frames, 16 games per
+  match unless noted, seats swapped every game):
+  - **`qwen` beats `basic` 16-0** (seeds 5000-5007; 11 of the 16 by the
+    opponent topping out; mean score 4901 vs 1422) - the search is worth a lot.
+  - `qwen` vs `qwen,followup=0`: 9-7; vs `qwen,budget=10`: 9-7 (seeds 2000-2007)
+    - the second ply pays, a 4x smaller CPU budget costs little.
+  - `qwen` vs `qwen,replan=6,replanActive=24` (planning far less often): 8-8 and
+    16-16 in a second, larger run (seeds 3200-3215) - the replan cadence makes
+    no measurable difference, so the frequent re-planning is only a CPU cost.
+  - `qwen` vs `qwen,ticks=700` (longer horizon): 10-6 - maybe slightly better.
+  - `cand` (how many follow-up searches, best candidate first): 6 vs 1 came out
+    even (6-10 on seeds 2000-2007, 18-14 over 32 games on seeds 3000-3015),
+    while `cand=1` lost to `cand=3` 13-19 (seeds 3100-3115) - do at least a few
+    refinements, the exact number is noise.
 
 ## Gotchas
 
