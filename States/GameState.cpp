@@ -7,6 +7,11 @@
  */
 
 #include "GameState.h"
+
+#include <iostream>
+
+#include "../AI/AIBoardController.h"
+#include "../AI/AIStrategy.h"
 #include "../InputManager.h"
 #include "StateManager.h"
 
@@ -41,6 +46,58 @@ void GameState::tick() {
 
 Game *GameState::getGame() const {
     return _game;
+}
+
+void GameState::setAiStrategy(const std::string &key, int index) {
+    BoardController *target = nullptr;
+    if (index == 0) {
+        target = _playerBoardController;
+    } else if (index > 0 && index - 1 < (int) _opponentBoardcontollers.size()) {
+        target = _opponentBoardcontollers[index - 1];
+    }
+    AIBoardController *ai = dynamic_cast<AIBoardController *>(target);
+    if (ai != nullptr) {
+        ai->setStrategy(AIStrategies::create(key));
+    } else if (target != nullptr) {
+        // Not a computer controlled board (a KeyboardController): swap in an
+        // AI, so a VS game can be played computer against computer. Used by
+        // the debug console to benchmark strategies.
+        BoardController *replacement =
+            new AIBoardController(target->board(), AIStrategies::create(key));
+        if (target == _playerBoardController) {
+            delete _playerBoardController;
+            _playerBoardController = replacement;
+        } else {
+            for (size_t i = 0; i < _opponentBoardcontollers.size(); ++i) {
+                if (_opponentBoardcontollers[i] == target) {
+                    delete _opponentBoardcontollers[i];
+                    _opponentBoardcontollers[i] = replacement;
+                    break;
+                }
+            }
+        }
+    } else {
+        std::cout << "No such board." << std::endl;
+    }
+}
+
+void GameState::setAiStrategy(const std::string &key) {
+    for (BoardController *controller : _opponentBoardcontollers) {
+        AIBoardController *ai = dynamic_cast<AIBoardController *>(controller);
+        if (ai != nullptr) {
+            ai->setStrategy(AIStrategies::create(key));
+        }
+    }
+}
+
+std::string GameState::aiStrategyName() const {
+    for (BoardController *controller : _opponentBoardcontollers) {
+        const AIBoardController *ai = dynamic_cast<const AIBoardController *>(controller);
+        if (ai != nullptr) {
+            return ai->strategyName();
+        }
+    }
+    return "";
 }
 
 SDL_Texture *GameState::render() {

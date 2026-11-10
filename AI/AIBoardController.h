@@ -1,41 +1,39 @@
-
 #ifndef AIBOARDCONTROLLER_H
 #define AIBOARDCONTROLLER_H
 
-#include<queue>
-#include"../Game/BoardController.h"
-#include"MoveActions.h"
+#include <memory>
+#include <string>
+#include <vector>
 
-#include "BoardScanner.h"
+#include "../Game/BoardController.h"
+#include "AIStrategy.h"
 
+// Drives a board with an AIStrategy: asks the strategy for a list of actions
+// and plays them back on the board, one action per tick.
 class AIBoardController : public BoardController {
  public:
-
-  enum InputAction {
-    UP, RIGHT, DOWN, LEFT, SWAP, RAISE, WAIT
-  };
-
+  // Uses the default strategy (AIStrategies::defaultKey()).
   AIBoardController(Board &);
+  AIBoardController(Board &, std::unique_ptr<AIStrategy> strategy);
 
   void tick() override;
 
+  const std::string &strategyName() const;
+  const std::string &strategyKey() const;
+  void setStrategy(std::unique_ptr<AIStrategy> strategy);
+
   virtual ~AIBoardController();
+
  private:
-  BoardScanner _scanner;
+  // How often the strategy is asked for a new plan when the previous one is
+  // used up (in logic ticks).
+  static const int DECISION_TICKS = 1;
 
-  std::queue<InputAction> _inputQueue;
-  std::queue<CursorMoveAction> _cursorQueue;
-  std::queue<BlockMoveAction> _blockMoveQueue;
+  std::unique_ptr<AIStrategy> _strategy;
+  std::vector<AIStrategyAction> _actions;
+  size_t _nextAction;
 
-  void doInput(InputAction);
-  void doCursorMove(int x, int y);
-  void doBlockMove(int x, int y, int dx, int dy);
-  void doVerticalMatch(BoardScanner::VerticalMatch match);
-  void doChainMatch(BoardScanner::ChainMatch match);
-
-  void basicVerticalmatchStrat();
-
+  void doAction(AIStrategyAction action);
 };
 
 #endif /* AIBOARDCONTROLLER_H */
-

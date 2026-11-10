@@ -9,6 +9,8 @@
 #define CONFIG_CONFIGHANDLER_H_
 
 #include <boost/property_tree/ptree.hpp>
+
+#include <string>
 #include <SDL2/SDL_scancode.h>
 #include "InputConfig.h"
 #include "../InputEvents/KeyboardKey.h"
@@ -30,6 +32,10 @@ class ConfigHandler {
   bool getFullscreen();
   int getMusicVolume();
   int getSfxVolume();
+
+  // Key of the AI strategy used in "VS AI" (see AI/AIStrategy.h).
+  std::string getAiStrategy();
+  void setAiStrategy(const std::string &key);
 
   int getEndlessHighScore();
   void setEndlessHighScore(int);

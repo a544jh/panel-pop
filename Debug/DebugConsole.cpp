@@ -23,6 +23,7 @@
 #include "../Game/Game.h"
 #include "../SDLContext.h"
 #include "../States/AIGameState.h"
+#include "../AI/AIStrategy.h"
 #include "../States/DemoGameState.h"
 #include "../States/EndlessGameState.h"
 #include "../States/OptionsMenuState.h"
@@ -146,6 +147,7 @@ int DebugConsole::run() {
                 "  wait <ms>            real-time sleep, for SDL_GetTicks-based timers\n"
                 "  goto <state>         switch state: title|endless|vs|ai|demo|options\n"
                 "  shot <file.bmp>      save the rendered frame as a BMP\n"
+                "  strategy [name]      show or set the AI strategy (ai/demo games)\n"
                 "  echo on|off          echo piped commands (default: on when stdin is not a tty)\n"
                 "  quit | q             leave\n"
                 "\n"
@@ -166,8 +168,11 @@ int DebugConsole::run() {
         } else if (cmd == "menu") {
             TitleScreen *title = dynamic_cast<TitleScreen *>(sm.getCurrentState());
             GameState *gameState = dynamic_cast<GameState *>(sm.getCurrentState());
+            OptionsMenuState *options = dynamic_cast<OptionsMenuState *>(sm.getCurrentState());
             if (title != nullptr) {
                 std::cout << StateDump::menu(title->getMenu()) << std::flush;
+            } else if (options != nullptr && options->getCurrentMenu() != nullptr) {
+                std::cout << StateDump::menu(*options->getCurrentMenu()) << std::flush;
             } else if (gameState != nullptr && gameState->getGame()->isPaused()) {
                 std::cout << StateDump::menu(gameState->getGame()->getPauseMenu()) << std::flush;
             } else {
@@ -235,6 +240,27 @@ int DebugConsole::run() {
             }
             sm.step(false); // apply the switch
             std::cout << "state: " << StateDump::stateName(sm.getCurrentState()) << "\n";
+        } else if (cmd == "strategy" || cmd == "ai") {
+            GameState *gameState = dynamic_cast<GameState *>(sm.getCurrentState());
+            if (gameState == nullptr) {
+                std::cout << "no game in " << StateDump::stateName(sm.getCurrentState()) << "\n";
+            } else if (argv.size() > 1) {
+                if (argv.size() > 2) {
+                    gameState->setAiStrategy(argv[1], atoi(argv[2].c_str()) - 1);
+                } else {
+                    gameState->setAiStrategy(argv[1]);
+                }
+                const std::string name = gameState->aiStrategyName();
+                std::cout << (name.empty() ? std::string("no AI board") : "ai strategy: " + name) << "\n";
+            } else {
+                const std::string name = gameState->aiStrategyName();
+                std::cout << (name.empty() ? std::string("no AI board") : "ai strategy: " + name) << "\n";
+                std::cout << "available:";
+                for (const std::string &key : AIStrategies::keys()) {
+                    std::cout << ' ' << key;
+                }
+                std::cout << "\n";
+            }
         } else if (cmd == "shot") {
             screenshot(argv.size() > 1 ? argv[1] : "screenshot.bmp");
         } else if (cmd == "echo") {

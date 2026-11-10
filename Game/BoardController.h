@@ -14,6 +14,12 @@ class BoardController {
   BoardController(Board &);
   virtual void tick() = 0;
   virtual ~BoardController();
+
+  // The board this controller drives.
+  Board &board() const {
+    return _board;
+  }
+
  protected:
   Board &_board;
 };

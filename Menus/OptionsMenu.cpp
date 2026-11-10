@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "../Config/ConfigHandler.h"
+#include "../AI/AIStrategy.h"
 #include "../SDLContext.h"
 #include "MenuItem.h"
 #include "../States/OptionsMenuState.h"
@@ -32,6 +33,17 @@ OptionsMenu::OptionsMenu(OptionsMenuState &state) :
     addItem(
         MenuItem("SFX volume", [&]() {}, cf.getSfxVolume(), MIX_MAX_VOLUME,
                  MenuItem::OptionType::SLIDER));
+    int strategyIndex = AIStrategies::defaultIndex();
+    const std::vector<std::string> &strategyKeys = AIStrategies::keys();
+    std::string configured = cf.getAiStrategy();
+    for (size_t i = 0; i < strategyKeys.size(); ++i) {
+        if (strategyKeys.at(i) == configured) {
+            strategyIndex = (int) i;
+        }
+    }
+    addItem(
+        MenuItem("AI strategy", [&]() {}, strategyIndex, (int) strategyKeys.size() - 1,
+                 MenuItem::OptionType::LIST, AIStrategies::names()));
     addItem(MenuItem("Configure controls", [&]() {
       _state.configurePlayerKeys(_items.at(_selection).getValue() + 1);
     }, 0, 1, MenuItem::OptionType::PLAYER));
@@ -39,6 +51,7 @@ OptionsMenu::OptionsMenu(OptionsMenuState &state) :
       cf.setFullscreen(_items.at(0).getValue());
       cf.setMusicVolume(_items.at(1).getValue());
       cf.setSfxVolume(_items.at(2).getValue());
+      cf.setAiStrategy(AIStrategies::keys().at(_items.at(3).getValue()));
       cf.saveConfig();
       _state.goBack();
     }));

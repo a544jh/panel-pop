@@ -12,6 +12,7 @@
 #include "../InputEvents/JoyHat.h"
 #include "../InputEvents/JoyButton.h"
 #include "../InputEvents/JoyAxisDirection.h"
+#include "../AI/AIStrategy.h"
 
 #include <boost/property_tree/detail/ptree_implementation.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -212,6 +213,14 @@ int ConfigHandler::getMusicVolume() {
 
 int ConfigHandler::getSfxVolume() {
     return _settingsTree.get("audio.sfx_volume", MIX_MAX_VOLUME);
+}
+
+std::string ConfigHandler::getAiStrategy() {
+  return _settingsTree.get<std::string>("ai.strategy", AIStrategies::defaultKey());
+}
+
+void ConfigHandler::setAiStrategy(const std::string &key) {
+  _settingsTree.put("ai.strategy", key);
 }
 
 int ConfigHandler::getEndlessHighScore() {

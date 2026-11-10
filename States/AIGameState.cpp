@@ -9,6 +9,8 @@
 #include "AIGameState.h"
 
 #include "../AI/AIBoardController.h"
+#include "../AI/AIStrategy.h"
+#include "../Config/ConfigHandler.h"
 #include "../Game/BoardEventHandler.h"
 #include "../Game/GameEventHandler.h"
 #include "StateManager.h"
@@ -26,7 +28,10 @@ AIGameState::AIGameState() {
 
     _playerBoardController = new KeyboardController(_game->getBoard(0), StateManager::getInstance().getKeys(1));
 
-    _opponentBoardcontollers.push_back(new AIBoardController(_game->getBoard(1)));
+    // The AI opponent uses the strategy configured in the options menu;
+    // QwenStrat is the default (see AIStrategies::defaultKey()).
+    _opponentBoardcontollers.push_back(new AIBoardController(_game->getBoard(1),
+                                                       AIStrategies::create(ConfigHandler::getInstance().getAiStrategy())));
 }
 
 

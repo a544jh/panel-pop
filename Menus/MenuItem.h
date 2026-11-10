@@ -8,8 +8,9 @@
 #ifndef MENUS_MENUITEM_H_
 #define MENUS_MENUITEM_H_
 
-#include <string>
 #include <functional>
+#include <string>
+#include <vector>
 
 class Menu;
 
@@ -19,11 +20,14 @@ class MenuItem {
  public:
 
   enum class OptionType {
-    NONE, SLIDER, TOGGLE, PLAYER
+    NONE, SLIDER, TOGGLE, PLAYER, LIST
   };
 
   MenuItem(std::string, command);
   MenuItem(std::string, command, int value, int max, OptionType type);
+  // LIST: _value indexes into the option names shown next to the item.
+  MenuItem(std::string, command, int value, int max, OptionType type,
+           const std::vector<std::string> &options);
   virtual ~MenuItem();
   command getFn() const;
   const std::string &getName() const;
@@ -32,11 +36,13 @@ class MenuItem {
   void decrease();
   OptionType getOptionType() const;
   int getMax() const;
+  const std::vector<std::string> &getOptions() const;
   int getValue() const;
   void setValue(int value);
 
  private:
   OptionType _optionType;
+  std::vector<std::string> _options;
   std::string _name;
   command _fn;
   int _value;

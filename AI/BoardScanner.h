@@ -40,7 +40,7 @@ class BoardScanner {
     Direction side; //side of gap
   };
 
-  BoardScanner(Board &);
+  BoardScanner(const Board &);
 
   RowColors countRowColors();
   ColorCounts countColorsOn(int row, int startCol, int endCol);
@@ -53,7 +53,7 @@ class BoardScanner {
   ChainMatch findChainMatch();
   virtual ~BoardScanner();
  private:
-  Board &_board;
+  const Board &_board;
 
 };
 

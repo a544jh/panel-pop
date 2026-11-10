@@ -9,7 +9,7 @@
 #include "BoardScanner.h"
 #include <iostream>
 
-BoardScanner::BoardScanner(Board &board) :
+BoardScanner::BoardScanner(const Board &board) :
     _board(board) {
 }
 

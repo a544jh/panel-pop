@@ -46,6 +46,10 @@ set(SRCS
         States/FadeTransition.cpp
         AI/BoardScanner.cpp
         AI/AIBoardController.cpp
+        AI/AIStrategy.cpp
+        AI/BasicStrategy.cpp
+        AI/QwenStrat.cpp
+        AI/SimBoard.cpp
         InputManager.cpp
         Util/Paths.cpp
         Menus/KeyConfigMenu.cpp

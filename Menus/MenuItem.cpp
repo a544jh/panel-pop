@@ -31,6 +31,17 @@ MenuItem::MenuItem(std::string name, command c, int value, int max,
 
 }
 
+MenuItem::MenuItem(std::string name, command c, int value, int max,
+                   OptionType type, const std::vector<std::string> &options) :
+    _optionType(type),
+    _options(options),
+    _name(name),
+    _fn(c),
+    _value(value),
+    _max(max) {
+
+}
+
 MenuItem::~MenuItem() {
 }
 
@@ -48,6 +59,10 @@ MenuItem::OptionType MenuItem::getOptionType() const {
 
 int MenuItem::getMax() const {
     return _max;
+}
+
+const std::vector<std::string> &MenuItem::getOptions() const {
+    return _options;
 }
 
 int MenuItem::getValue() const {
@@ -88,6 +103,11 @@ const std::string MenuItem::getOptionString() const {
         case OptionType::PLAYER: os << "P" << _value + 1;
             return os.str();
             break;
+        case OptionType::LIST:
+            if (_value >= 0 && _value < (int) _options.size()) {
+                return _options.at(_value);
+            }
+            return "";
         default: return "";
             break;
     }
