@@ -32,7 +32,9 @@ void GarbageBlock::fillBufferRow() {
         for (int k = 0; k < BlockColor::COUNT; k++) {
             colors.push_back(k);
         }
-        colors.remove(_bufferRow[i - 1]._color);
+        if (i - 1 >= 0) {
+            colors.remove(_bufferRow[i - 1]._color);
+        }
         _bufferRow[i]._color = Block::getRandomColor(colors);
         _bufferRow[i]._gbFallChain = true;
     }

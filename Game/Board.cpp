@@ -22,6 +22,7 @@ Board::Board() :
     _stackRaiseTimer(0),
     _stackRaiseForced(false),
     _graceTimer(0),
+    _activeBlocks(false),
     _chainCounter(1),
     _tickChain(false),
     _tickChainEnd(false),
@@ -81,7 +82,9 @@ void Board::fillBufferRow() {
             colors.push_back(k);
         }
         colors.remove(_tiles[0][i].b._color);
-        colors.remove(_bufferRow[i - 1].b._color);
+        if (i - 1 >= 0) {
+            colors.remove(_bufferRow[i - 1].b._color);
+        }
         _bufferRow[i].type = BLOCK;
         _bufferRow[i].b._color = Block::getRandomColor(colors);
     }
