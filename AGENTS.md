@@ -54,6 +54,7 @@ Notes:
 | `--debug-stdin` | debug console on stdin, one tick at a time (implies `--headless`) | `PANELPOP_DEBUG_STDIN=1` |
 | `--frames N` or `--frames=N` | stop after N *logic* ticks (0 = run until quit); in the console it caps the total ticks stepped across all commands | `PANELPOP_MAX_TICKS=N` |
 | `--no-render` | skip `State::render()`; faster, but no render coverage | `PANELPOP_RENDER=0` |
+| `--seed N` | seed the game RNG (`std::srand`) so board layouts repeat; also honoured by the debug console | `PANELPOP_SEED=N` |
 
 In normal (non-console) mode a logic tick is 16 ms of wall clock, so
 `--frames 300` ≈ 4.8 s of gameplay.
@@ -98,6 +99,7 @@ Gotchas below.)
 | `run [n]` | `tick n` then print a summary |
 | `wait <ms>` | real-time sleep, needed for `SDL_GetTicks()` timers |
 | `goto <s>` | switch state directly: `title\|endless\|vs\|ai\|demo\|options` |
+| `strategy [key] [board]` | print/swap the AI strategy of the running game (board 2 by default): `basic`, `qwen`, `qwen,k=v,...`; a human board is replaced by an AI |
 | `shot <file.bmp>` | save the rendered frame as a 640×480 BMP |
 | `echo on\|off` | echo piped commands (on by default when stdin is not a tty) |
 | `quit`, `q` | leave (prints the tick count) |
@@ -136,6 +138,146 @@ Injection is inert unless `--debug-stdin` is active; a normal run is unchanged.
 A press is live for exactly one tick, which is why `press` must be followed by
 `tick` (or use `send`). Joystick/gamepad injection is not implemented.
 
+## AI strategies (`AI/`)
+
+Board 2 of a "VS AI" game is driven by a strategy object; every other board is
+played by a human.
+
+| File | Role |
+|---|---|
+| `AIStrategy.h/.cpp` | interface, shared cursor-path helper, registry, `parseSpec()` |
+| `QwenStrat.h/.cpp` | the default strategy, key `qwen` |
+| `BasicStrategy.h/.cpp` | the original AI, key `basic` (`BoardScanner` + the old `AIBoardController` move ordering) |
+| `SimBoard.h/.cpp` | headless copy of the board rules used for lookahead |
+| `AIBoardController.*`, `BoardScanner.*` | board 2 controller / the chain scorer the original AI wraps |
+
+Selection, in order of precedence:
+
+1. debug console `strategy <key> [board]` on a running game - live swap, and
+   it replaces a human controller with an AI one, which is how the benchmarks
+   drive both boards (`GameState::setAiStrategy`)
+2. `strategy=` in the `[ai]` section of `panelpop.ini` - written by the options
+   menu item "AI strategy", read by `Config/ConfigHandler::getAiStrategy()`;
+   used whenever a `AIGameState` is created
+3. `DEFAULT_KEY` in `AIStrategy.cpp` (currently `qwen`) when the ini has nothing
+
+There is no strategy env var. The environment only tunes the planner:
+`PANELPOP_QWEN_WEIGHTS="k=v,..."` and `PANELPOP_AI_DEBUG=1` (prints each plan).
+A key may also carry tuning inline: `qwen,cand=3,budget=60`
+(`AIStrategies::parseSpec`).
+
+### QwenStrat
+
+One *plan* at a time: it searches, queues the actions of the best move, and
+searches again when the queue is empty - after `replan` logic ticks if the
+board is at rest, `replanActive` ticks while tiles are still moving.
+
+The search (`plan()` -> `generateMoves()` -> `playAndValue()`):
+
+1. Candidates: every legal adjacent swap, plus *pass*, plus a forced stack
+   raise.
+2. Each candidate is played out on a `SimBoard` copy for `ticks` logic ticks
+   (swap, gravity, chains, buffer-row refill, stack rise) and judged by
+   `evaluate()`; a board that tops out scores `death`.
+3. The best `cand` candidates get a second ply: their horizon position is
+   played `followup` more ticks with its best follow-up swap, discounted by
+   `followupWeight`. This is what makes the AI build chains instead of only
+   clearing what is directly matchable (`followup=0` turns it off).
+4. The search is *anytime*: it keeps adding second-ply lookahead until `budget`
+   **milliseconds of wall clock** are used. On a loaded machine (or with a
+   high `--jobs` in the benchmarks) the AI therefore looks less deep - pin
+   `budget` and keep the machine otherwise idle when comparability matters.
+5. Cursor travel is subtracted from a move's value (`travel` per logic tick of
+   walking, `appendCursorPath()` for the actions), so equally good moves are
+   chosen by how fast they can be played.
+
+`evaluate()` scores the *delta* against the position at the search root:
+
+| Knob | Default | Counts |
+|---|---|---|
+| `score` | 1.0 | points gained - the model scores with the same `chainScoring()`/`comboScoring()` tables as `Board` |
+| `garbage` | 45 | garbage rows sent to the opponent |
+| `chainLevel` | 25 | per chain level reached, and per extra level of a chain still running at the horizon |
+| `pendingScore` | 12 | blocks already exploding/settling when the horizon ends |
+| `height`, `heightSquare` | 6, 0.45 | column heights, linear and quadratic |
+| `holes` | 16 | empty cells under the top of a column |
+| `garbageRows` | 14 | garbage still on the board |
+| `panicBlocks` | 30 | blocks at or above `PANIC_HEIGHT` |
+| `topThreat` | 220 | stack within 3 rows of `TOP_ROW`, and the grace timer running - the real killer |
+| `matchOptions`, `optionBlocks` | 40, 4 | swaps that score right away (from `immediateMatches()`) |
+| `adjacency` | 3 | same-colour neighbour pairs, i.e. one move from a match |
+| `columnSpread` | 4 | difference between the tallest and shortest column |
+| `raisePenalty` | 0 | raising the stack (only used by the survival mode below) |
+| `death` | -40000 | the simulated board topped out |
+
+When the board is in danger (`survival`) the height terms are weighted 1.5x
+harder and garbage sent is ignored - digging out beats poking the opponent.
+
+Tuning knobs: the search shape is `ticks`, `followup`, `cand`, `budget`,
+`replan`, `replanActive`, `followupWeight`, `travel`; the evaluation weights are
+the names in the table above. Set them as `qwen,cand=3,budget=60`, as
+`PANELPOP_QWEN_WEIGHTS="holes=30,..."`, or on the console
+(`strategy qwen,height=12 2`); `plan()` re-reads the env each time, so the
+console path honours them too.
+
+### SimBoard
+
+`SimBoard` re-implements `Board` without SDL. `tick()` mirrors `Board::tick()`
+(swap animation and the `SWAP_DELAY` exchange, gravity/collapse, matches,
+chains and their score, floating/explosion timers, the stack rise, garbage
+spawns including the gray/transformation rows), and the input layer mirrors
+`Board::inputSwapBlocks()` / `Board::inputForceStackRaise()` (`canSwap`,
+`startSwap`, `forceRaise`). `import(const Board&)` copies a live board into the
+model; `fillBufferRow()` reproduces the buffer-row pattern of the real game (a
+colour different from the block below and from the buffer neighbour to the
+left); `setRng(seed)` gives the model its own deterministic PRNG for the
+colours it has to invent, reset before every candidate so the candidates stay
+comparable.
+
+Two consequences worth knowing:
+
+- Keep the two in sync by hand when you change `Board` - the buffer row and the
+  gravity rules in particular. A model that collapses or refills differently
+  from the real board invalidates the search (that is what made the AI play
+  badly once: the model invented buffer rows the real board never produces).
+- Nothing writes back into a live board: `plan()` only reads.
+
+### AI benchmarks (`tools/aibench`)
+
+`bench.py` measures one strategy; `match.py` plays two strategies against each
+other with both boards driven by the AI, which is far more sensitive than "who
+tops out first" (an AI board never tops out while it clears its own matches).
+
+```
+tools/aibench/bench.py  qwen,budget=30 qwen --games 4 --frames 6000 --seed 400
+tools/aibench/match.py  qwen qwen,followup=0 16 2000 --jobs 4 --frames 6000
+```
+
+- One game = one `--debug-stdin` process: `goto ai`, the countdown is cleared
+  with four `wait 1100; tick` pairs (see Gotchas), then `tick` chunks.
+- Determinism: pass `--seed` (`srand()` in `Main.cpp`; `0` means "seed from the
+  clock", so never benchmark with 0). Both halves of a match use the same seed,
+  and `--frames` is a *total* budget over all `tick` commands, so use about
+  `2*(GAME_TICKS + 2400)`.
+- A 6000-tick AI game is a few seconds of CPU (`budget` is a wall-clock budget
+  per plan, so the deeper you let it look, the slower the game runs); use
+  `--jobs N` to play several games at once, but note that the shared CPU makes
+  the anytime search shallower for every game. Games end on top-out, so the
+  metric is the score gap when both finish, with `decided-by-top-out` reported.
+- Measured here (this machine, 8 jobs, 6000 frames, 16 games/match, each pair
+  played with the seats swapped): **`qwen` beats `basic` 16-0** (seeds
+  5000-5007, 11 of the 16 by the opponent topping out; mean score 4901 vs
+  1422), `qwen` beats `qwen,followup=0` 10-6 (seeds 5000-5007) and
+  `qwen,budget=10` 9-7 (seeds 6000-6007). Averages over 12 games (seeds
+  1000-1005): `budget=3` 2313, `budget=10` 2631, `budget=45` (default) 2745,
+  `budget=30` 3100, `budget=100` 3154 - the default is not obviously the right
+  budget, but the spread is inside the +-600 game-to-game noise, so treat these
+  as weak. Score differences are much more stable than win counts, because a
+  match usually ends with both boards alive.
+- The `chain=` column `bench.py` prints is the AI board's live `chainCounter`
+  when the game ends (usually 1) - it is not a chain-quality metric. Use the
+  score, or the `lastChain` field of `json`.
+
 ## Gotchas
 
 - **Wall-clock timers.** Logic ticks are deterministic in the console, but many
@@ -163,6 +305,15 @@ A press is live for exactly one tick, which is why `press` must be followed by
   `state` reports `DemoGameState`. `goto` skips fades.
 - **Game over needs `Esc`/`Return`** to reset the game (see
   `GameState::tick()`).
+- **The AI costs CPU.** `QwenStrat` re-plans as soon as its queued actions run
+  out (`replan`/`replanActive`) and its search budget is wall clock, so one
+  6000-tick AI game is a few seconds of pure C++ and a benchmark with 8 jobs is
+  CPU-bound. Note that a loaded machine makes the anytime search *shallower*:
+  results are only comparable when the machine is otherwise idle, or if you pin
+  `budget`.
+- **`panelpop.ini` gains an `[ai]` section** once the options menu saves a
+  strategy; a benchmark or test session that opens that menu dirties it (see
+  the ini gotcha above).
 
 ## Debugging recipes
 
@@ -215,24 +366,35 @@ session should reach a few hundred points, print `board=RUNNING`, then
 `game=ENDED board=GAME_OVER` once the stack tops out — i.e. input, matching,
 chains, stack rise and game over all visible through the console.
 
-## Known issues found with the debug console (not yet fixed)
+## Game bugs found while building the AI (fixed on this branch)
 
-UBSan/ASan trips immediately on a scripted session; these are pre-existing game
-bugs, not debug-mode bugs:
+Pre-existing bugs, found because the planner simulates the rules and disagrees
+with the live board, and because UBSan trips on a scripted session:
 
-- `Game/Board.cpp:84` in `Board::fillBufferRow()` —
-  `colors.remove(_bufferRow[i - 1].b._color)` with `i == 0` reads
-  `_bufferRow[-1]` (UBSan `index -1 out of bounds for type 'Tile [6]'`, ASan
-  stack-buffer-underflow). Runs on every `Board` construction (`Board.cpp:34`)
-  and on each stack advance (`Board.cpp:704`).
-- `Game/GarbageBlock.cpp:35` in `GarbageBlock::fillBufferRow()` — same
-  `_bufferRow[i - 1]` pattern at `i == 0`; hit whenever garbage spawns
-  (VS / AI games). This one is an actual ASan crash.
-- `Board::fillRandom()` (around `Board.cpp:66`) shows the intended pattern:
-  both neighbour lookups are guarded with `if (j - 1 >= 0)` /
-  `if (i - 1 >= 0)`. The two `fillBufferRow()`s just lack that guard, so the
-  fix is the same guard (the value is only used to exclude a colour from the
-  random pick).
+- `Board::fillBufferRow()` and `GarbageBlock::fillBufferRow()` read
+  `_bufferRow[i - 1]` with `i == 0` — UBSan `index -1 out of bounds for type
+  'Tile [6]'` on the base branch (`Game/Board.cpp:84`, on every board
+  construction and every stack advance; a real crash under ASan for garbage).
+  Guarded with the same `if (i - 1 >= 0)` pattern `Board::fillRandom()` uses.
+- `Board::Board()` left the member `_activeBlocks` uninitialised. Nothing
+  recomputes it before the first `Board::tick()`, and it gates the stack-raise
+  checks, the spawn timers and `hasActiveBlocks()` — a board could start out
+  pretending tiles were mid-air. Now initialised to `false`.
+- `FadeTransition::tick()` created the next state in `render()` only, so with
+  `--no-render` `_nextState` stayed null and the transition never produced a
+  state. It is now created in `tick()`.
 
-Until they are fixed, expect ASan runs of VS/AI games to abort; endless mode is
-usable under ASan apart from the construction-time report.
+With those in, a scripted session (endless with garbage, and a full VS AI game)
+is clean: `valgrind --leak-check=full` reports `definitely lost: 0 bytes` (all
+that remains is `still reachable` SDL/TTF/ALSA at exit) and a
+`-fsanitize=undefined` build reports no runtime errors. Before the fix, UBSan
+reported `Game/Board.cpp:84: index -1 out of bounds for type 'Tile [6]'`.
+
+Latent, not fixed:
+
+- `Board::garbageBlockCanFall()` computes `row = gb.getY() - gb.getH()` and
+  dereferences `_tiles[row][i]` without checking `row >= 0`, and reads `Block`
+  members (`._state`) from tiles that hold a `GarbageBlock`. It never goes
+  negative in the sessions run under UBSan/valgrind, but
+  `SimBoard::garbageCanFall()` guards the row anyway, so simulated garbage can
+  fall slightly more readily than real garbage (`AI/SimBoard.cpp:707`).
