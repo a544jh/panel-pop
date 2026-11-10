@@ -12,6 +12,8 @@
 #include "../Game/VsGame.h"
 #include "../Rendering/VsGameRenderer.h"
 #include "../AI/AIBoardController.h"
+#include "../AI/AIStrategy.h"
+#include "../Config/ConfigHandler.h"
 #include "../Game/GameEventHandler.h"
 
 DemoGameState::DemoGameState() {
@@ -23,9 +25,15 @@ DemoGameState::DemoGameState() {
     _game->getBoard(0).setEventHandler(new BoardEventHandler(*_gameRenderer, 0));
     _game->getBoard(1).setEventHandler(new BoardEventHandler(*_gameRenderer, 1));
 
-    _playerBoardController = new AIBoardController(_game->getBoard(0));
+    // Both boards play the strategy chosen in the options menu ("AI
+    // strategy"), so the demo shows the AI that "VS AI" would put up,
+    // against itself.
+    const std::string strategy = ConfigHandler::getInstance().getAiStrategy();
+    _playerBoardController = new AIBoardController(_game->getBoard(0),
+                                                   AIStrategies::create(strategy));
 
-    _opponentBoardcontollers.push_back(new AIBoardController(_game->getBoard(1)));
+    _opponentBoardcontollers.push_back(new AIBoardController(_game->getBoard(1),
+                                                             AIStrategies::create(strategy)));
 }
 
 void DemoGameState::tick() {

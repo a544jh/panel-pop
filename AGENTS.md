@@ -178,9 +178,15 @@ Selection, in order of precedence:
    drive both boards (`GameState::setAiStrategy`)
 2. `strategy=` in the `[ai]` section of `panelpop.ini` - written by the options
    menu item "AI strategy", read by `Config/ConfigHandler::getAiStrategy()`;
-   used whenever a `AIGameState` is created
+   used whenever an `AIGameState` is created (board 2) and whenever the title
+   screen demo (`DemoGameState`) starts - there it plays both boards, so the
+   demo shows the selected AI against itself
 3. the first entry of `DESCRIPTORS` in `AIStrategy.cpp` (currently `qwen`)
-   when the ini has nothing; the title screen demo always uses it
+   when the ini has nothing
+
+On the console, `strategy` with no argument prints board 2's strategy, and
+`strategy <key>` *sets* it: `strategy 1` asks for a strategy called "1",
+which falls back to the default.
 
 There is no strategy env var. The environment only tunes the planners:
 `PANELPOP_QWEN_WEIGHTS="k=v,..."` and `PANELPOP_AI_DEBUG=1` (prints each plan)
