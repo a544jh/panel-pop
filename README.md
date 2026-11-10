@@ -74,9 +74,15 @@ makepkg -si
 
 It is not on the AUR yet.
 
-#### MacOS
-1. `cmake`
-2. `make`
+#### macOS
+Install the dependencies with [Homebrew](https://brew.sh):
+
+```
+brew install cmake sdl2 sdl2_image sdl2_ttf sdl2_mixer boost
+```
+
+Then build and run it from the source tree as on Linux (`cmake .`, `make`,
+`./panel-pop`). This produces a plain executable, not an `.app` bundle.
 
 #### Windows (MinGW)
 
