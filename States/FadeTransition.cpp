@@ -17,6 +17,11 @@ FadeTransition::FadeTransition(StateConstructor constr) : _nextStateConstr(const
 }
 
 void FadeTransition::tick() {
+    // The next state used to be created in render() only, which left
+    // _nextState null when nothing was rendered (headless --no-render).
+    if (_nextState == nullptr && _ticksRun >= TRANSITION_TICKS / 2) {
+        _nextState = _nextStateConstr();
+    }
     if (_nextState != nullptr && _ticksRun >= TRANSITION_TICKS / 2) {
         _nextState->tick();
     }
