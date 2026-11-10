@@ -157,9 +157,10 @@ played by a human.
 | `AIStrategy.h/.cpp` | interface, shared cursor-path helper, registry, `parseSpec()` |
 | `QwenStrat.h/.cpp` | the default strategy, key `qwen` |
 | `ClaudeStrategy.h/.cpp` | plays like a good human player, key `claude` (see "Claude" below) |
+| `ClaudeFableStrategy.h/.cpp` | the strongest one, never tops out, key `claudefable` (see "ClaudeFable" below) |
 | `BasicStrategy.h/.cpp` | the original AI, key `basic` (`BoardScanner` + the old `AIBoardController` move ordering) |
 | `SimBoard.h/.cpp` | headless copy of the board rules used for lookahead by `qwen` |
-| `ClaudeSim.h/.cpp` | tick-exact board model used by `claude`, checked by `claudesim-check` |
+| `ClaudeSim.h/.cpp` | tick-exact board model used by `claude` and `claudefable`, checked by `claudesim-check` |
 | `AIBoardController.*`, `BoardScanner.*` | board 2 controller / the chain scorer the original AI wraps |
 
 The controller outlives the board: `VsGame::reset()` (the next round of a VS
@@ -196,8 +197,10 @@ which falls back to the default.
 There is no strategy env var. The environment only tunes the planners:
 `PANELPOP_QWEN_WEIGHTS="k=v,..."` and `PANELPOP_AI_DEBUG=1` (prints each plan)
 for `qwen`, `PANELPOP_CLAUDE_OPTIONS="k=v,..."`, `PANELPOP_CLAUDE_DEBUG=1` and
-`PANELPOP_CLAUDE_VERIFY=1` for `claude`. A key may also carry tuning inline:
-`qwen,cand=3,budget=60`, `claude,pace=3` (`AIStrategies::parseSpec`).
+`PANELPOP_CLAUDE_VERIFY=1` for `claude`, `PANELPOP_FABLE_OPTIONS="k=v,..."` and
+`PANELPOP_FABLE_DEBUG=1` for `claudefable`. A key may also carry tuning inline:
+`qwen,cand=3,budget=60`, `claude,pace=3`, `claudefable,target=9`
+(`AIStrategies::create`).
 
 ### QwenStrat
 
@@ -290,7 +293,7 @@ extends running chains with skill-chain swaps timed against the falling
 blocks, keeps a flat stack at a useful height (raising it when material runs
 low), digs through garbage, and moves at a human pace instead of one input
 per frame. Selectable in Options -> "AI strategy" (menu order: QwenStrat,
-Claude, Basic) or with `strategy claude [board]` on the console.
+Claude, ClaudeFable, Basic) or with `strategy claude [board]` on the console.
 
 One decision (`plan()`):
 
@@ -352,6 +355,101 @@ between looks when waiting), and the weights `row` 100, `chainGrowth` 0.25,
 - Pace: 4 ticks per input calm, 3 in a hurry - 15-20 inputs/s, fast but
   human. `pace=3,fastPace=2` plays stronger (see benchmarks) and looks
   robotic sooner; `pace=1` is frame-perfect.
+
+### ClaudeFable (`ClaudeFableStrategy`, key `claudefable`)
+
+Built to win and to never top out, with no attempt to look human (one input
+per tick). It plays on `ClaudeSim` like `claude`, but is organised around
+three things `Board` does:
+
+- the chain counter only resets on a tick that *starts* with nothing active
+  (`Board::initTick()`), and a block that is being swapped is active;
+- queued garbage only spawns, the stack only rises and the top-out grace
+  timer only runs on such an idle tick;
+- a chain link is any match made by a block that fell out of a clear -
+  however long ago the previous link was, as long as the counter survived.
+
+So it never lets the board go idle by accident. Between matches it *holds*:
+it parks the cursor on a pair it can swap back and forth without consequences
+and swaps it every third tick (a swap made on tick k keeps ticks k..k+2
+active). That freezes the chain counter, the incoming garbage and the stack.
+Every 2-chain it then sets off adds a link to the one long chain being held,
+with all the time in the world to arrange the next one. When it runs out of
+material it lets go: the chain ends, the opponent gets up to twelve rows in
+one block, it raises its stack for new material and starts over. With blocks
+on the top row it simply keeps holding - a board that is never idle cannot
+top out, however short the grace period has become.
+
+One decision (`plan()`):
+
+1. Import the board, then run the model forward with no input to learn
+   `firstIdle` (the tick the board would go idle) and `firstGrace` (the tick
+   the grace timer would run, garbage that is about to drop included). The
+   number of ticks before the first one that must not happen is `free`.
+2. Let the chain go? Only when nothing but its own swap is active, and the
+   chain reached `target`, or the last search found nothing to do, or
+   `patience` ticks passed without a link. Normally that is just "stop
+   swapping". With the top row full it is a *blip*: exactly one idle tick
+   (enough to end the chain and send the garbage) and straight back to
+   swapping, at the price of one grace tick - only done while there are 40 to
+   spare.
+3. No chain and an idle board: raise the stack (`AI_RAISE`) until its top is on
+   row `raiseTop`. When it already is and there are fewer than `stock` blocks,
+   `raiseAtBrim()` raises one more row and swaps the block that ends up on
+   the top row off it on the very next tick.
+4. Otherwise search. Candidates are every swap, every drag (`drag` columns)
+   and standing still. The cursor path to each comes from `Travel`, a
+   shortest-path search over (cursor cell, free ticks left) that inserts
+   *hops* - swaps on harmless pairs - wherever the board would otherwise go
+   idle on the way: swap, two steps, swap, two steps... A pair is harmless
+   when both are resting blocks of the same colour (nothing changes), or
+   match nothing either way round; any legal swap is the last resort.
+5. Each candidate is played on the model, action by action. A tick that ends
+   a held chain or runs the grace timer marks it `LOST` (value -1e6). A
+   rearrangement that leaves nothing active gets a tail from `park()`: one
+   or two steps to a harmless pair and a swap there, so the plan after this
+   one can carry on (swapping the pair of the move itself again would undo
+   it). Then the model runs until the board is at rest and the result is
+   scored by `evaluate()`.
+6. The best `width` candidates get a second move searched on top, weighted
+   `follow`. A move has to beat standing still by `margin`, or two equal
+   positions get swapped back and forth forever.
+7. If nothing was cleared for `bored` ticks and nothing is in sight, the
+   best available match is made anyway: holding is safe, so nothing else
+   would ever force a move.
+8. `secure()` replays the chosen list once more and, should a tick in it be
+   one that must not happen, cuts it there and swaps instead.
+
+`evaluate()`: `link` (100) per chain link made, `pot` (45) per link the best
+single swap or short drag would set off on the settled board (the timing-free
+resolver, as in `claude`; a clear next to garbage counts half a link),
+`option` (2) per available match, `clearCell` (6) per garbage cell turned
+into blocks, `comboCell` (2) per garbage cell a combo sends; minus `material`
+(2) per block cleared, `low` (20) per block missing from the reserve
+(`reserve` = 24 blocks, plus 2 per queued garbage row - what is queued lands
+the moment the chain is let go, and digging out needs blocks), `overflow`
+(30) per cell on the top row or above, `garbage` (1) per garbage cell on the
+board, `breach` (60) per garbage row let in, and `tick`/`effort` for the
+time and the swaps a move takes.
+
+Other knobs: `hold` (1; 0 never holds a chain), `target` (13, i.e. twelve
+rows of garbage, the most `VsGame` sends), `patience` (600), `budget` (10000
+simulated ticks per plan, deterministic), `busyWait` (5 ticks between looks
+while explosions keep the board busy anyway).
+
+- `PANELPOP_FABLE_DEBUG=1` prints one line per plan (`fable: t=... chain=...
+  free=... swap(x,y) v=... links=... [actions]`, `LOST` if the move would
+  drop the chain), `released a chain of N`, `lost a chain of N` (the chain
+  ended without the strategy wanting it to - a bug if it ever appears),
+  `secured the plan` and `raise at the brim`.
+- Cost: `AI/ClaudeFableStrategy.cpp` is compiled with `-O2` in Debug builds
+  too. Measured in games against `claude`: a plan every ~5 ticks, 9-10 ms on
+  average (95th percentile 13-15, worst 42), about 2 ms per game tick.
+- What it cannot do: while it holds a chain nothing can arrive, but the
+  stack does not rise either, so every chain ends in an idle phase and what
+  the opponent queued lands then. Deep under garbage with few blocks left
+  it can end up with no match to make. It still does not die (it holds), but
+  it stops scoring; two ClaudeFables can lock each other up like that.
 
 ### ClaudeSim
 
@@ -457,6 +555,40 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
     the model predicted every plan exactly. A `claude` game costs about as much
     CPU as the `qwen` side of it; a 24-game match at 4 jobs takes ~15 min.
 
+- `claudefable` (4 jobs, 6000 frames, seats swapped every game):
+  - final defaults against `claude`: **134-2** - 48-0 on seeds 9500-9523
+    and 42-2 on seeds 9600-9621 (neither set used for tuning), 44-0 on seeds
+    7200-7221 (used for tuning). 130 of the wins by top-out; both losses on
+    points at the 6000 tick cap, with ClaudeFable alive but buried.
+    Against `qwen`: **32-0** (seeds 9500-9515, 30 by top-out). Against
+    `basic`: **16-0** (seeds 9500-9507, all by top-out). A game lasts ~2900
+    ticks on average against `claude` and `qwen`, ~2400 against `basic`:
+    typically one or two held chains of 9-15 and the twelve-row block that
+    follows.
+  - it did not top out in any game played with the final rules, including
+    ClaudeFable against itself for 40000 ticks (far beyond tick 14400, where
+    `_stackRaiseTicks` reaches 0 and the grace period with it): no
+    `lost a chain`, no `secured the plan`, one side at 299243 points, the
+    other locked under garbage but alive.
+  - what the tuning runs said (24 games against `claude` per seed set,
+    seeds 7200.. and 8000..): `reserve` 18 lost 3 of 56 on points (buried
+    with too few blocks to dig out, `claude` surviving on the points my
+    garbage gives it), 24 lost none of 48, 30 lost 1; `target` 7/9/11
+    with reserve 24 lost 1/0/0 - no real difference, so it stays at the
+    maximum. A flatness term (cost per unit of height difference between
+    columns, to get rid of the lone tall column a long chain leaves behind)
+    changed nothing: 86-2 with it, 86-2 without, so it is not in. Keeping
+    one column up at row 10 so that garbage cannot spawn
+    (`Board::spawnGarbage()` wants rows 10 and up empty) looked attractive
+    and was dropped: `handleGarbageQueue()` keeps the raised `y` of a
+    full-width piece that failed to spawn, so every later piece spawns
+    above the column and comes to rest on it - on the top row.
+  - the two bugs that made it lose while it was being written are worth
+    knowing as failure modes: a plan that pads an action list with waits
+    while the top row is full (it topped out), and a board with garbage
+    queued where swapping forever scored better than anything else (it
+    stood still for 5000 ticks; `bored` fixes that).
+
 ## Gotchas
 
 - **Wall-clock timers.** Logic ticks are deterministic in the console, but many
@@ -497,6 +629,11 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
   a full board; long chains do the same legitimately. `claude` ends up doing
   this when it is about to top out (see `scramble`) - it looks like
   panicked button mashing, and it is what the rules reward.
+- **Holding is unbeatable by design.** `claudefable` uses the rule above on
+  purpose and all the time: a human playing "VS AI" against it will not see
+  it top out. It is the right opponent for benchmarking another AI and the
+  wrong one for a relaxed game; `claudefable,hold=0` switches the holding
+  off.
 - **The AI costs CPU.** `QwenStrat` re-plans as soon as its queued actions run
   out (`replan`/`replanActive`) and its search budget is wall clock, so one
   6000-tick AI game is a few seconds of pure C++ and a benchmark with 8 jobs is

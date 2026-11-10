@@ -40,7 +40,7 @@ class AIStrategy {
   virtual const std::string &key() const = 0;
 
   // Optional tuning string, "key=value" pairs separated by commas, e.g.
-  // "qwen,height=12". Only QwenStrat has knobs; the base ignores it.
+  // "qwen,height=12". The base ignores it.
   virtual void setOptions(const std::string &options);
 
   // Actions to play on the given board. Called when the controller has run

@@ -51,6 +51,7 @@ set(SRCS
         AI/QwenStrat.cpp
         AI/ClaudeSim.cpp
         AI/ClaudeStrategy.cpp
+        AI/ClaudeFableStrategy.cpp
         AI/SimBoard.cpp
         InputManager.cpp
         Util/Paths.cpp
@@ -70,6 +71,7 @@ add_executable(panel-pop ${SRCS})
 # The "claude" AI simulates tens of thousands of board ticks per decision;
 # keep it optimised in Debug builds too, or it costs frames in live play.
 set_source_files_properties(AI/ClaudeSim.cpp AI/ClaudeStrategy.cpp
+        AI/ClaudeFableStrategy.cpp
         PROPERTIES COMPILE_FLAGS "-O2")
 
 find_package(SDL2 REQUIRED)

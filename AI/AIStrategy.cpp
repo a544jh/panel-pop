@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "BasicStrategy.h"
+#include "ClaudeFableStrategy.h"
 #include "ClaudeStrategy.h"
 #include "QwenStrat.h"
 
@@ -23,6 +24,7 @@ struct Descriptor {
 const Descriptor DESCRIPTORS[] = {
     {"qwen", "QwenStrat"},
     {"claude", "Claude"},
+    {"claudefable", "ClaudeFable"},
     {"basic", "Basic"},
 };
 
@@ -77,6 +79,8 @@ std::unique_ptr<AIStrategy> AIStrategies::create(const std::string &spec) {
   std::unique_ptr<AIStrategy> strategy;
   if (key == "basic") {
     strategy.reset(new BasicStrategy());
+  } else if (key == "claudefable") {
+    strategy.reset(new ClaudeFableStrategy());
   } else if (key == "claude") {
     strategy.reset(new ClaudeStrategy());
   } else {
