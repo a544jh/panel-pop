@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "BasicStrategy.h"
-#include "ProStrategy.h"
+#include "ClaudeStrategy.h"
 #include "QwenStrat.h"
 
 namespace {
@@ -22,7 +22,7 @@ struct Descriptor {
 // Menu order; the default strategy comes first (see defaultIndex()).
 const Descriptor DESCRIPTORS[] = {
     {"qwen", "QwenStrat"},
-    {"pro", "Pro"},
+    {"claude", "Claude"},
     {"basic", "Basic"},
 };
 
@@ -77,8 +77,8 @@ std::unique_ptr<AIStrategy> AIStrategies::create(const std::string &spec) {
   std::unique_ptr<AIStrategy> strategy;
   if (key == "basic") {
     strategy.reset(new BasicStrategy());
-  } else if (key == "pro") {
-    strategy.reset(new ProStrategy());
+  } else if (key == "claude") {
+    strategy.reset(new ClaudeStrategy());
   } else {
     strategy.reset(new QwenStrat());
   }

@@ -1,7 +1,7 @@
 /*
- * ProSim.h
+ * ClaudeSim.h
  *
- * Board model for ProStrategy (the "pro" AI): a compact, copyable,
+ * Board model for ClaudeStrategy (the "claude" AI): a compact, copyable,
  * tick-exact re-implementation of Board::tick() and the board input
  * functions, plus the cursor, so a list of AIStrategyActions can be played
  * on it exactly as AIBoardController plays them on the real board.
@@ -19,15 +19,15 @@
  * Kept separate from SimBoard (QwenStrat's model) on purpose; see AGENTS.md.
  */
 
-#ifndef AI_PROSIM_H_
-#define AI_PROSIM_H_
+#ifndef AI_CLAUDESIM_H_
+#define AI_CLAUDESIM_H_
 
 #include <cstdint>
 
 #include "AIStrategy.h"
 #include "../Game/Board.h"
 
-class ProSim {
+class ClaudeSim {
  public:
   static const int H = Board::BOARD_HEIGHT;
   static const int W = Board::BOARD_WIDTH;
@@ -85,7 +85,7 @@ class ProSim {
     int chainLen[8];
   };
 
-  ProSim();
+  ClaudeSim();
 
   // Copies everything from a live board, including the cursor.
   void import(const Board &board);
@@ -285,4 +285,4 @@ class ProSim {
   void sendEvents();
 };
 
-#endif /* AI_PROSIM_H_ */
+#endif /* AI_CLAUDESIM_H_ */

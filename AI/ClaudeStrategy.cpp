@@ -1,8 +1,8 @@
 /*
- * ProStrategy.cpp
+ * ClaudeStrategy.cpp
  */
 
-#include "ProStrategy.h"
+#include "ClaudeStrategy.h"
 
 #include <SDL2/SDL_timer.h>
 
@@ -162,13 +162,13 @@ inline bool gridSwappable(const Grid &g, int row, int col) {
   return true;
 }
 
-void gridFromSim(const ProSim &m, Grid &g) {
+void gridFromSim(const ClaudeSim &m, Grid &g) {
   for (int row = 0; row < GR; ++row) {
     for (int col = 0; col < 6; ++col) {
-      const ProSim::Cell &c = m.cell(row, col);
-      if (c.type == ProSim::BLOCK) {
+      const ClaudeSim::Cell &c = m.cell(row, col);
+      if (c.type == ClaudeSim::BLOCK) {
         g.c[row][col] = (c.state == EXPLODING || c.state == MATCHED) ? EMPTY : (int8_t) c.color;
-      } else if (c.type == ProSim::GARBAGE) {
+      } else if (c.type == ClaudeSim::GARBAGE) {
         g.c[row][col] = SOLID;
       } else {
         g.c[row][col] = EMPTY;
@@ -200,7 +200,7 @@ int comboCells(int combo) {
 bool debugEnabled() {
   static int on = -1;
   if (on < 0) {
-    on = getenv("PANELPOP_PRO_DEBUG") != nullptr ? 1 : 0;
+    on = getenv("PANELPOP_CLAUDE_DEBUG") != nullptr ? 1 : 0;
   }
   return on == 1;
 }
@@ -208,7 +208,7 @@ bool debugEnabled() {
 bool verifyEnabled() {
   static int on = -1;
   if (on < 0) {
-    on = (getenv("PANELPOP_PRO_VERIFY") != nullptr || debugEnabled()) ? 1 : 0;
+    on = (getenv("PANELPOP_CLAUDE_VERIFY") != nullptr || debugEnabled()) ? 1 : 0;
   }
   return on == 1;
 }
@@ -228,7 +228,7 @@ const char *actionName(AIStrategyAction a) {
 
 } // namespace
 
-ProStrategy::ProStrategy() :
+ClaudeStrategy::ClaudeStrategy() :
     _simulated(0),
     _lastSwapX(-1),
     _lastSwapY(-1),
@@ -260,23 +260,23 @@ ProStrategy::ProStrategy() :
   _p.follow = 0.8;
   _p.undo = 40.0;
   _p.scramble = 80.0;
-  const char *env = getenv("PANELPOP_PRO_OPTIONS");
+  const char *env = getenv("PANELPOP_CLAUDE_OPTIONS");
   if (env != nullptr) {
     setOptions(env);
   }
 }
 
-const std::string &ProStrategy::name() const {
-  static const std::string kName = "Pro";
+const std::string &ClaudeStrategy::name() const {
+  static const std::string kName = "Claude";
   return kName;
 }
 
-const std::string &ProStrategy::key() const {
-  static const std::string kKey = "pro";
+const std::string &ClaudeStrategy::key() const {
+  static const std::string kKey = "claude";
   return kKey;
 }
 
-void ProStrategy::setOptions(const std::string &options) {
+void ClaudeStrategy::setOptions(const std::string &options) {
   struct IntKnob {
     const char *name;
     int Params::*field;
@@ -330,7 +330,7 @@ void ProStrategy::setOptions(const std::string &options) {
   _p.maxDrag = std::max(1, std::min(5, _p.maxDrag));
 }
 
-void ProStrategy::reset() {
+void ClaudeStrategy::reset() {
   _havePrediction = false;
   _lastSwapX = _lastSwapY = -1;
   _lastSwapTick = 0;
@@ -340,7 +340,8 @@ void ProStrategy::reset() {
 // move generation
 // ---------------------------------------------------------------------------
 
-void ProStrategy::appendAction(AIStrategyAction a, int pace, std::vector<AIStrategyAction> &out) {
+void ClaudeStrategy::appendAction(AIStrategyAction a, int pace,
+                                  std::vector<AIStrategyAction> &out) {
   if (a == AI_SWAP) {
     // A block that is still swapping can't be swapped again: a swap applied
     // at tick k completes on tick k + 2, so the next one goes in at k + 3 at
@@ -358,7 +359,7 @@ void ProStrategy::appendAction(AIStrategyAction a, int pace, std::vector<AIStrat
   }
 }
 
-void ProStrategy::appendPath(int fromX, int fromY, int toX, int toY, int pace,
+void ClaudeStrategy::appendPath(int fromX, int fromY, int toX, int toY, int pace,
                              std::vector<AIStrategyAction> &out) const {
   // Vertical first: the stack shifting up under a travelling cursor moves
   // the cursor along with it, so the row stays right either way.
@@ -380,7 +381,7 @@ void ProStrategy::appendPath(int fromX, int fromY, int toX, int toY, int pace,
   }
 }
 
-void ProStrategy::buildMoves(const ProSim &from, std::vector<Move> &moves, int maxDrag,
+void ClaudeStrategy::buildMoves(const ClaudeSim &from, std::vector<Move> &moves, int maxDrag,
                              int pace, bool withRaise) const {
   moves.clear();
   const int cx = from.cursorX();
@@ -388,12 +389,12 @@ void ProStrategy::buildMoves(const ProSim &from, std::vector<Move> &moves, int m
   const int topRow = std::min((int) Board::TOP_ROW, from.top());
 
   for (int y = 0; y <= topRow; ++y) {
-    for (int x = 0; x + 1 < ProSim::W; ++x) {
+    for (int x = 0; x + 1 < ClaudeSim::W; ++x) {
       if (!from.canSwap(x, y)) {
         continue;
       }
-      const ProSim::Cell &a = from.cell(y, x);
-      const ProSim::Cell &b = from.cell(y, x + 1);
+      const ClaudeSim::Cell &a = from.cell(y, x);
+      const ClaudeSim::Cell &b = from.cell(y, x + 1);
       if (a.type == b.type && a.color == b.color) {
         continue; // swapping two of the same does nothing
       }
@@ -412,15 +413,15 @@ void ProStrategy::buildMoves(const ProSim &from, std::vector<Move> &moves, int m
 
   // Drags: one block slid len columns along its row, swap after swap.
   for (int y = 0; y <= topRow && maxDrag >= 2; ++y) {
-    for (int x = 0; x < ProSim::W; ++x) {
-      const ProSim::Cell &c = from.cell(y, x);
-      if (c.type != ProSim::BLOCK || c.state != NORMAL || c.falling) {
+    for (int x = 0; x < ClaudeSim::W; ++x) {
+      const ClaudeSim::Cell &c = from.cell(y, x);
+      if (c.type != ClaudeSim::BLOCK || c.state != NORMAL || c.falling) {
         continue;
       }
       for (int dir = -1; dir <= 1; dir += 2) {
         for (int len = 2; len <= maxDrag; ++len) {
           const int last = x + dir * len;
-          if (last < 0 || last >= ProSim::W) {
+          if (last < 0 || last >= ClaudeSim::W) {
             break;
           }
           // The block must stay supported until the last step, or it drops
@@ -428,12 +429,12 @@ void ProStrategy::buildMoves(const ProSim &from, std::vector<Move> &moves, int m
           bool ok = true;
           for (int k = 1; k <= len && ok; ++k) {
             const int col = x + dir * k;
-            const ProSim::Cell &t = from.cell(y, col);
-            if (t.type == ProSim::GARBAGE || t.state != NORMAL
-                || (t.type == ProSim::AIR && from.cell(y + 1, col).type == ProSim::BLOCK)) {
+            const ClaudeSim::Cell &t = from.cell(y, col);
+            if (t.type == ClaudeSim::GARBAGE || t.state != NORMAL
+                || (t.type == ClaudeSim::AIR && from.cell(y + 1, col).type == ClaudeSim::BLOCK)) {
               ok = false;
             }
-            if (k < len && y > 0 && from.cell(y - 1, col).type == ProSim::AIR) {
+            if (k < len && y > 0 && from.cell(y - 1, col).type == ClaudeSim::AIR) {
               ok = false;
             }
           }
@@ -474,12 +475,12 @@ void ProStrategy::buildMoves(const ProSim &from, std::vector<Move> &moves, int m
 // simulation
 // ---------------------------------------------------------------------------
 
-int ProStrategy::inputs(const Move &move) {
+int ClaudeStrategy::inputs(const Move &move) {
   return (int) std::count_if(move.actions.begin(), move.actions.end(),
                              [](AIStrategyAction a) { return a != AI_WAIT; });
 }
 
-bool ProStrategy::simulate(const ProSim &from, const Move &move, ProSim &m) {
+bool ClaudeStrategy::simulate(const ClaudeSim &from, const Move &move, ClaudeSim &m) {
   m = from;
   // The tick on which plan() runs: AIBoardController applies no action.
   m.tick();
@@ -498,8 +499,8 @@ bool ProStrategy::simulate(const ProSim &from, const Move &move, ProSim &m) {
       if (move.kind == MOVE_DRAG && swaps > 0) {
         // The dragged block has to be where the last swap put it, at rest.
         const int col = move.x + move.dir * swaps;
-        const ProSim::Cell &c = m.cell(row, col);
-        if (c.type != ProSim::BLOCK || c.color != move.color || c.state != NORMAL || c.falling) {
+        const ClaudeSim::Cell &c = m.cell(row, col);
+        if (c.type != ClaudeSim::BLOCK || c.color != move.color || c.state != NORMAL || c.falling) {
           return false;
         }
       }
@@ -517,7 +518,7 @@ bool ProStrategy::simulate(const ProSim &from, const Move &move, ProSim &m) {
   return true;
 }
 
-void ProStrategy::rollout(ProSim &m) {
+void ClaudeStrategy::rollout(ClaudeSim &m) {
   // Until the board is at rest and any chain has been counted (the chain
   // ends on the first tick that starts with nothing active).
   const int cap = 1500;
@@ -536,14 +537,14 @@ void ProStrategy::rollout(ProSim &m) {
 // evaluation
 // ---------------------------------------------------------------------------
 
-double ProStrategy::chainReward(int rows) const {
+double ClaudeStrategy::chainReward(int rows) const {
   if (rows <= 0) {
     return 0;
   }
   return _p.row * rows * (1.0 + _p.chainGrowth * (rows - 1));
 }
 
-double ProStrategy::potential(const ProSim &m, int &triggers) const {
+double ClaudeStrategy::potential(const ClaudeSim &m, int &triggers) const {
   Grid g;
   gridFromSim(m, g);
   triggers = 0;
@@ -627,11 +628,11 @@ double ProStrategy::potential(const ProSim &m, int &triggers) const {
   return best;
 }
 
-double ProStrategy::evaluate(const ProSim &m) const {
+double ClaudeStrategy::evaluate(const ClaudeSim &m) const {
   if (m.dead()) {
     return DEATH + 50.0 * m.simTicks();
   }
-  const ProSim::Stats &s = m.stats();
+  const ClaudeSim::Stats &s = m.stats();
   double v = 0;
 
   // What actually happened.
@@ -645,16 +646,16 @@ double ProStrategy::evaluate(const ProSim &m) const {
   v += _p.clearCell * s.garbageCleared;
 
   // The settled board.
-  int h[ProSim::W];
+  int h[ClaudeSim::W];
   int garbageCells = 0;
   int blocks = 0;
-  for (int col = 0; col < ProSim::W; ++col) {
+  for (int col = 0; col < ClaudeSim::W; ++col) {
     h[col] = 0;
-    for (int row = 0; row < ProSim::H; ++row) {
-      const ProSim::Cell &c = m.cell(row, col);
-      if (c.type != ProSim::AIR) {
+    for (int row = 0; row < ClaudeSim::H; ++row) {
+      const ClaudeSim::Cell &c = m.cell(row, col);
+      if (c.type != ClaudeSim::AIR) {
         h[col] = row + 1;
-        if (c.type == ProSim::GARBAGE) {
+        if (c.type == ClaudeSim::GARBAGE) {
           ++garbageCells;
         } else if (row <= Board::TOP_ROW && c.state != EXPLODING) {
           ++blocks;
@@ -666,21 +667,21 @@ double ProStrategy::evaluate(const ProSim &m) const {
   // Garbage on its way down lands on top of everything.
   double incoming = 0;
   for (int i = 0; i < m.numSpawns(); ++i) {
-    const ProSim::Spawn &sp = m.spawn(i);
+    const ClaudeSim::Spawn &sp = m.spawn(i);
     incoming += sp.fullWidth ? sp.size : sp.size / 6.0;
   }
   const double raise = m.stackOffset() / (double) Board::STACK_RAISE_STEPS;
 
-  for (int col = 0; col < ProSim::W; ++col) {
+  for (int col = 0; col < ClaudeSim::W; ++col) {
     const double eff = h[col] + raise + incoming;
     if (eff > 7.0) {
       v -= _p.danger * (eff - 7.0) * (eff - 7.0);
     }
-    if (col + 1 < ProSim::W) {
+    if (col + 1 < ClaudeSim::W) {
       v -= _p.flat * std::abs(h[col] - h[col + 1]);
     }
     const int left = col > 0 ? h[col - 1] : h[col + 1];
-    const int right = col + 1 < ProSim::W ? h[col + 1] : h[col - 1];
+    const int right = col + 1 < ClaudeSim::W ? h[col + 1] : h[col - 1];
     const int over = h[col] - std::max(left, right);
     if (over >= 3) {
       v -= _p.tower * (over - 2);
@@ -689,9 +690,9 @@ double ProStrategy::evaluate(const ProSim &m) const {
   // Material: blocks to build chains with and to dig garbage out with.
   // Garbage does not count, which is the point - a stack of garbage over
   // a handful of blocks is the most dangerous board there is.
-  const double comfortBlocks = _p.comfort * ProSim::W;
+  const double comfortBlocks = _p.comfort * ClaudeSim::W;
   if (blocks < comfortBlocks) {
-    v -= _p.low * (comfortBlocks - blocks) / ProSim::W;
+    v -= _p.low * (comfortBlocks - blocks) / ClaudeSim::W;
   }
   if (m.graceTimer() > 0) {
     v -= 600.0 + 40.0 * m.graceTimer();
@@ -708,7 +709,7 @@ double ProStrategy::evaluate(const ProSim &m) const {
 // plan
 // ---------------------------------------------------------------------------
 
-bool ProStrategy::predictionUsable(const ProSim &now) const {
+bool ClaudeStrategy::predictionUsable(const ClaudeSim &now) const {
   if (!_havePrediction || _prediction.inventedColors()) {
     return false;
   }
@@ -716,23 +717,23 @@ bool ProStrategy::predictionUsable(const ProSim &now) const {
   return now.numSpawns() == _prediction.numSpawns();
 }
 
-std::vector<AIStrategyAction> ProStrategy::plan(const Board &board) {
+std::vector<AIStrategyAction> ClaudeStrategy::plan(const Board &board) {
   std::vector<AIStrategyAction> actions;
   if (board.getState() != Board::RUNNING) {
     return actions;
   }
   const Uint32 started = SDL_GetTicks();
 
-  ProSim base;
+  ClaudeSim base;
   base.import(board);
 
   if (verifyEnabled() && predictionUsable(base)) {
     ++_verifyChecks;
     const char *what = nullptr;
-    for (int r = 0; r < ProSim::H && what == nullptr; ++r) {
-      for (int c = 0; c < ProSim::W && what == nullptr; ++c) {
-        const ProSim::Cell &a = base.cell(r, c);
-        const ProSim::Cell &b = _prediction.cell(r, c);
+    for (int r = 0; r < ClaudeSim::H && what == nullptr; ++r) {
+      for (int c = 0; c < ClaudeSim::W && what == nullptr; ++c) {
+        const ClaudeSim::Cell &a = base.cell(r, c);
+        const ClaudeSim::Cell &b = _prediction.cell(r, c);
         if (a.type != b.type || a.color != b.color || a.state != b.state
             || a.falling != b.falling || a.chain != b.chain) {
           what = "cells";
@@ -751,7 +752,7 @@ std::vector<AIStrategyAction> ProStrategy::plan(const Board &board) {
     }
     if (what != nullptr) {
       ++_verifyMisses;
-      printf("pro: tick %u prediction miss (%s), %ld of %ld\n",
+      printf("claude: tick %u prediction miss (%s), %ld of %ld\n",
              board.getTicksRun(), what, _verifyMisses, _verifyChecks);
       fflush(stdout);
     }
@@ -763,14 +764,14 @@ std::vector<AIStrategyAction> ProStrategy::plan(const Board &board) {
   int maxH = 0;
   int blocks = 0;
   int garbageCells = 0;
-  for (int col = 0; col < ProSim::W; ++col) {
+  for (int col = 0; col < ClaudeSim::W; ++col) {
     for (int row = Board::TOP_ROW; row >= 0; --row) {
-      const ProSim::Cell &c = base.cell(row, col);
-      if (c.type != ProSim::AIR) {
+      const ClaudeSim::Cell &c = base.cell(row, col);
+      if (c.type != ClaudeSim::AIR) {
         maxH = std::max(maxH, row + 1);
       }
-      blocks += c.type == ProSim::BLOCK;
-      garbageCells += c.type == ProSim::GARBAGE;
+      blocks += c.type == ClaudeSim::BLOCK;
+      garbageCells += c.type == ClaudeSim::GARBAGE;
     }
   }
   // About to top out, or buried under garbage with little to dig with: a
@@ -847,7 +848,7 @@ std::vector<AIStrategyAction> ProStrategy::plan(const Board &board) {
       buildMoves(line.end, next, std::min(_p.maxDrag, 2), pace,
                  !line.end.anyActive());
       double best = line.value;
-      ProSim after;
+      ClaudeSim after;
       for (const Move &mv : next) {
         if (_simulated >= _p.budget) {
           break;
@@ -894,16 +895,16 @@ std::vector<AIStrategyAction> ProStrategy::plan(const Board &board) {
     }
     if (base.chainCounter() > 1 && best.move.kind != MOVE_WAIT
         && best.end.stats().maxChain > waitChain) {
-      printf("pro: skill+%d at chain %d\n", best.end.stats().maxChain - waitChain,
+      printf("claude: skill+%d at chain %d\n", best.end.stats().maxChain - waitChain,
              base.chainCounter());
     }
   }
   return actions;
 }
 
-void ProStrategy::describe(const Line &line, const ProSim &base, unsigned ms) const {
+void ClaudeStrategy::describe(const Line &line, const ClaudeSim &base, unsigned ms) const {
   static const char *kinds[] = {"swap", "drag", "raise", "wait"};
-  const ProSim::Stats &s = line.end.stats();
+  const ClaudeSim::Stats &s = line.end.stats();
   std::string acts;
   for (AIStrategyAction a : line.move.actions) {
     if (a != AI_WAIT) {
@@ -912,7 +913,7 @@ void ProStrategy::describe(const Line &line, const ProSim &base, unsigned ms) co
   }
   int triggers = 0;
   const double pot = potential(line.end, triggers);
-  printf("pro: t=%u chain=%d %s(%d,%d%s%d) v=%.0f tot=%.0f sent=%d+%dc clr=%d maxc=%d pot=%.0f trig=%d sims=%d ms=%u [%s]\n",
+  printf("claude: t=%u chain=%d %s(%d,%d%s%d) v=%.0f tot=%.0f sent=%d+%dc clr=%d maxc=%d pot=%.0f trig=%d sims=%d ms=%u [%s]\n",
          base.ticksRun(), base.chainCounter(), kinds[line.move.kind], line.move.x, line.move.y,
          line.move.dir > 0 ? ">" : (line.move.dir < 0 ? "<" : ""), line.move.len,
          line.value, line.total, s.chainRows, s.comboCells, s.garbageCleared, s.maxChain,

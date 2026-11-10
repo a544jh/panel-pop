@@ -156,10 +156,10 @@ played by a human.
 |---|---|
 | `AIStrategy.h/.cpp` | interface, shared cursor-path helper, registry, `parseSpec()` |
 | `QwenStrat.h/.cpp` | the default strategy, key `qwen` |
-| `ProStrategy.h/.cpp` | plays like a good human player, key `pro` (see "Pro" below) |
+| `ClaudeStrategy.h/.cpp` | plays like a good human player, key `claude` (see "Claude" below) |
 | `BasicStrategy.h/.cpp` | the original AI, key `basic` (`BoardScanner` + the old `AIBoardController` move ordering) |
 | `SimBoard.h/.cpp` | headless copy of the board rules used for lookahead by `qwen` |
-| `ProSim.h/.cpp` | tick-exact board model used by `pro`, checked by `prosim-check` |
+| `ClaudeSim.h/.cpp` | tick-exact board model used by `claude`, checked by `claudesim-check` |
 | `AIBoardController.*`, `BoardScanner.*` | board 2 controller / the chain scorer the original AI wraps |
 
 The controller outlives the board: `VsGame::reset()` (the next round of a VS
@@ -184,9 +184,9 @@ Selection, in order of precedence:
 
 There is no strategy env var. The environment only tunes the planners:
 `PANELPOP_QWEN_WEIGHTS="k=v,..."` and `PANELPOP_AI_DEBUG=1` (prints each plan)
-for `qwen`, `PANELPOP_PRO_OPTIONS="k=v,..."`, `PANELPOP_PRO_DEBUG=1` and
-`PANELPOP_PRO_VERIFY=1` for `pro`. A key may also carry tuning inline:
-`qwen,cand=3,budget=60`, `pro,pace=3` (`AIStrategies::parseSpec`).
+for `qwen`, `PANELPOP_CLAUDE_OPTIONS="k=v,..."`, `PANELPOP_CLAUDE_DEBUG=1` and
+`PANELPOP_CLAUDE_VERIFY=1` for `claude`. A key may also carry tuning inline:
+`qwen,cand=3,budget=60`, `claude,pace=3` (`AIStrategies::parseSpec`).
 
 ### QwenStrat
 
@@ -264,26 +264,26 @@ Two consequences worth knowing:
   badly once: the model invented buffer rows the real board never produces).
 - Nothing writes back into a live board: `plan()` only reads.
 
-`SimBoard` has known divergences from `Board` (left as they are; `pro` uses
+`SimBoard` has known divergences from `Board` (left as they are; `claude` uses
 its own model, below): `import()` drops the float timer of floating blocks
 (they start falling up to 12 ticks early), the empty half of a block-into-air
 swap is turned into a `BLOCK` of colour `COUNT` that stays on the board after
 the swap, the empty half's swap timer is not imported, and garbage `falling`
-is always imported as false. The lockstep checker in `tools/prosim-check`
+is always imported as false. The lockstep checker in `tools/claudesim-check`
 found them; pointing it at `SimBoard` reproduces them.
 
-### Pro (`ProStrategy`, key `pro`)
+### Claude (`ClaudeStrategy`, key `claude`)
 
 Built to *look* like a good Panel de Pon player: it builds chains on purpose,
 extends running chains with skill-chain swaps timed against the falling
 blocks, keeps a flat stack at a useful height (raising it when material runs
 low), digs through garbage, and moves at a human pace instead of one input
 per frame. Selectable in Options -> "AI strategy" (menu order: QwenStrat,
-Pro, Basic) or with `strategy pro [board]` on the console.
+Claude, Basic) or with `strategy claude [board]` on the console.
 
 One decision (`plan()`):
 
-1. Import the board into `ProSim` (exact, see below) and list candidate
+1. Import the board into `ClaudeSim` (exact, see below) and list candidate
    moves: every single swap, every *drag* (one block slid 2-3 columns along
    its row, swap after swap, `drag`), a forced raise, and waiting. Each move
    is the literal action list the controller will play: cursor path first,
@@ -316,34 +316,35 @@ One decision (`plan()`):
    unless it makes something happen; standing still while about to top out
    or buried costs `scramble`, so it fights on like a player would.
 
-Knobs (`pro,k=v,...` or `PANELPOP_PRO_OPTIONS`): `pace` (4), `fastPace` (3),
-`drag` (3), `depth` (2), `width` (4), `budget` (60000 simulated ticks per plan,
-deterministic - not wall clock), `waitCalm`/`waitActive` (6/3 ticks between
-looks when waiting), and the weights `row` 100, `chainGrowth` 0.25,
-`potential` 0.6, `comboCell` 10, `clearCell` 8, `effort` 1.5, `flat` 4,
-`tower` 15, `low` 20, `comfort` 6, `danger` 25, `garbage` 2, `options` 3,
-`follow` 0.8, `undo` 40, `scramble` 80.
+Knobs (`claude,k=v,...` or `PANELPOP_CLAUDE_OPTIONS`): `pace` (4), `fastPace`
+(3), `drag` (3), `depth` (2), `width` (4), `budget` (60000 simulated ticks per
+plan, deterministic - not wall clock), `waitCalm`/`waitActive` (6/3 ticks
+between looks when waiting), and the weights `row` 100, `chainGrowth` 0.25,
+`potential` 0.6, `comboCell` 10, `clearCell` 8, `effort` 1.5, `flat` 4, `tower`
+15, `low` 20, `comfort` 6, `danger` 25, `garbage` 2, `options` 3, `follow` 0.8,
+`undo` 40, `scramble` 80.
 
-- `PANELPOP_PRO_DEBUG=1` prints one line per plan (`pro: t=... chain=...
+- `PANELPOP_CLAUDE_DEBUG=1` prints one line per plan (`claude: t=... chain=...
   swap(x,y) v=... sent=... maxc=... pot=... sims=... ms=... [inputs]`) and
-  `pro: skill+N at chain C` whenever a move makes a running chain N links
+  `claude: skill+N at chain C` whenever a move makes a running chain N links
   longer than just watching it would.
-- `PANELPOP_PRO_VERIFY=1` (also on with DEBUG) checks at every plan that the
+- `PANELPOP_CLAUDE_VERIFY=1` (also on with DEBUG) checks at every plan that the
   real board is exactly where the model said it would be (cells, cursor,
   stack, score) and prints `prediction miss` otherwise. Garbage the opponent
   sent in between and invented colours are not counted as misses. It reported
   none over thousands of plans in VS games.
-- Cost: `AI/ProSim.cpp` and `AI/ProStrategy.cpp` are compiled with `-O2` even
-  in Debug builds (`set_source_files_properties` in `CMakeLists.txt`).
+- Cost: `AI/ClaudeSim.cpp` and `AI/ClaudeStrategy.cpp` are compiled with
+  `-O2` even in Debug builds (`set_source_files_properties` in
+  `CMakeLists.txt`).
   Measured in a VS game: a plan every ~6.5 ticks, 3 ms on average (median 2,
   95th percentile 10, worst 26), about 0.5 ms per game tick overall.
 - Pace: 4 ticks per input calm, 3 in a hurry - 15-20 inputs/s, fast but
   human. `pace=3,fastPace=2` plays stronger (see benchmarks) and looks
   robotic sooner; `pace=1` is frame-perfect.
 
-### ProSim
+### ClaudeSim
 
-`ProSim` is `pro`'s board model: a compact, copyable re-implementation of
+`ClaudeSim` is `claude`'s board model: a compact, copyable re-implementation of
 `Board::tick()` and the board input functions, plus the cursor, so an action
 list plays on it exactly as `AIBoardController` plays it on the real board
 (`step(action)` = one controller tick + one board tick). It follows
@@ -361,11 +362,11 @@ after the first, garbage interiors after their first row) come from its own
 PRNG, and `inventedColors()` turns true once one is on the board; and garbage
 the opponent sends after `import()`.
 
-`tools/prosim-check` checks it against the real board in lockstep:
+`tools/claudesim-check` checks it against the real board in lockstep:
 
 ```
-cmake --build build --target prosim-check     # not built by default
-./build/prosim-check [seed] [ticks] [window] [swap%]
+cmake --build build --target claudesim-check     # not built by default
+./build/claudesim-check [seed] [ticks] [window] [swap%]
 ```
 
 It drives a `Board` with random inputs and random incoming garbage and, every
@@ -427,22 +428,22 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
     even (6-10 on seeds 2000-2007, 18-14 over 32 games on seeds 3000-3015),
     while `cand=1` lost to `cand=3` 13-19 (seeds 3100-3115) - do at least a few
     refinements, the exact number is noise.
-- `pro` vs `qwen` (4 jobs, 6000 frames, every game decided by a top-out):
+- `claude` vs `qwen` (4 jobs, 6000 frames, every game decided by a top-out):
   - final defaults: **23-1** on seeds 8000-8011, never used for tuning (the
     loss went to points, 5080-5023); 16-0 on seeds 6000-6007 (used for
-    tuning). `pro` vs `basic`: 8-0 (seeds 9000-9003).
+    tuning). `claude` vs `basic`: 8-0 (seeds 9000-9003).
   - the steps on the way, same seeds 6000-6007: first version (pace 3/2)
     14-2; counting blocks instead of height as material (a board of garbage
     over a few blocks no longer looks comfortable) plus the `undo` rule 16-0;
     human pace 4/3 14-2 (23-1 on unseen seeds 7000-7011); `scramble` (fight
     on instead of idling when buried) 16-0. Both 14-2 losses were the same
-    story: `pro` spent its stack on a 6-chain, `qwen` answered with a 7-chain
+    story: `claude` spent its stack on a 6-chain, `qwen` answered with a 7-chain
     and six rows landed on an empty board.
-  - what it looks like (seed 6006, `pro` vs `qwen`, 3500 ticks of json
-    snapshots plus `PANELPOP_PRO_DEBUG`): `pro`
+  - what it looks like (seed 6006, `claude` vs `qwen`, 3500 ticks of json
+    snapshots plus `PANELPOP_CLAUDE_DEBUG`): `claude`
     sent a 7-chain and a 6-chain built with 11 skill-chain links, moved its
     cursor ~3 cells/s against `qwen`'s ~8, kept its stack at ~7.7 rows, and
-    the model predicted every plan exactly. A `pro` game costs about as much
+    the model predicted every plan exactly. A `claude` game costs about as much
     CPU as the `qwen` side of it; a 24-game match at 4 jobs takes ~15 min.
 
 ## Gotchas
@@ -482,7 +483,7 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
   any block is swapping, and the top-out grace timer, the automatic stack
   raise and the spawning of queued garbage all wait for no active blocks. So
   a player (or AI) that keeps swapping holds off garbage and stays alive on
-  a full board; long chains do the same legitimately. `pro` ends up doing
+  a full board; long chains do the same legitimately. `claude` ends up doing
   this when it is about to top out (see `scramble`) - it looks like
   panicked button mashing, and it is what the rules reward.
 - **The AI costs CPU.** `QwenStrat` re-plans as soon as its queued actions run

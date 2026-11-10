@@ -1,7 +1,7 @@
 /*
- * ProStrategy.h
+ * ClaudeStrategy.h
  *
- * The "pro" AI: plays like a good Panel de Pon player. It builds chains on
+ * The "claude" AI: plays like a good Panel de Pon player. It builds chains on
  * purpose, extends running chains with skill-chain swaps timed against the
  * falling blocks, keeps a flat stack at a useful height (raising it when it
  * runs low), digs through garbage, and moves its cursor at a human pace
@@ -10,7 +10,7 @@
  * How it decides (see AGENTS.md for the long version):
  *
  *  - Candidate moves are single swaps, drags (one block slid two or three
- *    columns), a stack raise and waiting. Each is played on ProSim, an
+ *    columns), a stack raise and waiting. Each is played on ClaudeSim, an
  *    exact model of the board, with the very action list the controller
  *    will play (cursor travel and pacing included), then the model runs on
  *    until the board settles and any running chain has ended. Timing is
@@ -24,23 +24,23 @@
  *  - The best few moves get a second move searched on top, so it plays
  *    setups whose payoff is two moves away.
  *  - Between plans it checks that the real board is exactly where the model
- *    said it would be; PANELPOP_PRO_VERIFY=1 reports any difference.
+ *    said it would be; PANELPOP_CLAUDE_VERIFY=1 reports any difference.
  *
  * Deterministic: the search budget counts simulated ticks, not wall clock.
  */
 
-#ifndef AI_PROSTRATEGY_H_
-#define AI_PROSTRATEGY_H_
+#ifndef AI_CLAUDESTRATEGY_H_
+#define AI_CLAUDESTRATEGY_H_
 
 #include <string>
 #include <vector>
 
 #include "AIStrategy.h"
-#include "ProSim.h"
+#include "ClaudeSim.h"
 
-class ProStrategy : public AIStrategy {
+class ClaudeStrategy : public AIStrategy {
  public:
-  ProStrategy();
+  ClaudeStrategy();
 
   const std::string &name() const override;
   const std::string &key() const override;
@@ -48,7 +48,7 @@ class ProStrategy : public AIStrategy {
   std::vector<AIStrategyAction> plan(const Board &board) override;
   void reset() override;
 
-  // Tuning, settable as "pro,pace=3,depth=1" (see setOptions()).
+  // Tuning, settable as "claude,pace=3,depth=1" (see setOptions()).
   struct Params {
     int pace;          // ticks per input when calm
     int fastPace;      // ticks per input in a chain or in danger
@@ -91,7 +91,7 @@ class ProStrategy : public AIStrategy {
 
   struct Line {
     Move move;
-    ProSim end;
+    ClaudeSim end;
     double value;    // what this move alone is worth
     double total;    // with the follow-up search
     bool valid;
@@ -106,26 +106,26 @@ class ProStrategy : public AIStrategy {
 
   // The model's prediction of the board at the next plan() call.
   bool _havePrediction;
-  ProSim _prediction;
+  ClaudeSim _prediction;
   long _verifyChecks;
   long _verifyMisses;
   // Opponent garbage that arrived since the prediction was made is not a
   // model error; neither are colours the model had to invent.
-  bool predictionUsable(const ProSim &now) const;
+  bool predictionUsable(const ClaudeSim &now) const;
 
-  void buildMoves(const ProSim &from, std::vector<Move> &moves, int maxDrag,
+  void buildMoves(const ClaudeSim &from, std::vector<Move> &moves, int maxDrag,
                   int pace, bool withRaise) const;
   void appendPath(int fromX, int fromY, int toX, int toY, int pace,
                   std::vector<AIStrategyAction> &out) const;
   static void appendAction(AIStrategyAction a, int pace, std::vector<AIStrategyAction> &out);
   // Buttons pressed (everything but waiting), for the effort cost.
   static int inputs(const Move &move);
-  bool simulate(const ProSim &from, const Move &move, ProSim &out);
-  void rollout(ProSim &m);
-  double evaluate(const ProSim &m) const;
+  bool simulate(const ClaudeSim &from, const Move &move, ClaudeSim &out);
+  void rollout(ClaudeSim &m);
+  double evaluate(const ClaudeSim &m) const;
   double chainReward(int rows) const;
-  double potential(const ProSim &m, int &triggers) const;
-  void describe(const Line &line, const ProSim &base, unsigned ms) const;
+  double potential(const ClaudeSim &m, int &triggers) const;
+  void describe(const Line &line, const ClaudeSim &base, unsigned ms) const;
 };
 
-#endif /* AI_PROSTRATEGY_H_ */
+#endif /* AI_CLAUDESTRATEGY_H_ */

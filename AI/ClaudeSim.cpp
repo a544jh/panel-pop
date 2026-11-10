@@ -1,12 +1,12 @@
 /*
- * ProSim.cpp
+ * ClaudeSim.cpp
  *
  * Each function below is named after, and follows, its counterpart in
  * Game/Board.cpp. Comments call out where the real board does something
  * surprising that is mirrored on purpose.
  */
 
-#include "ProSim.h"
+#include "ClaudeSim.h"
 
 #include <cstring>
 #include <vector>
@@ -66,7 +66,7 @@ int comboCells(int combo) {
 
 } // namespace
 
-ProSim::ProSim() {
+ClaudeSim::ClaudeSim() {
   memset(this, 0, sizeof(*this));
   for (int r = 0; r < H; ++r) {
     for (int c = 0; c < W; ++c) {
@@ -78,7 +78,7 @@ ProSim::ProSim() {
   _stats.lastLinkTick = -1;
 }
 
-void ProSim::clearCell(Cell &c) {
+void ClaudeSim::clearCell(Cell &c) {
   c.type = AIR;
   c.color = BlockColor::COUNT;
   c.state = NORMAL;
@@ -93,18 +93,18 @@ void ProSim::clearCell(Cell &c) {
   c.animTicks = 0;
 }
 
-void ProSim::resetStats() {
+void ClaudeSim::resetStats() {
   memset(&_stats, 0, sizeof(_stats));
   _stats.maxChain = _chainCounter;
   _stats.lastLinkTick = -1;
   _simTicks = 0;
 }
 
-void ProSim::setRng(uint32_t seed) {
+void ClaudeSim::setRng(uint32_t seed) {
   _rng = seed ? seed : 0x2545f491u;
 }
 
-uint32_t ProSim::rnd() {
+uint32_t ClaudeSim::rnd() {
   // xorshift32
   uint32_t x = _rng;
   x ^= x << 13;
@@ -114,7 +114,7 @@ uint32_t ProSim::rnd() {
   return x;
 }
 
-uint8_t ProSim::randomColor(int excludeA, int excludeB) {
+uint8_t ClaudeSim::randomColor(int excludeA, int excludeB) {
   uint8_t allowed[BlockColor::COUNT];
   int n = 0;
   for (int k = 0; k < BlockColor::COUNT; ++k) {
@@ -125,7 +125,7 @@ uint8_t ProSim::randomColor(int excludeA, int excludeB) {
   return allowed[rnd() % n];
 }
 
-void ProSim::fillBufferRow() {
+void ClaudeSim::fillBufferRow() {
   // Board::fillBufferRow(): not the colour above (row 0) nor the one to
   // the left.
   for (int i = 0; i < W; ++i) {
@@ -134,7 +134,7 @@ void ProSim::fillBufferRow() {
   }
 }
 
-void ProSim::fillGarbageColors(Garbage &g) {
+void ClaudeSim::fillGarbageColors(Garbage &g) {
   // GarbageBlock::fillBufferRow(): not the colour to the left.
   for (int i = 0; i < g.w; ++i) {
     int left = i > 0 ? g.color[i - 1] : -1;
@@ -142,7 +142,7 @@ void ProSim::fillGarbageColors(Garbage &g) {
   }
 }
 
-void ProSim::import(const Board &board) {
+void ClaudeSim::import(const Board &board) {
   _numGarbage = 0;
   std::vector<const GarbageBlock *> ptrs;
   for (const GarbageBlock &gb : board.getGarbageBlocks()) {
@@ -240,7 +240,7 @@ void ProSim::import(const Board &board) {
   resetStats();
 }
 
-void ProSim::queueGarbage(bool fullWidth, int size, GarbageBlockType type) {
+void ClaudeSim::queueGarbage(bool fullWidth, int size, GarbageBlockType type) {
   if (_numSpawns >= MAX_SPAWNS) {
     return;
   }
@@ -251,7 +251,7 @@ void ProSim::queueGarbage(bool fullWidth, int size, GarbageBlockType type) {
   sp.timer = 80;
 }
 
-void ProSim::updateTop() {
+void ClaudeSim::updateTop() {
   int row = _top < H - 1 ? _top + 1 : H - 1;
   for (; row >= 0; --row) {
     for (int col = 0; col < W; ++col) {
@@ -269,7 +269,7 @@ void ProSim::updateTop() {
 // predicates
 // ---------------------------------------------------------------------------
 
-bool ProSim::blockOnRow(int row) const {
+bool ClaudeSim::blockOnRow(int row) const {
   for (int col = 0; col < W; ++col) {
     const Cell &c = _cells[row][col];
     if (c.type != AIR && !(c.type == GARBAGE && c.g >= 0 && _garbage[c.g].initialFall)) {
@@ -279,7 +279,7 @@ bool ProSim::blockOnRow(int row) const {
   return false;
 }
 
-bool ProSim::anyActive() const {
+bool ClaudeSim::anyActive() const {
   for (int row = 0; row <= _top; ++row) {
     for (int col = 0; col < W; ++col) {
       const Cell &c = _cells[row][col];
@@ -296,13 +296,13 @@ bool ProSim::anyActive() const {
   return false;
 }
 
-bool ProSim::swappable(int row, int col) const {
+bool ClaudeSim::swappable(int row, int col) const {
   const Cell &t = _cells[row][col];
   return ((t.type == AIR && _cells[row + 1][col].type != BLOCK) || t.type == BLOCK)
       && t.state == NORMAL;
 }
 
-bool ProSim::canSwap(int x, int y) const {
+bool ClaudeSim::canSwap(int x, int y) const {
   if (x < 0 || x + 1 >= W || y < 0 || y > Board::TOP_ROW) {
     return false;
   }
@@ -310,7 +310,7 @@ bool ProSim::canSwap(int x, int y) const {
       && (_cells[y][x].type == BLOCK || _cells[y][x + 1].type == BLOCK);
 }
 
-bool ProSim::blockCanFall(int row, int col) const {
+bool ClaudeSim::blockCanFall(int row, int col) const {
   const Cell &c = _cells[row][col];
   if (c.type != BLOCK || row == 0 || c.state != NORMAL) {
     return false;
@@ -319,7 +319,7 @@ bool ProSim::blockCanFall(int row, int col) const {
   return b.type == AIR && b.state == NORMAL;
 }
 
-bool ProSim::garbageCanFall(const Garbage &g) const {
+bool ClaudeSim::garbageCanFall(const Garbage &g) const {
   if (g.state != (uint8_t) GarbageBlockState::NORMAL) {
     return false;
   }
@@ -338,7 +338,7 @@ bool ProSim::garbageCanFall(const Garbage &g) const {
   return true;
 }
 
-bool ProSim::matchTiles(int r1, int c1, int r2, int c2) const {
+bool ClaudeSim::matchTiles(int r1, int c1, int r2, int c2) const {
   const Cell &a = _cells[r1][c1];
   const Cell &b = _cells[r2][c2];
   return a.type == BLOCK && b.type == BLOCK
@@ -347,7 +347,7 @@ bool ProSim::matchTiles(int r1, int c1, int r2, int c2) const {
       && !a.falling && !b.falling && a.color == b.color;
 }
 
-bool ProSim::checkChain(int row, int col) const {
+bool ClaudeSim::checkChain(int row, int col) const {
   for (int i = row; i >= 0; --i) {
     if (_cells[i][col].chain) {
       return true;
@@ -356,7 +356,7 @@ bool ProSim::checkChain(int row, int col) const {
   return false;
 }
 
-bool ProSim::allAirAbove(int row, int col) const {
+bool ClaudeSim::allAirAbove(int row, int col) const {
   for (int i = row; i <= _top; ++i) {
     const Cell &t = _cells[i][col];
     if (t.type == AIR || t.type == GARBAGE
@@ -372,7 +372,7 @@ bool ProSim::allAirAbove(int row, int col) const {
 // input
 // ---------------------------------------------------------------------------
 
-void ProSim::moveCursor(Direction d) {
+void ClaudeSim::moveCursor(Direction d) {
   if (_state != Board::RUNNING && _state != Board::COUNTDOWN) {
     return;
   }
@@ -402,7 +402,7 @@ void ProSim::moveCursor(Direction d) {
   }
 }
 
-bool ProSim::swapAtCursor() {
+bool ClaudeSim::swapAtCursor() {
   if (_state != Board::RUNNING) {
     return false;
   }
@@ -418,7 +418,7 @@ bool ProSim::swapAtCursor() {
   return true;
 }
 
-void ProSim::forceRaise() {
+void ClaudeSim::forceRaise() {
   if (_state != Board::RUNNING) {
     return;
   }
@@ -427,7 +427,7 @@ void ProSim::forceRaise() {
   }
 }
 
-void ProSim::apply(AIStrategyAction action) {
+void ClaudeSim::apply(AIStrategyAction action) {
   switch (action) {
     case AI_UP: moveCursor(UP);
       break;
@@ -450,7 +450,7 @@ void ProSim::apply(AIStrategyAction action) {
 // Board::tick()
 // ---------------------------------------------------------------------------
 
-void ProSim::tick() {
+void ClaudeSim::tick() {
   if (_state != Board::RUNNING) {
     // The countdown is driven by the game (advanceCountdownState()), which
     // the model does not see; nothing else ticks outside RUNNING.
@@ -509,7 +509,7 @@ void ProSim::tick() {
   ++_simTicks;
 }
 
-void ProSim::raiseStack() {
+void ClaudeSim::raiseStack() {
   if (!_forced && _raiseTimer < _raiseTicks) {
     ++_raiseTimer;
     return;
@@ -562,7 +562,7 @@ void ProSim::raiseStack() {
   }
 }
 
-bool ProSim::spawnGarbage(int x, int y, int w, int h, uint8_t type) {
+bool ClaudeSim::spawnGarbage(int x, int y, int w, int h, uint8_t type) {
   if (y >= H || x >= W) {
     return false;
   }
@@ -606,7 +606,7 @@ bool ProSim::spawnGarbage(int x, int y, int w, int h, uint8_t type) {
   return true;
 }
 
-void ProSim::handleGarbageQueue() {
+void ClaudeSim::handleGarbageQueue() {
   if (_numSpawns == 0) {
     return;
   }
@@ -669,7 +669,7 @@ void ProSim::handleGarbageQueue() {
   }
 }
 
-void ProSim::removeGarbage(int idx) {
+void ClaudeSim::removeGarbage(int idx) {
   for (int k = idx; k + 1 < _numGarbage; ++k) {
     _garbage[k] = _garbage[k + 1];
   }
@@ -684,7 +684,7 @@ void ProSim::removeGarbage(int idx) {
   }
 }
 
-void ProSim::swapBlocks(int row, int col) {
+void ClaudeSim::swapBlocks(int row, int col) {
   Cell &right = _cells[row][col];      // the SWAPPING_RIGHT half
   Cell &left = _cells[row][col + 1];   // the SWAPPING_LEFT half
   if (left.state == SWAPPING_LEFT) {
@@ -702,7 +702,7 @@ void ProSim::swapBlocks(int row, int col) {
   left.state = NORMAL;
 }
 
-void ProSim::handleBlockTimers() {
+void ClaudeSim::handleBlockTimers() {
   for (int row = 0; row <= _top; ++row) {
     for (int col = 0; col < W; ++col) {
       Cell &c = _cells[row][col];
@@ -770,7 +770,7 @@ void ProSim::handleBlockTimers() {
   }
 }
 
-void ProSim::handleFalling() {
+void ClaudeSim::handleFalling() {
   for (int col = 0; col < W; ++col) {
     for (int row = 0; row <= _top; ++row) {
       Cell &c = _cells[row][col];
@@ -808,7 +808,7 @@ void ProSim::handleFalling() {
   }
 }
 
-void ProSim::handleGarbageFalling() {
+void ClaudeSim::handleGarbageFalling() {
   for (int i = 0; i < _numGarbage; ++i) {
     Garbage &g = _garbage[i];
     if (garbageCanFall(g)) {
@@ -834,7 +834,7 @@ void ProSim::handleGarbageFalling() {
   }
 }
 
-void ProSim::matchBlocks() {
+void ClaudeSim::matchBlocks() {
   for (int row = 0; row <= _top; ++row) {
     int matched = 1;
     int start = 0;
@@ -875,7 +875,7 @@ void ProSim::matchBlocks() {
   }
 }
 
-void ProSim::handleMatchedBlocks() {
+void ClaudeSim::handleMatchedBlocks() {
   int matches = 1;
   for (int row = _top; row >= 0; --row) {
     for (int col = 0; col < W; ++col) {
@@ -909,7 +909,7 @@ void ProSim::handleMatchedBlocks() {
   }
 }
 
-void ProSim::triggerTile(int row, int col) {
+void ClaudeSim::triggerTile(int row, int col) {
   if (row < 0 || col < 0 || row >= H || col >= W) {
     return;
   }
@@ -923,7 +923,7 @@ void ProSim::triggerTile(int row, int col) {
   }
 }
 
-void ProSim::triggerGarbageNeighbors(int idx) {
+void ClaudeSim::triggerGarbageNeighbors(int idx) {
   const Garbage g = _garbage[idx];
   for (int col = g.x; col <= g.x + (g.w - 1); ++col) {
     triggerTile(g.y + 1, col);
@@ -935,7 +935,7 @@ void ProSim::triggerGarbageNeighbors(int idx) {
   }
 }
 
-void ProSim::handleTriggeredBlocks() {
+void ClaudeSim::handleTriggeredBlocks() {
   int animStart = EXPL_BASE + (_tickMatched + 1) * EXPL_ADD;
   bool any = false;
   for (int row = 0; row <= _top; ++row) {
@@ -968,7 +968,7 @@ void ProSim::handleTriggeredBlocks() {
   }
 }
 
-void ProSim::sendEvents() {
+void ClaudeSim::sendEvents() {
   if (_tickMatched > 0) {
     ++_stats.matches;
   }
