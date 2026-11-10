@@ -26,6 +26,7 @@ target `panel-pop`, no test framework, no CI.
 ## Build
 
 ```
+sudo apt-get update
 sudo apt-get install -y cmake pkg-config libboost-dev libsdl2-dev \
   libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev gdb valgrind xvfb
 cmake -B build -DCMAKE_BUILD_TYPE=Debug
@@ -33,6 +34,9 @@ cmake --build build -j
 ```
 
 Notes:
+- Don't skip `apt-get update` in a fresh container or CI image: they often ship
+  with empty package lists, and the install then fails with `Unable to locate
+  package libboost-dev` (and the same for every SDL package).
 - Boost is header-only here (`boost::property_tree` in `Config/ConfigHandler`),
   `libboost-dev` is enough; no boost libraries are linked.
 - `CMakeLists.txt` asks for `cmake_minimum_required(VERSION 3.5.0)`: CMake 4.x
@@ -70,8 +74,13 @@ To run the *normal* (non-dummy) code path on a machine without a screen:
 xvfb-run -a -s "-screen 0 800x600x24" ./build/panel-pop --frames 100
 ```
 
-(You will see `ALSA lib … underrun occurred` noise: harmless, nothing is
-consuming the PCM device.)
+This uses the real audio driver. On a machine with a sound card you will see
+`ALSA lib … underrun occurred` noise: harmless, nothing is consuming the PCM
+device. On one with no sound device at all (a container or CI box without
+`/dev/snd`), you get `ALSA lib … Unknown PCM default` and then
+`Mix_OpenAudio: ALSA: Couldn't open audio device: …, running without sound`,
+and the game runs silent (verified on Ubuntu 24.04 / x86_64 / SDL 2.30). To
+skip the ALSA noise, add `SDL_AUDIODRIVER=dummy` in front of the command.
 
 ## Debug console (`--debug-stdin`)
 
@@ -320,7 +329,13 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
 - **SDL init is strict now.** `SDLContext::init()` returns false on a
   video/renderer/font/asset failure and `Main.cpp` exits 1. Previously failures
   were printed and ignored, producing a black window and null textures.
-  `Mix_OpenAudio` failure is still non-fatal (the game runs silent).
+  A failed `Mix_OpenAudio` (no audio device) is the exception: init then skips
+  `loadAudio()`, every `Mix_Chunk`/`Mix_Music` stays null, and the game runs
+  silent, since `Mix_PlayChannel()`/`Mix_PlayMusic()` reject null and the
+  other mixer calls are no-ops with no device. (Before this was handled,
+  `loadAudio()` failed because SDL_mixer won't load files with no device, so
+  the xvfb run above exited 1 on boxes with no sound device.) With a device
+  open, missing or broken audio files are still fatal.
 - **Title screen auto-demo.** 600 idle ticks (`DEMO_TIMEOUT`) start
   `DemoGameState`; a long scripted session on the title screen ends up there.
   The switch goes through `FadeTransition`, which is tick-based

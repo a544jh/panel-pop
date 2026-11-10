@@ -32,6 +32,7 @@ SDLContext::SDLContext() :
     _musicBgIntro(nullptr),
     _musicBgLoop(nullptr),
     _musicPanic(nullptr),
+    _sfxPop(),
     _sfxCursor(nullptr),
     _sfxSwap(nullptr),
     _sfxThump(nullptr),
@@ -91,9 +92,15 @@ bool SDLContext::init() {
         return false;
     }
 
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) < 0) {
-        // Not fatal: the game simply runs without sound.
-        std::cout << "Mix_OpenAudio: " << Mix_GetError() << std::endl;
+    // No audio device (e.g. a container or CI box without /dev/snd) is not
+    // fatal: the game runs silent. SDL_mixer can't load anything without an
+    // open device, so loadAudio() is skipped below and every Mix_Chunk and
+    // Mix_Music stays null; Mix_PlayChannel()/Mix_PlayMusic() reject null
+    // with -1, and the halt/pause/volume calls are no-ops while closed.
+    bool audioOpen = Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == 0;
+    if (!audioOpen) {
+        std::cout << "Mix_OpenAudio: " << Mix_GetError()
+                  << ", running without sound" << std::endl;
     }
 
 
@@ -118,7 +125,8 @@ bool SDLContext::init() {
     if (!loadFonts()) {
         return false;
     }
-    if (!loadAudio()) {
+    // With a device open, missing or broken audio files are still fatal.
+    if (audioOpen && !loadAudio()) {
         std::cout << "failed to load audio from " << Paths::asset("assets/") << ": "
                   << Mix_GetError() << std::endl;
         return false;
