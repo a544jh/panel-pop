@@ -99,6 +99,8 @@ class Board {
   const Tile &getTile(int row, int col) const;
   const std::list<GarbageBlock> &getGarbageBlocks() const;
   const std::list<GarbageSpawn> &getGarbageQueue() const;
+  // Rotating x positions for narrow garbage (see handleGarbageQueue()).
+  int getGarbageSpawnPosition(int i) const;
   void win();
 
  private:

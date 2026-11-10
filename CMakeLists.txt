@@ -49,6 +49,8 @@ set(SRCS
         AI/AIStrategy.cpp
         AI/BasicStrategy.cpp
         AI/QwenStrat.cpp
+        AI/ProSim.cpp
+        AI/ProStrategy.cpp
         AI/SimBoard.cpp
         InputManager.cpp
         Util/Paths.cpp
@@ -64,6 +66,11 @@ set(SRCS
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMake")
 
 add_executable(panel-pop ${SRCS})
+
+# The "pro" AI simulates tens of thousands of board ticks per decision;
+# keep it optimised in Debug builds too, or it costs frames in live play.
+set_source_files_properties(AI/ProSim.cpp AI/ProStrategy.cpp
+        PROPERTIES COMPILE_FLAGS "-O2")
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
@@ -99,6 +106,12 @@ target_link_libraries(panel-pop ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARIES}
         ${SDL2_TTF_LIBRARIES}
         ${SDL2_MIXER_LIBRARIES})
+
+# Lockstep check of AI/ProSim against Game/Board; not part of the game, not
+# built by default: cmake --build build --target prosim-check
+add_executable(prosim-check EXCLUDE_FROM_ALL
+        tools/prosim-check/prosim_check.cpp
+        Game/Board.cpp Game/Block.cpp Game/GarbageBlock.cpp AI/ProSim.cpp)
 
 ########################################
 # Installation

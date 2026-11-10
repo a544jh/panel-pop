@@ -844,6 +844,10 @@ const std::list<Board::GarbageSpawn> &Board::getGarbageQueue() const {
     return _garbageQueue;
 }
 
+int Board::getGarbageSpawnPosition(int i) const {
+    return _garbageSpawnPositions[i];
+}
+
 bool Board::isTickChainEnd() const {
     return _tickChainEnd;
 }

@@ -41,6 +41,9 @@ class GarbageBlock {
   bool isInitialFall() const {
       return _initialFall;
   }
+  bool isFalling() const {
+      return _falling;
+  }
 
  private:
   int _x, _y; //coordinates of upper-right corner;

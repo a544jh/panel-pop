@@ -156,8 +156,10 @@ played by a human.
 |---|---|
 | `AIStrategy.h/.cpp` | interface, shared cursor-path helper, registry, `parseSpec()` |
 | `QwenStrat.h/.cpp` | the default strategy, key `qwen` |
+| `ProStrategy.h/.cpp` | plays like a good human player, key `pro` (see "Pro" below) |
 | `BasicStrategy.h/.cpp` | the original AI, key `basic` (`BoardScanner` + the old `AIBoardController` move ordering) |
-| `SimBoard.h/.cpp` | headless copy of the board rules used for lookahead |
+| `SimBoard.h/.cpp` | headless copy of the board rules used for lookahead by `qwen` |
+| `ProSim.h/.cpp` | tick-exact board model used by `pro`, checked by `prosim-check` |
 | `AIBoardController.*`, `BoardScanner.*` | board 2 controller / the chain scorer the original AI wraps |
 
 The controller outlives the board: `VsGame::reset()` (the next round of a VS
@@ -177,12 +179,14 @@ Selection, in order of precedence:
 2. `strategy=` in the `[ai]` section of `panelpop.ini` - written by the options
    menu item "AI strategy", read by `Config/ConfigHandler::getAiStrategy()`;
    used whenever a `AIGameState` is created
-3. `DEFAULT_KEY` in `AIStrategy.cpp` (currently `qwen`) when the ini has nothing
+3. the first entry of `DESCRIPTORS` in `AIStrategy.cpp` (currently `qwen`)
+   when the ini has nothing; the title screen demo always uses it
 
-There is no strategy env var. The environment only tunes the planner:
-`PANELPOP_QWEN_WEIGHTS="k=v,..."` and `PANELPOP_AI_DEBUG=1` (prints each plan).
-A key may also carry tuning inline: `qwen,cand=3,budget=60`
-(`AIStrategies::parseSpec`).
+There is no strategy env var. The environment only tunes the planners:
+`PANELPOP_QWEN_WEIGHTS="k=v,..."` and `PANELPOP_AI_DEBUG=1` (prints each plan)
+for `qwen`, `PANELPOP_PRO_OPTIONS="k=v,..."`, `PANELPOP_PRO_DEBUG=1` and
+`PANELPOP_PRO_VERIFY=1` for `pro`. A key may also carry tuning inline:
+`qwen,cand=3,budget=60`, `pro,pace=3` (`AIStrategies::parseSpec`).
 
 ### QwenStrat
 
@@ -260,6 +264,120 @@ Two consequences worth knowing:
   badly once: the model invented buffer rows the real board never produces).
 - Nothing writes back into a live board: `plan()` only reads.
 
+`SimBoard` has known divergences from `Board` (left as they are; `pro` uses
+its own model, below): `import()` drops the float timer of floating blocks
+(they start falling up to 12 ticks early), the empty half of a block-into-air
+swap is turned into a `BLOCK` of colour `COUNT` that stays on the board after
+the swap, the empty half's swap timer is not imported, and garbage `falling`
+is always imported as false. The lockstep checker in `tools/prosim-check`
+found them; pointing it at `SimBoard` reproduces them.
+
+### Pro (`ProStrategy`, key `pro`)
+
+Built to *look* like a good Panel de Pon player: it builds chains on purpose,
+extends running chains with skill-chain swaps timed against the falling
+blocks, keeps a flat stack at a useful height (raising it when material runs
+low), digs through garbage, and moves at a human pace instead of one input
+per frame. Selectable in Options -> "AI strategy" (menu order: QwenStrat,
+Pro, Basic) or with `strategy pro [board]` on the console.
+
+One decision (`plan()`):
+
+1. Import the board into `ProSim` (exact, see below) and list candidate
+   moves: every single swap, every *drag* (one block slid 2-3 columns along
+   its row, swap after swap, `drag`), a forced raise, and waiting. Each move
+   is the literal action list the controller will play: cursor path first,
+   one input every `pace` ticks (`fastPace` while a chain runs, in danger or
+   with garbage queued), the planning tick itself included.
+2. Play every candidate on a copy of the model with exactly those actions,
+   then let the model run on until nothing is active and any chain has ended
+   (`rollout()`, capped at 1500 ticks). Timing is therefore real: a swap that
+   would extend a chain is only found if the cursor gets there before the
+   falling block lands - that is where the skill chains come from.
+3. Value = what happened + what the settled board promises (`evaluate()`):
+   - sent: `row * rows * (1 + chainGrowth * (rows - 1))` per finished chain
+     (rows = chain - 1, as `VsGame` sends), `comboCell` per garbage cell a
+     combo sends, `clearCell` per garbage cell turned into blocks;
+   - chain potential: the best chain one more swap or short drag could start
+     on the settled board, found by a timing-free resolver (apply the move,
+     let blocks fall, clear runs of 3+, repeat; every round after the first
+     is a link), times `potential`; plus `options` per available match;
+   - stack: `danger * (h - 7)^2` per column above 7 rows (garbage queued to
+     drop counts as height), `flat` per unit of height difference, `tower`
+     for lone tall columns, `garbage` per garbage cell, a big penalty while
+     the top-out grace timer runs, and `low` per row of *blocks* missing
+     below `comfort` rows. Garbage does not count as material - a board that
+     is mostly garbage over a few blocks is the most dangerous one there is.
+   - minus `effort` per input, so nothing is done for nothing.
+4. The best `width` moves on a calm board get a second move searched on top
+   (`depth=2`), weighted `follow`: setups that pay off one move later.
+   During a chain the single-move search is enough, and cheaper.
+5. Hysteresis: swapping the pair just swapped straight back costs `undo`
+   unless it makes something happen; standing still while about to top out
+   or buried costs `scramble`, so it fights on like a player would.
+
+Knobs (`pro,k=v,...` or `PANELPOP_PRO_OPTIONS`): `pace` (4), `fastPace` (3),
+`drag` (3), `depth` (2), `width` (4), `budget` (60000 simulated ticks per plan,
+deterministic - not wall clock), `waitCalm`/`waitActive` (6/3 ticks between
+looks when waiting), and the weights `row` 100, `chainGrowth` 0.25,
+`potential` 0.6, `comboCell` 10, `clearCell` 8, `effort` 1.5, `flat` 4,
+`tower` 15, `low` 20, `comfort` 6, `danger` 25, `garbage` 2, `options` 3,
+`follow` 0.8, `undo` 40, `scramble` 80.
+
+- `PANELPOP_PRO_DEBUG=1` prints one line per plan (`pro: t=... chain=...
+  swap(x,y) v=... sent=... maxc=... pot=... sims=... ms=... [inputs]`) and
+  `pro: skill+N at chain C` whenever a move makes a running chain N links
+  longer than just watching it would.
+- `PANELPOP_PRO_VERIFY=1` (also on with DEBUG) checks at every plan that the
+  real board is exactly where the model said it would be (cells, cursor,
+  stack, score) and prints `prediction miss` otherwise. Garbage the opponent
+  sent in between and invented colours are not counted as misses. It reported
+  none over thousands of plans in VS games.
+- Cost: `AI/ProSim.cpp` and `AI/ProStrategy.cpp` are compiled with `-O2` even
+  in Debug builds (`set_source_files_properties` in `CMakeLists.txt`).
+  Measured in a VS game: a plan every ~6.5 ticks, 3 ms on average (median 2,
+  95th percentile 10, worst 26), about 0.5 ms per game tick overall.
+- Pace: 4 ticks per input calm, 3 in a hurry - 15-20 inputs/s, fast but
+  human. `pace=3,fastPace=2` plays stronger (see benchmarks) and looks
+  robotic sooner; `pace=1` is frame-perfect.
+
+### ProSim
+
+`ProSim` is `pro`'s board model: a compact, copyable re-implementation of
+`Board::tick()` and the board input functions, plus the cursor, so an action
+list plays on it exactly as `AIBoardController` plays it on the real board
+(`step(action)` = one controller tick + one board tick). It follows
+`Board.cpp` function by function, quirks included: the
+`it = list.erase(it); continue;` loops in `handleGarbageQueue()` and
+`handleBlockTimers()` skip the next element and, when the erased one was last,
+wrap round to `begin()` (libstdc++) and visit the rest a second time; combos
+score the chain bonus twice; the panic flag only looks at row 9; `+10` per
+block is scored at the explosion *animation* tick; garbage only spawns when
+rows 10-23 are completely empty; and so on. It only deviates where `Board`
+has undefined behaviour (garbage resting on row 0 reads `_tiles[-1]`).
+
+What it cannot know: colours of rows that do not exist yet (new buffer rows
+after the first, garbage interiors after their first row) come from its own
+PRNG, and `inventedColors()` turns true once one is on the board; and garbage
+the opponent sends after `import()`.
+
+`tools/prosim-check` checks it against the real board in lockstep:
+
+```
+cmake --build build --target prosim-check     # not built by default
+./build/prosim-check [seed] [ticks] [window] [swap%]
+```
+
+It drives a `Board` with random inputs and random incoming garbage and, every
+tick, compares every field (cells and their timers, chain flags, cursor,
+score, stack, grace, garbage blocks and queue, spawn positions) with a model
+imported one tick earlier and with one imported once per window and fed the
+same inputs. It exits 1 on any difference. Planting a one-tick error in the
+float timer, or dropping the list wrap-around, makes it fail at once. Run it
+after any change to `Board`: the skill chains depend on the model being exact.
+`Board::getGarbageSpawnPosition()` and `GarbageBlock::isFalling()` exist so
+`import()` can copy that state.
+
 ### AI benchmarks (`tools/aibench`)
 
 `bench.py` measures one strategy over a *range of seeds*; `match.py` plays two
@@ -309,6 +427,23 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
     even (6-10 on seeds 2000-2007, 18-14 over 32 games on seeds 3000-3015),
     while `cand=1` lost to `cand=3` 13-19 (seeds 3100-3115) - do at least a few
     refinements, the exact number is noise.
+- `pro` vs `qwen` (4 jobs, 6000 frames, every game decided by a top-out):
+  - final defaults: **23-1** on seeds 8000-8011, never used for tuning (the
+    loss went to points, 5080-5023); 16-0 on seeds 6000-6007 (used for
+    tuning). `pro` vs `basic`: 8-0 (seeds 9000-9003).
+  - the steps on the way, same seeds 6000-6007: first version (pace 3/2)
+    14-2; counting blocks instead of height as material (a board of garbage
+    over a few blocks no longer looks comfortable) plus the `undo` rule 16-0;
+    human pace 4/3 14-2 (23-1 on unseen seeds 7000-7011); `scramble` (fight
+    on instead of idling when buried) 16-0. Both 14-2 losses were the same
+    story: `pro` spent its stack on a 6-chain, `qwen` answered with a 7-chain
+    and six rows landed on an empty board.
+  - what it looks like (seed 6006, `pro` vs `qwen`, 3500 ticks of json
+    snapshots plus `PANELPOP_PRO_DEBUG`): `pro`
+    sent a 7-chain and a 6-chain built with 11 skill-chain links, moved its
+    cursor ~3 cells/s against `qwen`'s ~8, kept its stack at ~7.7 rows, and
+    the model predicted every plan exactly. A `pro` game costs about as much
+    CPU as the `qwen` side of it; a 24-game match at 4 jobs takes ~15 min.
 
 ## Gotchas
 
@@ -343,6 +478,13 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
   `state` reports `DemoGameState`. `goto` skips fades.
 - **Game over needs `Esc`/`Return`** to reset the game (see
   `GameState::tick()`).
+- **A swap counts as an active block.** `Board::activeBlocks()` is true while
+  any block is swapping, and the top-out grace timer, the automatic stack
+  raise and the spawning of queued garbage all wait for no active blocks. So
+  a player (or AI) that keeps swapping holds off garbage and stays alive on
+  a full board; long chains do the same legitimately. `pro` ends up doing
+  this when it is about to top out (see `scramble`) - it looks like
+  panicked button mashing, and it is what the rules reward.
 - **The AI costs CPU.** `QwenStrat` re-plans as soon as its queued actions run
   out (`replan`/`replanActive`) and its search budget is wall clock, so one
   6000-tick AI game is a few seconds of pure C++ and a benchmark with 8 jobs is
