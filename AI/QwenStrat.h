@@ -28,6 +28,11 @@ class QwenStrat : public AIStrategy {
 
   std::vector<AIStrategyAction> plan(const Board &board) override;
 
+  // Drops the plan timer: it counts the board's logic ticks, which start over
+  // when a new round begins. Without this the AI would not search again until
+  // the fresh board had ticked as far as the previous round had run.
+  void reset() override;
+
   // Weight tuning: "height=12,holes=20" (see the .cpp).
   void setOptions(const std::string &options) override;
 

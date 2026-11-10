@@ -32,6 +32,8 @@ class AIBoardController : public BoardController {
   std::unique_ptr<AIStrategy> _strategy;
   std::vector<AIStrategyAction> _actions;
   size_t _nextAction;
+  // Board tick of the previous tick(), to notice the board restarting.
+  unsigned int _lastTickRun;
 
   void doAction(AIStrategyAction action);
 };

@@ -32,6 +32,9 @@ AIStrategy::~AIStrategy() {
 void AIStrategy::setOptions(const std::string &) {
 }
 
+void AIStrategy::reset() {
+}
+
 const std::vector<std::string> &AIStrategies::keys() {
   static std::vector<std::string> keys;
   if (keys.empty()) {

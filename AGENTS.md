@@ -151,6 +151,15 @@ played by a human.
 | `SimBoard.h/.cpp` | headless copy of the board rules used for lookahead |
 | `AIBoardController.*`, `BoardScanner.*` | board 2 controller / the chain scorer the original AI wraps |
 
+The controller outlives the board: `VsGame::reset()` (the next round of a VS
+match, after `Esc`/`Return` on a game-over screen) assigns the `Board::reset()`
+copy back over the same board object, so the `Board&` in `BoardController` stays
+valid but `Board::getTicksRun()` starts from 0 again. `AIBoardController::tick()`
+notices that counter going backwards and calls `AIStrategy::reset()` (clears
+`QwenStrat::_nextPlanTick`) plus drops the actions queued for the old board.
+Strategies throttle themselves on board ticks, so skipping that call leaves the
+AI silently idle for as long as the previous round lasted.
+
 Selection, in order of precedence:
 
 1. debug console `strategy <key> [board]` on a running game - live swap, and
@@ -397,6 +406,16 @@ with the live board, and because UBSan trips on a scripted session:
 - `FadeTransition::tick()` created the next state in `render()` only, so with
   `--no-render` `_nextState` stayed null and the transition never produced a
   state. It is now created in `tick()`.
+- The AI stopped playing after the first round of a "VS AI" match (the second
+  round, and every one after it). The strategy object lives in the long-lived
+  `AIBoardController`, and `QwenStrat::plan()` refuses to search before the
+  board's tick counter reaches `_nextPlanTick` - a number the *previous* round
+  left in the future of the freshly reset board. Measured with
+  `PANELPOP_AI_DEBUG=1` on seed 5000: round 1 ends at `ticks=1233`, the reset
+  board then produced no plan at all for its first 1232 ticks (score 0, cursor
+  never moved), and the first plan appeared at exactly `ticks=1233`. Added
+  `AIStrategy::reset()`, called by `AIBoardController` when the board's tick
+  counter goes backwards; rounds 2 and 3 now score like round 1.
 
 With those in, a scripted session (endless with garbage, and a full VS AI game)
 is clean: `valgrind --leak-check=full` reports `definitely lost: 0 bytes` (all

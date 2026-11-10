@@ -5,17 +5,37 @@
 AIBoardController::AIBoardController(Board &board) :
     BoardController(board),
     _strategy(AIStrategies::create(AIStrategies::defaultKey())),
-    _nextAction(0) {
+    _nextAction(0),
+    _lastTickRun(0) {
 }
 
 AIBoardController::AIBoardController(Board &board, std::unique_ptr<AIStrategy> strategy) :
     BoardController(board),
     _strategy(std::move(strategy)),
-    _nextAction(0) {
+    _nextAction(0),
+    _lastTickRun(0) {
 }
 
 void AIBoardController::tick() {
-  if (_board.getState() != Board::RUNNING || _strategy == nullptr) {
+  if (_strategy == nullptr) {
+    return;
+  }
+
+  // A new round replaces the board in place (VsGame::reset() assigns the
+  // Board::reset() copy back over it), so the tick counter we hand to the
+  // strategy restarts at 0 while this controller - and the strategy inside it
+  // - lives on. Tell the strategy to forget its plan timer and drop whatever
+  // actions were queued for the old board, or it sits idle for as long as the
+  // previous round lasted.
+  const unsigned int tickRun = _board.getTicksRun();
+  if (tickRun < _lastTickRun) {
+    _strategy->reset();
+    _actions.clear();
+    _nextAction = 0;
+  }
+  _lastTickRun = tickRun;
+
+  if (_board.getState() != Board::RUNNING) {
     return;
   }
 

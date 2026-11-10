@@ -140,6 +140,10 @@ void QwenStrat::setOptions(const std::string &options) {
   }
 }
 
+void QwenStrat::reset() {
+  _nextPlanTick = 0;
+}
+
 const std::string &QwenStrat::name() const {
   static const std::string kName = "QwenStrat";
   return kName;

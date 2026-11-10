@@ -47,6 +47,13 @@ class AIStrategy {
   // out of queued actions; the board is only read here, the actions are
   // applied to it later.
   virtual std::vector<AIStrategyAction> plan(const Board &board) = 0;
+
+  // The board this strategy plays restarted (a new round in a VS match):
+  // Board::reset() puts a brand new board in place, so its tick counter
+  // starts from 0 again and the tiles are unrelated to the old ones. Drop
+  // anything keyed on the previous board - plan timing in particular, or a
+  // strategy would keep waiting for a tick number that already passed.
+  virtual void reset();
 };
 
 // Registry of the available strategies. The first entry is the default used
