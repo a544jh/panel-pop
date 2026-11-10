@@ -25,15 +25,15 @@ DemoGameState::DemoGameState() {
     _game->getBoard(0).setEventHandler(new BoardEventHandler(*_gameRenderer, 0));
     _game->getBoard(1).setEventHandler(new BoardEventHandler(*_gameRenderer, 1));
 
-    // Both boards play the strategy chosen in the options menu ("AI
-    // strategy"), so the demo shows the AI that "VS AI" would put up,
-    // against itself.
-    const std::string strategy = ConfigHandler::getInstance().getAiStrategy();
+    // Player 1 plays the "AI strategy" from the options menu (the one "VS AI"
+    // puts up), player 2 the "P2 AI" one, which follows "AI strategy" until
+    // it is set - so by default the selected AI plays itself.
+    ConfigHandler &config = ConfigHandler::getInstance();
     _playerBoardController = new AIBoardController(_game->getBoard(0),
-                                                   AIStrategies::create(strategy));
+                                                   AIStrategies::create(config.getAiStrategy()));
 
     _opponentBoardcontollers.push_back(new AIBoardController(_game->getBoard(1),
-                                                             AIStrategies::create(strategy)));
+                                                             AIStrategies::create(config.getDemoP2Strategy())));
 }
 
 void DemoGameState::tick() {

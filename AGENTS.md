@@ -176,11 +176,16 @@ Selection, in order of precedence:
 1. debug console `strategy <key> [board]` on a running game - live swap, and
    it replaces a human controller with an AI one, which is how the benchmarks
    drive both boards (`GameState::setAiStrategy`)
-2. `strategy=` in the `[ai]` section of `panelpop.ini` - written by the options
-   menu item "AI strategy", read by `Config/ConfigHandler::getAiStrategy()`;
-   used whenever an `AIGameState` is created (board 2) and whenever the title
-   screen demo (`DemoGameState`) starts - there it plays both boards, so the
-   demo shows the selected AI against itself
+2. the `[ai]` section of `panelpop.ini`, written by the options menu:
+   - `strategy=` ("AI strategy", `ConfigHandler::getAiStrategy()`): the "VS
+     AI" opponent (board 2 of an `AIGameState`) and player 1 of the title
+     screen demo (`DemoGameState`);
+   - `demo_p2_strategy=` ("P2 AI", `ConfigHandler::getDemoP2Strategy()`):
+     player 2 of the demo. Until it is set it follows `strategy=`, so by
+     default the demo shows the selected AI against itself.
+
+   Both are read when the state starts, so a change applies to the next game
+   or demo.
 3. the first entry of `DESCRIPTORS` in `AIStrategy.cpp` (currently `qwen`)
    when the ini has nothing
 

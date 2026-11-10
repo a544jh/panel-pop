@@ -223,6 +223,14 @@ void ConfigHandler::setAiStrategy(const std::string &key) {
   _settingsTree.put("ai.strategy", key);
 }
 
+std::string ConfigHandler::getDemoP2Strategy() {
+  return _settingsTree.get<std::string>("ai.demo_p2_strategy", getAiStrategy());
+}
+
+void ConfigHandler::setDemoP2Strategy(const std::string &key) {
+  _settingsTree.put("ai.demo_p2_strategy", key);
+}
+
 int ConfigHandler::getEndlessHighScore() {
     return _settingsTree.get("endless.high_score", 0);
 }

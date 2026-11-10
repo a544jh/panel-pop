@@ -33,9 +33,16 @@ class ConfigHandler {
   int getMusicVolume();
   int getSfxVolume();
 
-  // Key of the AI strategy used in "VS AI" (see AI/AIStrategy.h).
+  // Key of the AI strategy used in "VS AI" and by player 1 of the title
+  // screen demo (see AI/AIStrategy.h).
   std::string getAiStrategy();
   void setAiStrategy(const std::string &key);
+
+  // Key of the AI strategy player 2 of the title screen demo uses ("P2 AI"
+  // in the options). Until it is set it follows getAiStrategy(), so the demo
+  // shows the selected AI against itself.
+  std::string getDemoP2Strategy();
+  void setDemoP2Strategy(const std::string &key);
 
   int getEndlessHighScore();
   void setEndlessHighScore(int);
