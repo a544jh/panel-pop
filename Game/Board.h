@@ -66,6 +66,14 @@ class Board {
   static const int
       ADD_EXPL_TICKS = 9; //the total explosion time for a combo is 61 + 9 * n, where n is the  number of blocks
   static const int SWAP_DELAY = 3;
+  // Least number of logic ticks between the starts of two swaps. A swap keeps
+  // its two blocks in the air for SWAP_DELAY ticks, and only a tick with
+  // nothing in the air ends a chain, drops queued garbage, raises the stack
+  // and runs the top-out grace timer (see initTick(), raiseStack()). A swap
+  // therefore covers the ticks k..k+SWAP_DELAY-1, and making the next one
+  // wait SWAP_DELAY+1 ticks forces the board to go idle in between: nobody,
+  // human or AI, can hold a game open by mashing the swap button.
+  static const int SWAP_COOLDOWN = SWAP_DELAY + 1;
   static const int BOARD_HEIGHT = 24;
   static const int TOP_ROW = 11;
   static const int BOARD_WIDTH = 6;
@@ -96,6 +104,9 @@ class Board {
   bool isPanic() const;
   int getScore() const;
   unsigned int getTicksRun() const;
+  // Ticks that still have to pass before the next swap is accepted (see
+  // SWAP_COOLDOWN); 0 when a swap can be started right now.
+  int getSwapCooldown() const;
   const Tile &getTile(int row, int col) const;
   const std::list<GarbageBlock> &getGarbageBlocks() const;
   const std::list<GarbageSpawn> &getGarbageQueue() const;
@@ -122,6 +133,7 @@ class Board {
   int _stackRaiseTimer;
   bool _stackRaiseForced;
   int _graceTimer;
+  int _swapCooldown;
   bool _activeBlocks;
   int _chainCounter;
   bool _tickChain; //true if a chain has occurred during the tick

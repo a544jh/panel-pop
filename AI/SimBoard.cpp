@@ -69,6 +69,7 @@ SimBoard::SimBoard() :
     _stackRaiseTimer(0),
     _stackRaiseForced(false),
     _graceTimer(0),
+    _swapCd(0),
     _topRow(H - 1),
     _changed(true),
     _chainCounter(1),
@@ -279,6 +280,7 @@ void SimBoard::import(const Board &board) {
   _stackRaiseTimer = board.getStackRaiseTimer();
   _stackRaiseForced = board.isStackRaiseForced();
   _graceTimer = board.getGraceTimer();
+  _swapCd = board.getSwapCooldown();
   _chainCounter = board.getChainCounter();
   _lastChain = board.getLastChain();
   _maxChain = board.getChainCounter();
@@ -378,7 +380,7 @@ bool SimBoard::canSwap(int x, int y) const {
 }
 
 void SimBoard::startSwap(int x, int y) {
-  if (!canSwap(x, y)) {
+  if (_swapCd > 0 || !canSwap(x, y)) {
     return;
   }
   _cells[y][x].type = BLOCK;
@@ -387,6 +389,7 @@ void SimBoard::startSwap(int x, int y) {
   _cells[y][x + 1].state = SWAPPING_LEFT;
   _cells[y][x].swapTimer = 0;
   _cells[y][x + 1].swapTimer = 0;
+  _swapCd = Board::SWAP_COOLDOWN;
   _changed = true;
   if (y > _topRow) {
     _topRow = y;
@@ -417,6 +420,9 @@ void SimBoard::tick() {
   }
 
   _tickMatched = 0;
+  if (_swapCd > 0) {
+    --_swapCd;
+  }
   _activeBlocks = activeBlocks();
   if (!_activeBlocks && _chainCounter > 1) {
     _lastChain = _chainCounter; // chain end: sends garbage in VsGame

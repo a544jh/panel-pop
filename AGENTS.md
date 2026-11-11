@@ -263,7 +263,8 @@ console path honours them too.
 chains and their score, floating/explosion timers, the stack rise, garbage
 spawns including the gray/transformation rows), and the input layer mirrors
 `Board::inputSwapBlocks()` / `Board::inputForceStackRaise()` (`canSwap`,
-`startSwap`, `forceRaise`). `import(const Board&)` copies a live board into the
+`startSwap`, `forceRaise`) - the `SWAP_COOLDOWN` gate included (`_swapCd`,
+copied by `import()`). `import(const Board&)` copies a live board into the
 model; `fillBufferRow()` reproduces the buffer-row pattern of the real game (a
 colour different from the block below and from the buffer neighbour to the
 left); `setRng(seed)` gives the model its own deterministic PRNG for the
@@ -380,6 +381,16 @@ one block, it raises its stack for new material and starts over. With blocks
 on the top row it simply keeps holding - a board that is never idle cannot
 top out, however short the grace period has become.
 
+That description is what the strategy was written for; `Board::SWAP_COOLDOWN`
+(see Gotchas) cut its leash. Swaps are good for 3 ticks out of every 4 they
+are used on, so the board goes idle between them: the park-and-hop trick of
+swapping an inert pair forever is impossible, a held chain survives only as
+long as real falling and exploding blocks keep the board busy, and everything
+the opponent queued lands once the chain ends. The whole apparatus is still
+in the code (`park()`, `Travel`'s hops, `hold`, `patience`, `blip()`,
+`secure()`) and still buys a few ticks in an emergency, but it can no longer
+freeze a match, and the strategy now loses games it used to draw.
+
 One decision (`plan()`):
 
 1. Import the board, then run the model forward with no input to learn
@@ -403,7 +414,10 @@ One decision (`plan()`):
    *hops* - swaps on harmless pairs - wherever the board would otherwise go
    idle on the way: swap, two steps, swap, two steps... A pair is harmless
    when both are resting blocks of the same colour (nothing changes), or
-   match nothing either way round; any legal swap is the last resort.
+   match nothing either way round; any legal swap is the last resort. Its
+   idea of a swap every third tick predates `SWAP_COOLDOWN`, so hops it wants
+   closer than 4 ticks apart are refused by the model it is scored on - the
+   values stay honest, the packing is just not optimal.
 5. Each candidate is played on the model, action by action. A tick that ends
    a held chain or runs the grace timer marks it `LOST` (value -1e6). A
    rearrangement that leaves nothing active gets a tail from `park()`: one
@@ -432,10 +446,12 @@ the moment the chain is let go, and digging out needs blocks), `overflow`
 board, `breach` (60) per garbage row let in, and `tick`/`effort` for the
 time and the swaps a move takes.
 
-Other knobs: `hold` (1; 0 never holds a chain), `target` (13, i.e. twelve
-rows of garbage, the most `VsGame` sends), `patience` (600), `budget` (10000
-simulated ticks per plan, deterministic), `busyWait` (5 ticks between looks
-while explosions keep the board busy anyway).
+Other knobs: `hold` (1; 0 never holds a chain - since the swap cooldown 0
+measures slightly better, see the benchmarks, but the default is unchanged),
+`target` (13, i.e. twelve rows of garbage, the most `VsGame` sends),
+`patience` (600), `budget` (10000 simulated ticks per plan, deterministic),
+`busyWait` (5 ticks between looks while explosions keep the board busy
+anyway).
 
 - `PANELPOP_FABLE_DEBUG=1` prints one line per plan (`fable: t=... chain=...
   free=... swap(x,y) v=... links=... [actions]`, `LOST` if the move would
@@ -444,12 +460,16 @@ while explosions keep the board busy anyway).
   `secured the plan` and `raise at the brim`.
 - Cost: `AI/ClaudeFableStrategy.cpp` is compiled with `-O2` in Debug builds
   too. Measured in games against `claude`: a plan every ~5 ticks, 9-10 ms on
-  average (95th percentile 13-15, worst 42), about 2 ms per game tick.
-- What it cannot do: while it holds a chain nothing can arrive, but the
-  stack does not rise either, so every chain ends in an idle phase and what
-  the opponent queued lands then. Deep under garbage with few blocks left
-  it can end up with no match to make. It still does not die (it holds), but
-  it stops scoring; two ClaudeFables can lock each other up like that.
+  average (95th percentile 13-15, worst 42), about 2 ms per game tick. Under
+  the swap cooldown it plans less often (nothing to gain from looking every
+  third tick): ~6 ticks per plan, same ~10 ms per plan, and a 4200-tick
+  self-play game that used to take 39 s of wall clock now takes ~10 s.
+- What it cannot do: deep under garbage with few blocks left it can end up
+  with no match to make, and it then stands still (the `bored` rule is what
+  gets it moving again). It used to survive that by holding the board idle-
+  free forever; with the swap cooldown the board goes idle, the grace timer
+  runs and it tops out like anybody else. Two ClaudeFables can still lock
+  each other under garbage for a long time, but one of them now loses.
 
 ### ClaudeSim
 
@@ -463,8 +483,10 @@ list plays on it exactly as `AIBoardController` plays it on the real board
 wrap round to `begin()` (libstdc++) and visit the rest a second time; combos
 score the chain bonus twice; the panic flag only looks at row 9; `+10` per
 block is scored at the explosion *animation* tick; garbage only spawns when
-rows 10-23 are completely empty; and so on. It only deviates where `Board`
-has undefined behaviour (garbage resting on row 0 reads `_tiles[-1]`).
+rows 10-23 are completely empty; a swap is refused while the `SWAP_COOLDOWN`
+counter runs (`_swapCd`, copied from the live board by `import()`); and so on.
+It only deviates where `Board` has undefined behaviour (garbage resting on
+row 0 reads `_tiles[-1]`).
 
 What it cannot know: colours of rows that do not exist yet (new buffer rows
 after the first, garbage interiors after their first row) come from its own
@@ -480,9 +502,9 @@ cmake --build build --target claudesim-check     # not built by default
 
 It drives a `Board` with random inputs and random incoming garbage and, every
 tick, compares every field (cells and their timers, chain flags, cursor,
-score, stack, grace, garbage blocks and queue, spawn positions) with a model
-imported one tick earlier and with one imported once per window and fed the
-same inputs. It exits 1 on any difference. Planting a one-tick error in the
+score, stack, grace, the swap-cooldown counter, garbage blocks and queue,
+spawn positions) with a model imported one tick earlier and with one imported
+once per window and fed the same inputs. It exits 1 on any difference. Planting a one-tick error in the
 float timer, or dropping the list wrap-around, makes it fail at once. Run it
 after any change to `Board`: the skill chains depend on the model being exact.
 `Board::getGarbageSpawnPosition()` and `GarbageBlock::isFalling()` exist so
@@ -541,6 +563,11 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
   - final defaults: **23-1** on seeds 8000-8011, never used for tuning (the
     loss went to points, 5080-5023); 16-0 on seeds 6000-6007 (used for
     tuning). `claude` vs `basic`: 8-0 (seeds 9000-9003).
+  - **those records predate `Board::SWAP_COOLDOWN`** (see Gotchas). With the
+    swap cooldown in, the same harness and the same seeds give **11-5**
+    (seeds 7200-7207) and **10-6** (6000-6007): the rule costs `claude` most
+    of its margin over `qwen`, because its endgame trick was mashing swap to
+    keep the board active. Not re-tuned since.
   - the steps on the way, same seeds 6000-6007: first version (pace 3/2)
     14-2; counting blocks instead of height as material (a board of garbage
     over a few blocks no longer looks comfortable) plus the `undo` rule 16-0;
@@ -556,6 +583,16 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
     CPU as the `qwen` side of it; a 24-game match at 4 jobs takes ~15 min.
 
 - `claudefable` (4 jobs, 6000 frames, seats swapped every game):
+  - **the records below predate `Board::SWAP_COOLDOWN`** (see Gotchas). With
+    the cooldown in, same harness, 16 games per match, seats swapped:
+    vs `claude` **13-3** (seeds 9500-9507) and **9-7** (7200-7207), vs `qwen`
+    **11-5** (9500-9507), vs `basic` **15-1** (9500-9507), self-play **4-4**
+    (4200-4207). Every one of those games ended in a top-out (before, long
+    matches simply timed out), and games are shorter and cheaper: a
+    ClaudeFable self-play game now runs ~2000-4200 ticks instead of running
+    out the 6000-tick cap. `claudefable,hold=0` beat the default **10-6**
+    (7200-7207) and went **14-2** against `claude` (9500-9507) - holding is
+    no longer worth its cost, the default is still `hold=1`.
   - final defaults against `claude`: **134-2** - 48-0 on seeds 9500-9523
     and 42-2 on seeds 9600-9621 (neither set used for tuning), 44-0 on seeds
     7200-7221 (used for tuning). 130 of the wins by top-out; both losses on
@@ -622,18 +659,40 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
   `state` reports `DemoGameState`. `goto` skips fades.
 - **Game over needs `Esc`/`Return`** to reset the game (see
   `GameState::tick()`).
-- **A swap counts as an active block.** `Board::activeBlocks()` is true while
-  any block is swapping, and the top-out grace timer, the automatic stack
-  raise and the spawning of queued garbage all wait for no active blocks. So
-  a player (or AI) that keeps swapping holds off garbage and stays alive on
-  a full board; long chains do the same legitimately. `claude` ends up doing
-  this when it is about to top out (see `scramble`) - it looks like
-  panicked button mashing, and it is what the rules reward.
-- **Holding is unbeatable by design.** `claudefable` uses the rule above on
-  purpose and all the time: a human playing "VS AI" against it will not see
-  it top out. It is the right opponent for benchmarking another AI and the
-  wrong one for a relaxed game; `claudefable,hold=0` switches the holding
-  off.
+- **A swap counts as an active block, but swaps are rate limited.**
+  `Board::activeBlocks()` is true while any block is swapping, and the top-out
+  grace timer, the automatic stack raise and the spawning of queued garbage
+  all wait for no active blocks: a player (or AI) that keeps swapping holds
+  off garbage and stays alive on a full board. Two swaps must however be
+  `Board::SWAP_COOLDOWN = SWAP_DELAY + 1` (4) logic ticks apart -
+  `Board::inputSwapBlocks()` refuses one started earlier (`_swapCooldown`,
+  `getSwapCooldown()`, decremented in `initTick()`). A swap only covers the
+  ticks k..k+SWAP_DELAY-1, so a spacing of 4 forces one tick per cycle with
+  nothing in the air: the tick that ends the chain, drops queued garbage,
+  raises the stack and runs the grace timer. The gate sits in `Board`, not in
+  a controller, so it binds human input, every `BoardController` and the debug
+  console alike. Without it a player that swaps on every third tick keeps the
+  board permanently active and freezes the match - no chain ever ends, nothing
+  ever lands, the grace timer never runs, nobody ever loses; that is exactly
+  how `claudefable` used to stall games out. `AI/ClaudeSim::swapAtCursor()`
+  and `AI/SimBoard::startSwap()` mirror the rule, both `import()`s copy the
+  counter from the live board, and `tools/claudesim-check` compares it every
+  tick - so a planner that queues a swap too early sees it refused on the
+  model exactly as on the real board. Real chains still keep a board busy on
+  their own (falling and exploding blocks), and `claude` still mashes swap
+  when it is about to top out (see `scramble`); it just cannot do it on every
+  third tick.
+- **`claudefable` can no longer hold a game open, and does top out.** Its
+  park-and-hop machinery (`park()`, the *hops* `Travel` inserts, the `hold`
+  and `patience` knobs) was written for the unlimited-swap rules: it froze the
+  board by swapping an inert pair every third tick, which the cooldown makes
+  impossible. It still builds and holds long chains (the falling blocks keep
+  the board active between swaps) and it is still the strongest strategy, but
+  it loses games now. `Travel` still assumes a swap every 3 ticks, so the
+  extra hops it plants in a cursor path are refused - plans stay correctly
+  valued (the model refuses them too), just not optimally packed. With the
+  cooldown in, `claudefable,hold=0` measured slightly *better* than the
+  default (see the benchmarks), so the holding rules are now mostly a cost.
 - **The AI costs CPU.** `QwenStrat` re-plans as soon as its queued actions run
   out (`replan`/`replanActive`) and its search budget is wall clock, so one
   6000-tick AI game is a few seconds of pure C++ and a benchmark with 8 jobs is

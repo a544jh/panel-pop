@@ -222,6 +222,7 @@ void ClaudeSim::import(const Board &board) {
   _raiseTimer = board.getStackRaiseTimer();
   _forced = board.isStackRaiseForced();
   _graceTimer = board.getGraceTimer();
+  _swapCd = board.getSwapCooldown();
   _active = board.hasActiveBlocks();
   _chainCounter = board.getChainCounter();
   _lastChain = board.getLastChain();
@@ -406,6 +407,10 @@ bool ClaudeSim::swapAtCursor() {
   if (_state != Board::RUNNING) {
     return false;
   }
+  // Board::SWAP_COOLDOWN: one swap at a time, with a gap between them.
+  if (_swapCd > 0) {
+    return false;
+  }
   if (!canSwap(_cursorX, _cursorY)) {
     return false;
   }
@@ -414,6 +419,7 @@ bool ClaudeSim::swapAtCursor() {
   if (_cursorY > _top) {
     _top = _cursorY;
   }
+  _swapCd = Board::SWAP_COOLDOWN;
   _changed = true;
   return true;
 }
@@ -463,6 +469,9 @@ void ClaudeSim::tick() {
   _tickMatched = 0;
   _tickChain = false;
   _tickChainEnd = false;
+  if (_swapCd > 0) {
+    --_swapCd;
+  }
   _active = anyActive();
   if (!_active) {
     if (_chainCounter > 1) {

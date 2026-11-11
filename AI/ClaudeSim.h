@@ -108,6 +108,12 @@ class ClaudeSim {
 
   // Board::swappable() for both halves plus "at least one is a block".
   bool canSwap(int x, int y) const;
+  // Board::getSwapCooldown(): ticks that must still pass before a swap is
+  // accepted (see Board::SWAP_COOLDOWN). Position independent - it is about
+  // *when*, so it is checked where the swap is played, not in canSwap().
+  int swapCooldown() const {
+    return _swapCd;
+  }
 
   // Garbage the opponent sent (VsGame::handleGarbageSpawning()).
   void queueGarbage(bool fullWidth, int size, GarbageBlockType type);
@@ -238,6 +244,7 @@ class ClaudeSim {
   int _raiseTimer;
   bool _forced;
   int _graceTimer;
+  int _swapCd;   // Board::_swapCooldown
   bool _active;
   int _chainCounter;
   int _lastChain;

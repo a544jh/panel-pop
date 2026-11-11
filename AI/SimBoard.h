@@ -78,8 +78,13 @@ class SimBoard {
   // the pair (x, y) and (x + 1, y).
   bool canSwap(int x, int y) const;
   // Starts the swap; the tiles actually exchange places SWAP_DELAY ticks
-  // later, exactly as on the real board.
+  // later, exactly as on the real board. Like Board::inputSwapBlocks() it is
+  // refused while the cooldown of the previous swap runs (see
+  // Board::SWAP_COOLDOWN); swapCooldown() says how many ticks are left.
   void startSwap(int x, int y);
+  int swapCooldown() const {
+    return _swapCd;
+  }
   // Forces the next stack step, as Board::inputForceStackRaise() does.
   void forceRaise();
 
@@ -211,6 +216,8 @@ class SimBoard {
   int _stackRaiseTimer;
   bool _stackRaiseForced;
   int _graceTimer;
+  // Board::_swapCooldown: ticks before the next swap is accepted.
+  int _swapCd;
   // Highest row that holds anything; keeps the per-tick loops short.
   int _topRow;
   // Set when a cell changed since the last tick (swap, fall, match, spawn).

@@ -70,6 +70,7 @@ static bool compare(const Board &b, const ClaudeSim &m, int tick, const char *mo
     else if (b.getStackRaiseTicks() != m.stackRaiseTicks()) what = "raiseTicks";
     else if (b.isStackRaiseForced() != m.raiseForced()) what = "forced";
     else if (b.getGraceTimer() != m.graceTimer()) what = "grace";
+    else if (b.getSwapCooldown() != m.swapCooldown()) what = "swapCd";
     else if (b.getState() != m.state()) what = "boardState";
     else if (b.hasActiveBlocks() != m.activeFlag()) what = "active";
     else if (b.isPanic() != m.panic()) what = "panic";

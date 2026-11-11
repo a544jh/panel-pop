@@ -22,6 +22,7 @@ Board::Board() :
     _stackRaiseTimer(0),
     _stackRaiseForced(false),
     _graceTimer(0),
+    _swapCooldown(0),
     _activeBlocks(false),
     _chainCounter(1),
     _tickChain(false),
@@ -255,6 +256,10 @@ void Board::inputSwapBlocks() {
     if (_state != RUNNING) {
         return;
     }
+    // One swap at a time, with a gap between them (see SWAP_COOLDOWN).
+    if (_swapCooldown > 0) {
+        return;
+    }
     if (!(swappable(_cursorY, _cursorX) && swappable(_cursorY, _cursorX + 1))
         || !(_tiles[_cursorY][_cursorX].type == BLOCK
             || _tiles[_cursorY][_cursorX + 1].type == BLOCK)) {
@@ -263,6 +268,7 @@ void Board::inputSwapBlocks() {
     _tiles[_cursorY][_cursorX].b._state = SWAPPING_RIGHT;
     _tiles[_cursorY][_cursorX + 1].b._state = SWAPPING_LEFT;
 
+    _swapCooldown = SWAP_COOLDOWN;
     _eventHandler->swap();
 }
 
@@ -270,6 +276,9 @@ void Board::initTick() {
     _tickMatched = 0;
     _tickChain = false;
     _tickChainEnd = false;
+    if (_swapCooldown > 0) {
+        --_swapCooldown;
+    }
     _activeBlocks = activeBlocks();
     //detect chain end
     if (!_activeBlocks) {
@@ -858,6 +867,10 @@ int Board::getLastChain() const {
 
 unsigned int Board::getTicksRun() const {
     return _ticksRun;
+}
+
+int Board::getSwapCooldown() const {
+    return _swapCooldown;
 }
 
 bool Board::blockOnRow(int row) {
