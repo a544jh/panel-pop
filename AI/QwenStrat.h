@@ -44,6 +44,8 @@ class QwenStrat : public AIStrategy {
     int y;
     double value;
     double followUp;
+    // Garbage cells this swap sets off on the spot (see digCellsForSwap()).
+    int dig;
   };
 
   // Tuning knobs, see the comment on evaluate().
@@ -60,6 +62,9 @@ class QwenStrat : public AIStrategy {
     double topThreat;
     double matchOptions;
     double optionBlocks;
+    double dig;
+    double garbageNear;
+    double raiseGarbage;
     double adjacency;
     double columnSpread;
     double raisePenalty;
@@ -80,10 +85,10 @@ class QwenStrat : public AIStrategy {
     int replanActiveTicks;
   };
 
-  // Prints the effective configuration under PANELPOP_AI_DEBUG, once.
+  // Prints the effective configuration under PANELPOP_AI_DEBUG.
   void dump();
 
-  bool _dumped;
+  mutable bool _dumped;
   Weights _w;
   Tuning _t;
   // Do not search again before the board had a chance to change.
@@ -93,8 +98,24 @@ class QwenStrat : public AIStrategy {
   double evaluate(const SimBoard &model, const SimBoard &base, bool survival) const;
   // Plays the model out for "ticks" and judges the result.
   double playAndValue(SimBoard &model, const SimBoard &base, int ticks, bool survival) const;
-  // Swaps that would score on the spot (and how many blocks they clear).
-  static void immediateMatches(const SimBoard &model, int &moves, int &blocks);
+  // Swaps that would score on the spot (and how many blocks they clear, and
+  // how much garbage those clears would set off).
+  static void immediateMatches(const SimBoard &model, int &moves, int &blocks,
+                               int &digCells);
+  // Length of the same-colour run through (row, col), horizontally or vertically.
+  static int runSpan(const SimBoard &model, int row, int col, bool horizontal);
+  // Garbage cells adjacent to that run: what a match there would dig at.
+  static int garbageAlongRun(const SimBoard &model, int row, int col, bool horizontal);
+  // Garbage cells a swap at (x, y) sets off on the spot; 0 when it matches
+  // nothing. This is the opportunity the search otherwise never sees: the
+  // first move of a dig only *converts* garbage into blocks, the payoff comes
+  // one cascade later.
+  static int digCellsForSwap(const SimBoard &model, int x, int y);
+  // Highest row holding garbage (-1 when there is none), and the number of
+  // garbage rows within `rows` of the top row - a garbage carpet low down is a
+  // material problem, one at row 10 is a deadline.
+  static int highestGarbageRow(const SimBoard &model);
+  static int garbageNearTop(const SimBoard &model, int rows);
   // Fills moves with every legal swap plus the forced raise and "pass",
   // ordered by value. The cursor distance is subtracted from the value, so
   // equal moves are picked by how quickly they can be played.

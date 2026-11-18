@@ -22,6 +22,9 @@ const uint32_t RNG_FOLLOWUP = 0x85ebca6bu;
 
 const double DEATH = -40000.0;
 
+// Rows of garbage below the top row that count as "close" (see garbageNearTop).
+const int GARBAGE_NEAR_ROWS = 3;
+
 // Move markers for the non-swap candidates.
 const int PASS = -1;
 const int RAISE = -2;
@@ -57,6 +60,11 @@ QwenStrat::QwenStrat() :
   _w.topThreat = 220.0;
   _w.matchOptions = 40.0;
   _w.optionBlocks = 4.0;
+  // Digging at garbage: a garbage cell a match sets off, garbage sitting close
+  // to the top row, and the cost of raising the stack while it is covered.
+  _w.dig = 40.0;
+  _w.garbageNear = 10.0;
+  _w.raiseGarbage = 400.0;
   _w.adjacency = 3.0;
   _w.columnSpread = 4.0;
   _w.raisePenalty = 0.0;
@@ -69,16 +77,16 @@ QwenStrat::QwenStrat() :
 }
 
 // Weight tuning from a "key=value,key=value" string. PANELPOP_QWEN_WEIGHTS
-// and the debug console ("strategy qwen,height=12") both end up here, which
-// is how the weights were measured and tuned.
+// and the debug console ("strategy qwen,height=12") both end up here, which is
+// how the weights are measured and tuned.
+//
+// Every knob by name, straight onto the member it sets. The names and the
+// members used to be two parallel arrays walked with an index, which silently
+// applied every weight to its neighbour two slots away ("height=12" moved
+// "holes") and read two pointers past the end for the last two names -
+// AddressSanitizer: global-buffer-overflow on "death=...". The tables live
+// inside setOptions() because they name QwenStrat's private types.
 void QwenStrat::setOptions(const std::string &options) {
-  // Every knob by name, straight onto the member it sets. The names and the
-  // members used to be two parallel arrays walked with an index, which silently
-  // applied every weight to its neighbour two slots away ("height=12" moved
-  // "holes") and read two pointers past the end for the last two names:
-  // AddressSanitizer global-buffer-overflow on "death=...". "replan=" wrote
-  // "replanActiveTicks" and "replanActive=" was ignored outright. The tables
-  // live here because they name QwenStrat's private types.
   struct TuningName {
     const char *name;
     int Tuning::*member;
@@ -115,6 +123,9 @@ void QwenStrat::setOptions(const std::string &options) {
       {"topThreat", &Weights::topThreat},
       {"matchOptions", &Weights::matchOptions},
       {"optionBlocks", &Weights::optionBlocks},
+      {"dig", &Weights::dig},
+      {"garbageNear", &Weights::garbageNear},
+      {"raiseGarbage", &Weights::raiseGarbage},
       {"adjacency", &Weights::adjacency},
       {"columnSpread", &Weights::columnSpread},
       {"raisePenalty", &Weights::raisePenalty},
@@ -183,10 +194,10 @@ void QwenStrat::setOptions(const std::string &options) {
   }
 }
 
-// The effective configuration, printed once per strategy so a tuning run can
-// be read back instead of assumed: the console builds a strategy and then hands
-// it the options from the spec string ("strategy qwen,height=12 2"), so a line
-// printed at construction would not be the configuration in use.
+// Prints the effective configuration under PANELPOP_AI_DEBUG, once per
+// strategy: the console builds one, then hands it the options from the spec
+// string ("strategy qwen,height=12 2"), so printing at construction or in
+// setOptions() would show a line that is not the configuration in use.
 void QwenStrat::dump() {
   if (_dumped || !getenv("PANELPOP_AI_DEBUG")) {
     return;
@@ -195,13 +206,15 @@ void QwenStrat::dump() {
   printf("qwen: ticks=%d followup=%d cand=%d budget=%u replan=%d replanActive=%d "
          "followupWeight=%.2f travel=%.2f | score=%.1f garbage=%.1f chainLevel=%.1f "
          "pendingScore=%.1f height=%.1f heightSquare=%.2f holes=%.1f garbageRows=%.1f "
-         "panicBlocks=%.1f topThreat=%.1f matchOptions=%.1f optionBlocks=%.1f "
+         "panicBlocks=%.1f topThreat=%.1f matchOptions=%.1f optionBlocks=%.1f dig=%.1f "
+         "garbageNear=%.1f raiseGarbage=%.1f "
          "adjacency=%.1f columnSpread=%.1f raisePenalty=%.1f death=%.0f\n",
          _t.simTicks, _t.followupTicks, _t.lookaheadCandidates, _t.budgetMs,
          _t.replanTicks, _t.replanActiveTicks, _t.followupWeight, _t.travelCost,
          _w.score, _w.garbage, _w.chainLevel, _w.pendingScore, _w.height,
          _w.heightSquare, _w.holes, _w.garbageRows, _w.panicBlocks, _w.topThreat,
-         _w.matchOptions, _w.optionBlocks, _w.adjacency, _w.columnSpread,
+         _w.matchOptions, _w.optionBlocks, _w.dig, _w.garbageNear, _w.raiseGarbage,
+         _w.adjacency, _w.columnSpread,
          _w.raisePenalty, _w.death);
   fflush(stdout);
 }
@@ -220,9 +233,124 @@ const std::string &QwenStrat::key() const {
   return kKey;
 }
 
-void QwenStrat::immediateMatches(const SimBoard &model, int &moves, int &blocks) {
+// Length of the same-colour run of blocks through (row, col).
+int QwenStrat::runSpan(const SimBoard &model, int row, int col, bool horizontal) {
+  const SimBoard::Cell &c = model.cell(row, col);
+  if (c.type != SimBoard::BLOCK) {
+    return 0;
+  }
+  int n = 1;
+  if (horizontal) {
+    for (int i = col - 1; i >= 0 && model.cell(row, i).type == SimBoard::BLOCK
+        && model.cell(row, i).color == c.color; --i) {
+      ++n;
+    }
+    for (int i = col + 1; i < SimBoard::W && model.cell(row, i).type == SimBoard::BLOCK
+        && model.cell(row, i).color == c.color; ++i) {
+      ++n;
+    }
+  } else {
+    for (int i = row - 1; i >= 0 && model.cell(i, col).type == SimBoard::BLOCK
+        && model.cell(i, col).color == c.color; --i) {
+      ++n;
+    }
+    for (int i = row + 1; i < SimBoard::H && model.cell(i, col).type == SimBoard::BLOCK
+        && model.cell(i, col).color == c.color; ++i) {
+      ++n;
+    }
+  }
+  return n;
+}
+
+// Garbage cells orthogonally adjacent to the run of blocks through (row, col):
+// exactly what a match there would set off. Board::triggerTile() only reacts
+// for a garbage block still in state NORMAL, and any adjacent matched block
+// triggers it - gray included - so that is the test used here. Each cell is
+// counted once.
+int QwenStrat::garbageAlongRun(const SimBoard &model, int row, int col, bool horizontal) {
+  const uint8_t color = model.cell(row, col).color;
+  bool seen[SimBoard::H][SimBoard::W] = {};
+  int cells = 0;
+  const int steps = horizontal ? SimBoard::W : SimBoard::H;
+  int lo = horizontal ? col : row;
+  int hi = lo;
+  while (lo - 1 >= 0 && (horizontal ? model.cell(row, lo - 1) : model.cell(lo - 1, col)).type == SimBoard::BLOCK
+      && (horizontal ? model.cell(row, lo - 1) : model.cell(lo - 1, col)).color == color) {
+    --lo;
+  }
+  while (hi + 1 < steps && (horizontal ? model.cell(row, hi + 1) : model.cell(hi + 1, col)).type == SimBoard::BLOCK
+      && (horizontal ? model.cell(row, hi + 1) : model.cell(hi + 1, col)).color == color) {
+    ++hi;
+  }
+  for (int k = lo; k <= hi; ++k) {
+    const int r = horizontal ? row : k;
+    const int c = horizontal ? k : col;
+    const int dr[4] = {1, -1, 0, 0};
+    const int dc[4] = {0, 0, 1, -1};
+    for (int n = 0; n < 4; ++n) {
+      const int nr = r + dr[n];
+      const int nc = c + dc[n];
+      if (nr < 0 || nc < 0 || nr >= SimBoard::H || nc >= SimBoard::W || seen[nr][nc]) {
+        continue;
+      }
+      const SimBoard::Cell &t = model.cell(nr, nc);
+      if (t.type != SimBoard::GARBAGE || t.g < 0 || t.g >= model.numGarbage()
+          || model.garbage(t.g).state != 0 /* GarbageBlockState::NORMAL */) {
+        continue;
+      }
+      seen[nr][nc] = true;
+      ++cells;
+    }
+  }
+  return cells;
+}
+
+int QwenStrat::digCellsForSwap(const SimBoard &model, int x, int y) {
+  if (!model.canSwap(x, y)) {
+    return 0;
+  }
+  SimBoard m = model;
+  const SimBoard::Cell a = m.cell(y, x);
+  const SimBoard::Cell b = m.cell(y, x + 1);
+  m.cell(y, x) = b;
+  m.cell(y, x + 1) = a;
+  int cells = 0;
+  for (int k = 0; k < 2; ++k) {
+    for (int horizontal = 0; horizontal < 2; ++horizontal) {
+      if (runSpan(m, y, x + k, horizontal != 0) >= 3) {
+        cells += garbageAlongRun(m, y, x + k, horizontal != 0);
+      }
+    }
+  }
+  return cells;
+}
+
+int QwenStrat::highestGarbageRow(const SimBoard &model) {
+  int top = -1;
+  for (int i = 0; i < model.numGarbage(); ++i) {
+    top = std::max(top, static_cast<int>(model.garbage(i).y));
+  }
+  return top;
+}
+
+int QwenStrat::garbageNearTop(const SimBoard &model, int rows) {
+  const int limit = Board::TOP_ROW - rows;
+  int near = 0;
+  for (int i = 0; i < model.numGarbage(); ++i) {
+    const SimBoard::Garbage &g = model.garbage(i);
+    const int over = std::min(static_cast<int>(g.y) - limit + 1, static_cast<int>(g.h));
+    if (over > 0) {
+      near += over;
+    }
+  }
+  return near;
+}
+
+void QwenStrat::immediateMatches(const SimBoard &model, int &moves, int &blocks,
+                                 int &digCells) {
   moves = 0;
   blocks = 0;
+  digCells = 0;
 
   SimBoard m = model;
   for (int row = 0; row < SimBoard::H; ++row) {
@@ -241,34 +369,21 @@ void QwenStrat::immediateMatches(const SimBoard &model, int &moves, int &blocks)
       m.cell(row, col + 1) = a;
 
       int best = 0;
-      const int rows[2] = {row, row};
-      const int cols[2] = {col, col + 1};
+      int digs = 0;
       for (int k = 0; k < 2; ++k) {
-        uint8_t color = m.cell(rows[k], cols[k]).color;
-        int hor = 1;
-        for (int c = cols[k] - 1; c >= 0 && m.cell(row, c).type == SimBoard::BLOCK
-            && m.cell(row, c).color == color; --c) {
-          ++hor;
+        for (int horizontal = 0; horizontal < 2; ++horizontal) {
+          const int span = runSpan(m, row, col + k, horizontal != 0);
+          best = std::max(best, span);
+          if (span >= 3) {
+            digs += garbageAlongRun(m, row, col + k, horizontal != 0);
+          }
         }
-        for (int c = cols[k] + 1; c < SimBoard::W && m.cell(row, c).type == SimBoard::BLOCK
-            && m.cell(row, c).color == color; ++c) {
-          ++hor;
-        }
-        int ver = 1;
-        for (int r = rows[k] - 1; r >= 0 && m.cell(r, cols[k]).type == SimBoard::BLOCK
-            && m.cell(r, cols[k]).color == color; --r) {
-          ++ver;
-        }
-        for (int r = rows[k] + 1; r < SimBoard::H && m.cell(r, cols[k]).type == SimBoard::BLOCK
-            && m.cell(r, cols[k]).color == color; ++r) {
-          ++ver;
-        }
-        best = std::max(best, std::max(hor, ver));
       }
 
       if (best >= 3) {
         ++moves;
         blocks += best;
+        digCells += digs;
       }
 
       m.cell(row, col) = a;
@@ -327,6 +442,11 @@ double QwenStrat::evaluate(const SimBoard &m, const SimBoard &base, bool surviva
   value -= _w.heightSquare * heightSquare;
   value -= _w.holes * holes;
   value -= _w.garbageRows * m.garbageRows();
+  // Garbage close to the top is not the same problem as garbage low down: the
+  // board dumps it in drops of three or four rows, and the rows that reach
+  // row 9 or 10 are the ones that decide the game.
+  const int nearTop = garbageNearTop(m, GARBAGE_NEAR_ROWS);
+  value -= _w.garbageNear * nearTop;
   value -= _w.panicBlocks * m.blocksAbove(Board::PANIC_HEIGHT);
   if (lowest <= highest) {
     value -= _w.columnSpread * (highest - lowest);
@@ -346,9 +466,15 @@ double QwenStrat::evaluate(const SimBoard &m, const SimBoard &base, bool surviva
   // chain building instead of parking a pretty but dead stack.
   int optionMoves = 0;
   int optionBlocks = 0;
-  immediateMatches(m, optionMoves, optionBlocks);
+  int digCells = 0;
+  immediateMatches(m, optionMoves, optionBlocks, digCells);
   value += _w.matchOptions * optionMoves;
   value += _w.optionBlocks * optionBlocks;
+  // Garbage a match would set off right now. Without this the AI sits on such
+  // a clear for hundreds of ticks: converting garbage into blocks changes
+  // almost nothing in the height and hole counts, so the dig looks free and
+  // loses to anything that scores points on the spot.
+  value += _w.dig * digCells;
 
   int pairs = 0;
   for (int row = 0; row <= topOccupied; ++row) {
@@ -377,7 +503,13 @@ double QwenStrat::evaluate(const SimBoard &m, const SimBoard &base, bool surviva
     value -= 1.5 * _w.holes * holes;
     value -= 1.5 * _w.panicBlocks * m.blocksAbove(Board::PANIC_HEIGHT);
     value -= 1.0 * _w.topThreat * (3 - head > 0 ? 3 - head : 0);
-    value -= 0.5 * _w.matchOptions * optionMoves;
+    // The garbage is what is killing us, so getting it off the board outranks
+    // everything the line cleared elsewhere. It used to be the other way
+    // round: panic halved the value of having a match available at all, which
+    // is precisely when the AI stopped clearing anything.
+    value -= 1.5 * _w.garbageRows * m.garbageRows();
+    value -= 1.5 * _w.garbageNear * nearTop;
+    value += 1.0 * _w.dig * digCells;
   }
 
   return value;
@@ -412,6 +544,7 @@ int QwenStrat::generateMoves(const SimBoard &base, std::vector<Move> &moves,
       move.x = x;
       move.y = y;
       move.followUp = 0;
+      move.dig = digCellsForSwap(base, x, y);
       move.value = playAndValue(model, base, _t.simTicks, survival);
       // All else equal, take the swap that is quickest to reach.
       move.value -= _t.travelCost * (std::abs(x - cursorX) + std::abs(y - cursorY));
@@ -428,7 +561,15 @@ int QwenStrat::generateMoves(const SimBoard &base, std::vector<Move> &moves,
     move.x = RAISE;
     move.y = 0;
     move.followUp = 0;
+    move.dig = 0;
     move.value = playAndValue(model, base, _t.simTicks, survival) - _w.raisePenalty;
+    // The D button lifts everything, garbage included: under a garbage cover
+    // it walks the hazard up to the top row instead of away from it, and the
+    // new blocks land on top of the problem. Measured, this candidate was
+    // picked for 40-55% of plans while garbage sat at rows 4-6.
+    if (highestGarbageRow(base) >= Board::PANIC_HEIGHT) {
+      move.value -= _w.raiseGarbage;
+    }
     moves.push_back(move);
   }
 
@@ -440,6 +581,7 @@ int QwenStrat::generateMoves(const SimBoard &base, std::vector<Move> &moves,
     move.x = PASS;
     move.y = 0;
     move.followUp = 0;
+    move.dig = 0;
     move.value = playAndValue(model, base, _t.simTicks, survival);
     moves.push_back(move);
   }
@@ -488,8 +630,13 @@ std::vector<AIStrategyAction> QwenStrat::plan(const Board &board) {
   _nextPlanTick = board.getTicksRun()
       + (base.hasActiveBlocks() ? _t.replanActiveTicks : _t.replanTicks);
 
+  // Danger, in the order it actually arrives: the game's own panic flag, the
+  // stack at the warning row, garbage within reach of the top row, and the
+  // top-out clock already running.
   const bool survival = board.isPanic()
-      || base.highestOccupiedRow() >= Board::WARN_HEIGHT;
+      || base.highestOccupiedRow() >= Board::WARN_HEIGHT
+      || highestGarbageRow(base) >= Board::PANIC_HEIGHT
+      || base.graceTimer() > 0;
 
   const Uint32 searchStart = SDL_GetTicks();
 
@@ -501,21 +648,12 @@ std::vector<AIStrategyAction> QwenStrat::plan(const Board &board) {
   // Second ply for the most promising swaps: this is what makes the AI play
   // setup moves that only pay off one cascade later.
   const Uint32 start = searchStart;
-  int refined = 0;
-  for (size_t i = 0; i < moves.size() && refined < _t.lookaheadCandidates; ++i) {
-    if (moves[i].x < 0) {
-      break;
-    }
-    if (refined > 0 && SDL_GetTicks() - start > _t.budgetMs) {
-      break;
-    }
-    ++refined;
-
+  auto refine = [&](size_t i) {
     SimBoard after = base;
     after.setRng(RNG_BASE);
     after.startSwap(moves[i].x, moves[i].y);
     if (playAndValue(after, base, _t.simTicks, survival) <= _w.death + 1) {
-      continue; // this line of play dies inside the horizon, no follow-up
+      return; // this line of play dies inside the horizon, no follow-up
     }
 
     SimBoard waiting = after;
@@ -536,6 +674,40 @@ std::vector<AIStrategyAction> QwenStrat::plan(const Board &board) {
     // Only the improvement over simply waiting is worth anything: the
     // position itself is already counted in the first ply value.
     moves[i].value += _t.followupWeight * (best - passValue);
+  };
+
+  int refined = 0;
+  size_t scanned = 0;
+  for (size_t i = 0; i < moves.size() && refined < _t.lookaheadCandidates; ++i) {
+    if (moves[i].x < 0) {
+      break;
+    }
+    if (refined > 0 && SDL_GetTicks() - start > _t.budgetMs) {
+      break;
+    }
+    ++refined;
+    scanned = i + 1;
+    refine(i);
+  }
+
+  // The dig is the move this prune is worst at seeing: the search keeps the
+  // best `cand` candidates by first-ply value, and the first move of a dig
+  // converts garbage into blocks without clearing much of anything, so it
+  // ranks badly exactly when digging is what saves the game. Give the best
+  // available dig its second ply regardless of rank.
+  if (survival && refined > 0) {
+    int bestDig = 0;
+    size_t bestIdx = 0;
+    for (size_t i = scanned; i < moves.size() && moves[i].x >= 0; ++i) {
+      if (moves[i].dig > bestDig) {
+        bestDig = moves[i].dig;
+        bestIdx = i;
+      }
+    }
+    if (bestDig > 0 && SDL_GetTicks() - start <= _t.budgetMs) {
+      refine(bestIdx);
+      ++refined;
+    }
   }
 
   std::sort(moves.begin(), moves.end(), [](const Move &a, const Move &b) {
@@ -543,10 +715,11 @@ std::vector<AIStrategyAction> QwenStrat::plan(const Board &board) {
   });
 
   if (getenv("PANELPOP_AI_DEBUG")) {
-    printf("ai: ticks=%d candidates=%d refined=%d survival=%d ms=%u best=(%d,%d) v=%.1f\n",
+    printf("ai: ticks=%d candidates=%d refined=%d survival=%d ms=%u best=(%d,%d) "
+           "dig=%d v=%.1f\n",
            (int) board.getTicksRun(), (int) moves.size(), refined, (int) survival,
            SDL_GetTicks() - searchStart, moves.front().x, moves.front().y,
-           moves.front().value);
+           moves.front().dig, moves.front().value);
     fflush(stdout);
   }
 
