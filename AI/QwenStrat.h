@@ -36,6 +36,7 @@ class QwenStrat : public AIStrategy {
   // Weight tuning: "height=12,holes=20" (see the .cpp).
   void setOptions(const std::string &options) override;
 
+
  private:
   struct Move {
     // x < 0 for the non-swap candidates: pass (-1), forced raise (-2).
@@ -79,6 +80,10 @@ class QwenStrat : public AIStrategy {
     int replanActiveTicks;
   };
 
+  // Prints the effective configuration under PANELPOP_AI_DEBUG, once.
+  void dump();
+
+  bool _dumped;
   Weights _w;
   Tuning _t;
   // Do not search again before the board had a chance to change.

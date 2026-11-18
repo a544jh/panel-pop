@@ -28,7 +28,9 @@ const int RAISE = -2;
 
 } // namespace
 
-QwenStrat::QwenStrat() : _nextPlanTick(0) {
+QwenStrat::QwenStrat() :
+    _dumped(false),
+    _nextPlanTick(0) {
   // The search is anytime: it keeps adding second-ply lookahead until the
   // budget runs out, so a larger budget only means a deeper look at the
   // best candidates.
@@ -70,22 +72,54 @@ QwenStrat::QwenStrat() : _nextPlanTick(0) {
 // and the debug console ("strategy qwen,height=12") both end up here, which
 // is how the weights were measured and tuned.
 void QwenStrat::setOptions(const std::string &options) {
-  static const char *names[] = {"ticks", "followup", "cand", "budget",
-      "replan", "replanActive",
-      "followupWeight", "travel", "score", "garbage", "chainLevel", "pendingScore",
-      "height", "heightSquare", "holes", "garbageRows", "panicBlocks",
-      "topThreat", "matchOptions", "optionBlocks", "adjacency", "columnSpread",
-      "raisePenalty", "death", 0};
-  static int Tuning::*const ints[] = {&Tuning::simTicks, &Tuning::followupTicks,
-      &Tuning::lookaheadCandidates, &Tuning::replanTicks,
-      &Tuning::replanActiveTicks};
-  static double Weights::*const members[] = {
-      &Weights::score, &Weights::garbage, &Weights::chainLevel,
-      &Weights::pendingScore, &Weights::height, &Weights::heightSquare,
-      &Weights::holes, &Weights::garbageRows, &Weights::panicBlocks,
-      &Weights::topThreat, &Weights::matchOptions, &Weights::optionBlocks,
-      &Weights::adjacency, &Weights::columnSpread, &Weights::raisePenalty,
-      &Weights::death};
+  // Every knob by name, straight onto the member it sets. The names and the
+  // members used to be two parallel arrays walked with an index, which silently
+  // applied every weight to its neighbour two slots away ("height=12" moved
+  // "holes") and read two pointers past the end for the last two names:
+  // AddressSanitizer global-buffer-overflow on "death=...". "replan=" wrote
+  // "replanActiveTicks" and "replanActive=" was ignored outright. The tables
+  // live here because they name QwenStrat's private types.
+  struct TuningName {
+    const char *name;
+    int Tuning::*member;
+  };
+  struct TuningDouble {
+    const char *name;
+    double Tuning::*member;
+  };
+  struct WeightName {
+    const char *name;
+    double Weights::*member;
+  };
+  static const TuningName tuningInts[] = {
+      {"ticks", &Tuning::simTicks},
+      {"followup", &Tuning::followupTicks},
+      {"cand", &Tuning::lookaheadCandidates},
+      {"replan", &Tuning::replanTicks},
+      {"replanActive", &Tuning::replanActiveTicks},
+  };
+  static const TuningDouble tuningDoubles[] = {
+      {"followupWeight", &Tuning::followupWeight},
+      {"travel", &Tuning::travelCost},
+  };
+  static const WeightName weights[] = {
+      {"score", &Weights::score},
+      {"garbage", &Weights::garbage},
+      {"chainLevel", &Weights::chainLevel},
+      {"pendingScore", &Weights::pendingScore},
+      {"height", &Weights::height},
+      {"heightSquare", &Weights::heightSquare},
+      {"holes", &Weights::holes},
+      {"garbageRows", &Weights::garbageRows},
+      {"panicBlocks", &Weights::panicBlocks},
+      {"topThreat", &Weights::topThreat},
+      {"matchOptions", &Weights::matchOptions},
+      {"optionBlocks", &Weights::optionBlocks},
+      {"adjacency", &Weights::adjacency},
+      {"columnSpread", &Weights::columnSpread},
+      {"raisePenalty", &Weights::raisePenalty},
+      {"death", &Weights::death},
+  };
 
   const char *p = options.c_str();
   while (*p != 0) {
@@ -108,36 +142,68 @@ void QwenStrat::setOptions(const std::string &options) {
     while (*p == ',' || *p == ' ') {
       ++p;
     }
-    // The first six names tune the search shape, the rest are weights.
+    // The search shape first ("budget" is unsigned, so it is its own row),
+    // then the evaluation weights.
     if (strcmp(key, "budget") == 0) {
       _t.budgetMs = static_cast<unsigned>(value);
       continue;
     }
-    int i = 0;
-    for (; i < 5; ++i) {
-      if (strcmp(key, names[i]) == 0) {
-        _t.*ints[i] = static_cast<int>(value);
+    bool known = false;
+    for (const TuningName &o : tuningInts) {
+      if (strcmp(key, o.name) == 0) {
+        _t.*o.member = static_cast<int>(value);
+        known = true;
         break;
       }
     }
-    if (i < 5) {
+    if (known) {
       continue;
     }
-    if (strcmp(key, "followupWeight") == 0) {
-      _t.followupWeight = value;
-      continue;
-    }
-    if (strcmp(key, "travel") == 0) {
-      _t.travelCost = value;
-      continue;
-    }
-    for (i = 6; names[i] != 0; ++i) {
-      if (strcmp(key, names[i]) == 0) {
-        _w.*members[i - 6] = value;
+    for (const TuningDouble &o : tuningDoubles) {
+      if (strcmp(key, o.name) == 0) {
+        _t.*o.member = value;
+        known = true;
         break;
       }
+    }
+    if (known) {
+      continue;
+    }
+    for (const WeightName &o : weights) {
+      if (strcmp(key, o.name) == 0) {
+        _w.*o.member = value;
+        known = true;
+        break;
+      }
+    }
+    if (!known && getenv("PANELPOP_AI_DEBUG")) {
+      printf("qwen: unknown option \"%s\" (ignored)\n", key);
+      fflush(stdout);
     }
   }
+}
+
+// The effective configuration, printed once per strategy so a tuning run can
+// be read back instead of assumed: the console builds a strategy and then hands
+// it the options from the spec string ("strategy qwen,height=12 2"), so a line
+// printed at construction would not be the configuration in use.
+void QwenStrat::dump() {
+  if (_dumped || !getenv("PANELPOP_AI_DEBUG")) {
+    return;
+  }
+  _dumped = true;
+  printf("qwen: ticks=%d followup=%d cand=%d budget=%u replan=%d replanActive=%d "
+         "followupWeight=%.2f travel=%.2f | score=%.1f garbage=%.1f chainLevel=%.1f "
+         "pendingScore=%.1f height=%.1f heightSquare=%.2f holes=%.1f garbageRows=%.1f "
+         "panicBlocks=%.1f topThreat=%.1f matchOptions=%.1f optionBlocks=%.1f "
+         "adjacency=%.1f columnSpread=%.1f raisePenalty=%.1f death=%.0f\n",
+         _t.simTicks, _t.followupTicks, _t.lookaheadCandidates, _t.budgetMs,
+         _t.replanTicks, _t.replanActiveTicks, _t.followupWeight, _t.travelCost,
+         _w.score, _w.garbage, _w.chainLevel, _w.pendingScore, _w.height,
+         _w.heightSquare, _w.holes, _w.garbageRows, _w.panicBlocks, _w.topThreat,
+         _w.matchOptions, _w.optionBlocks, _w.adjacency, _w.columnSpread,
+         _w.raisePenalty, _w.death);
+  fflush(stdout);
 }
 
 void QwenStrat::reset() {
@@ -405,6 +471,7 @@ void QwenStrat::appendCursorPath(int fromX, int fromY, int toX, int toY,
 }
 
 std::vector<AIStrategyAction> QwenStrat::plan(const Board &board) {
+  dump();
   std::vector<AIStrategyAction> actions;
 
   if (board.getTicksRun() < _nextPlanTick) {
