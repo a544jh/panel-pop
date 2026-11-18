@@ -63,6 +63,8 @@ class QwenStrat : public AIStrategy {
     double matchOptions;
     double optionBlocks;
     double dig;
+    double digCalm;
+    double material;
     double garbageNear;
     double raiseGarbage;
     double adjacency;

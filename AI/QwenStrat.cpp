@@ -63,6 +63,19 @@ QwenStrat::QwenStrat() :
   // Digging at garbage: a garbage cell a match sets off, garbage sitting close
   // to the top row, and the cost of raising the stack while it is covered.
   _w.dig = 40.0;
+  // Measured: gating this to panic only puts the missed digs back (by the time
+  // the panic trigger fires the board is buried and there is nothing left to
+  // dig), so calm play values the dig as well.
+  _w.digCalm = 40.0;
+  // Blocks on the board count as material: they are what a chain is made of,
+  // and a triggered garbage row turns into ordinary blocks. The evaluation
+  // valued blocks only through the matches they happen to form, which is why
+  // the AI let its own stack and garbage walk up to the top row. Self-play
+  // against material=0 won 13-3 at 6, 21-11 at 16, 11-5 at 32 and lost 6-10 to
+  // 64 - past that one raised row (+6 blocks) is worth more than the rest of
+  // the table put together, so the default sits where the other terms still
+  // matter.
+  _w.material = 32.0;
   _w.garbageNear = 10.0;
   _w.raiseGarbage = 400.0;
   _w.adjacency = 3.0;
@@ -124,6 +137,8 @@ void QwenStrat::setOptions(const std::string &options) {
       {"matchOptions", &Weights::matchOptions},
       {"optionBlocks", &Weights::optionBlocks},
       {"dig", &Weights::dig},
+      {"digCalm", &Weights::digCalm},
+      {"material", &Weights::material},
       {"garbageNear", &Weights::garbageNear},
       {"raiseGarbage", &Weights::raiseGarbage},
       {"adjacency", &Weights::adjacency},
@@ -206,14 +221,15 @@ void QwenStrat::dump() {
   printf("qwen: ticks=%d followup=%d cand=%d budget=%u replan=%d replanActive=%d "
          "followupWeight=%.2f travel=%.2f | score=%.1f garbage=%.1f chainLevel=%.1f "
          "pendingScore=%.1f height=%.1f heightSquare=%.2f holes=%.1f garbageRows=%.1f "
-         "panicBlocks=%.1f topThreat=%.1f matchOptions=%.1f optionBlocks=%.1f dig=%.1f "
-         "garbageNear=%.1f raiseGarbage=%.1f "
+         "panicBlocks=%.1f topThreat=%.1f matchOptions=%.1f optionBlocks=%.1f dig=%.1f digCalm=%.1f "
+         "material=%.1f garbageNear=%.1f raiseGarbage=%.1f "
          "adjacency=%.1f columnSpread=%.1f raisePenalty=%.1f death=%.0f\n",
          _t.simTicks, _t.followupTicks, _t.lookaheadCandidates, _t.budgetMs,
          _t.replanTicks, _t.replanActiveTicks, _t.followupWeight, _t.travelCost,
          _w.score, _w.garbage, _w.chainLevel, _w.pendingScore, _w.height,
          _w.heightSquare, _w.holes, _w.garbageRows, _w.panicBlocks, _w.topThreat,
-         _w.matchOptions, _w.optionBlocks, _w.dig, _w.garbageNear, _w.raiseGarbage,
+         _w.matchOptions, _w.optionBlocks, _w.dig, _w.digCalm, _w.material,
+         _w.garbageNear, _w.raiseGarbage,
          _w.adjacency, _w.columnSpread,
          _w.raisePenalty, _w.death);
   fflush(stdout);
@@ -445,6 +461,9 @@ double QwenStrat::evaluate(const SimBoard &m, const SimBoard &base, bool surviva
   // Garbage close to the top is not the same problem as garbage low down: the
   // board dumps it in drops of three or four rows, and the rows that reach
   // row 9 or 10 are the ones that decide the game.
+  if (_w.material != 0.0) {
+    value += _w.material * (m.blocksAbove(0) - base.blocksAbove(0));
+  }
   const int nearTop = garbageNearTop(m, GARBAGE_NEAR_ROWS);
   value -= _w.garbageNear * nearTop;
   value -= _w.panicBlocks * m.blocksAbove(Board::PANIC_HEIGHT);
@@ -473,8 +492,9 @@ double QwenStrat::evaluate(const SimBoard &m, const SimBoard &base, bool surviva
   // Garbage a match would set off right now. Without this the AI sits on such
   // a clear for hundreds of ticks: converting garbage into blocks changes
   // almost nothing in the height and hole counts, so the dig looks free and
-  // loses to anything that scores points on the spot.
-  value += _w.dig * digCells;
+  // loses to anything that scores points on the spot. Calm and panic value it
+  // differently (see digCalm); the survival block below adds the difference.
+  value += _w.digCalm * digCells;
 
   int pairs = 0;
   for (int row = 0; row <= topOccupied; ++row) {
@@ -509,7 +529,7 @@ double QwenStrat::evaluate(const SimBoard &m, const SimBoard &base, bool surviva
     // is precisely when the AI stopped clearing anything.
     value -= 1.5 * _w.garbageRows * m.garbageRows();
     value -= 1.5 * _w.garbageNear * nearTop;
-    value += 1.0 * _w.dig * digCells;
+    value += (_w.dig - _w.digCalm) * digCells;
   }
 
   return value;

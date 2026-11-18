@@ -241,6 +241,11 @@ The search (`plan()` -> `generateMoves()` -> `playAndValue()`):
 | `panicBlocks` | 30 | blocks at or above `PANIC_HEIGHT` |
 | `topThreat` | 220 | stack within 3 rows of `TOP_ROW`, and the grace timer running - the real killer |
 | `matchOptions`, `optionBlocks` | 40, 4 | swaps that score right away (from `immediateMatches()`) |
+| `material` | 32 | blocks on the board, against the count at the search root |
+| `dig` | 40 | garbage cells a match would set off (see digging, below) |
+| `digCalm` | 40 | the same, outside `survival` - gating it to panic alone does not work |
+| `garbageNear` | 10 | garbage rows within 3 of `TOP_ROW` |
+| `raiseGarbage` | 400 | charged for a forced stack raise while garbage reaches `PANIC_HEIGHT` |
 | `adjacency` | 3 | same-colour neighbour pairs, i.e. one move from a match |
 | `columnSpread` | 4 | difference between the tallest and shortest column |
 | `raisePenalty` | 0 | raising the stack (only used by the survival mode below) |
@@ -248,13 +253,35 @@ The search (`plan()` -> `generateMoves()` -> `playAndValue()`):
 
 When the board is in danger (`survival`) the height terms are weighted 1.5x
 harder and garbage sent is ignored - digging out beats poking the opponent.
+`survival` triggers on the panic flag, on the board being within 3 rows of
+`TOP_ROW`, on garbage within 3 rows of `TOP_ROW`, and on the top-out grace
+timer running.
+
+Digging means clearing next to garbage so `Board::triggerTile()` turns it into
+ordinary blocks. `immediateMatches()` reports the cells each candidate touch
+(`digCells`), and `playAndMove()` refines the best such candidate even when it
+falls outside `cand`: the first move of a dig only converts garbage, so it
+ranks badly on the first ply and used to be pruned before the follow-up that
+pays for it was ever searched. `raiseGarbage` exists because lifting the stack
+lifts the garbage with it - without it the AI picked the raise as the way to
+find material while a garbage carpet sat at rows 4-6, and walked it up to the
+top row.
 
 Tuning knobs: the search shape is `ticks`, `followup`, `cand`, `budget`,
 `replan`, `replanActive`, `followupWeight`, `travel`; the evaluation weights are
 the names in the table above. Set them as `qwen,cand=3,budget=60`, as
 `PANELPOP_QWEN_WEIGHTS="holes=30,..."`, or on the console
 (`strategy qwen,height=12 2`); `plan()` re-reads the env each time, so the
-console path honours them too.
+console path honours them too. Unknown keys are ignored with a warning under
+`PANELPOP_AI_DEBUG`, which also prints the *effective* configuration once per
+strategy (`qwen: ticks=420 followup=24 cand=3 budget=45 ... material=32.0 ...`)
+- from `plan()`, because the console constructs a strategy and only then hands
+it the options from the spec string.
+
+Before the fix in "Option names set the wrong members" (this branch), those
+`k=v` names did not mean what they said, so every tuning record older than it
+- including the `replan=6,replanActive=24`, `cand=` and `ticks=700` runs below -
+measured something else.
 
 ### SimBoard
 
@@ -545,6 +572,36 @@ tools/aibench/match.py  qwen qwen,followup=0 16 5000 --jobs 8 --frames 6000
   `PANELPOP_AI_DEBUG=1` prints one line per plan on stdout; typical plans see
   ~30 candidates, run 4-6 refinements and take 12-47 ms, one plan every 6-8
   ticks.
+- **`qwen` is much weaker against `claude` than the records below suggest.**
+  On the current tree (`swap-cooldown` + the dig work) plain `qwen` goes
+  **1-15** against `claude` on seeds 6000-6007 at 4 jobs and **0-8** at 2 jobs
+  on seeds 6000-6003, while the 11-5/10-6 written above for the same seeds and
+  harness does not reproduce. `qwen` still beats `basic` 8-0, so it is not
+  broken; it is simply far behind `claude`. Keep `qwen`'s numbers suspicious in
+  either direction: its `budget` is wall clock, so it loses search depth when
+  the machine is busy, while `claude`'s is simulated ticks and does not care.
+- Option names set the wrong members (fixed on this branch): `setOptions()`
+  looked names up in parallel arrays walked with one index, so `height=12` set
+  `holes`, `panicBlocks=` set `matchOptions`, and `raisePenalty=`/`death=` read
+  two member-pointers past the end of the array (AddressSanitizer
+  `global-buffer-overflow`, `QwenStrat::setOptions`) from the console, from
+  `PANELPOP_QWEN_WEIGHTS` and from `[ai] strategy=...` in `panelpop.ini`.
+  Demonstrated on the same seed: before the fix `height=500` played exactly
+  what `holes=500` plays after it (853 at tick 734 in both), and `holes=500`
+  changed nothing at all.
+- Valuing blocks as `material` is worth more than anything else tried here:
+  32 beats the same strategy with `material=0` **31-17** over three seed sets
+  (8-8 on 8800-8807, 10-6 on 12000-12007; at 6 it won 13-3 on 9500-9507), and
+  lifts `qwen` against `claude` from 1-15 to **5-11** on seeds 6000-6007. In
+  the four-seed panic metrics it is the reason the AI now survives the whole
+  3000-tick observation window instead of dying at 1400-2900, with its score on
+  those games up from 1103/1534/1142/3401 to 9073/3935/5496/6644. Past 32 it
+  keeps winning in self-play (64 beat 32 10-6) but one raised row (+6 blocks)
+  is then worth more than the rest of the table, so the default stays at 32.
+  Gating the `dig` bonus to `survival` (`digCalm=0`) was tried and is worse: by
+  the time the panic trigger fires the board is buried and there is nothing
+  left to dig. With `material` on, the `dig`/`garbageNear`/`raiseGarbage` terms
+  are worth only ~9-7.
 - Measured on this machine with `match.py` (8 jobs, 6000 frames, 16 games per
   match unless noted, seats swapped every game):
   - **`qwen` beats `basic` 16-0** (seeds 5000-5007; 11 of the 16 by the
